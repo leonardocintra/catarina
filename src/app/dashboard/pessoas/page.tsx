@@ -15,11 +15,7 @@ import Link from "next/link";
 
 export default async function ComunidadePage() {
   const getPessoas = async () => {
-    const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`, {
-      next: {
-        revalidate: 5,
-      },
-    });
+    const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`);
     return res.json();
   };
   const data = await getPessoas();
@@ -30,7 +26,7 @@ export default async function ComunidadePage() {
     <div className="">
       <div>
         <div className="flex justify-between">
-          <h2 className="text-3xl pl-3">Pessoas - {pessoas.length}</h2>
+          <h2 className="text-3xl pl-3">Pessoas - {pessoas?.length}</h2>
           <Link href={"/dashboard/pessoas/novo"}>
             <Button>Cadastrar</Button>
           </Link>
@@ -40,7 +36,7 @@ export default async function ComunidadePage() {
 
       <Table>
         <TableCaption>
-          Ultimos cadatros - Pessoas: {pessoas.length}
+          Ultimos cadatros - Pessoas: {pessoas?.length}
         </TableCaption>
         <TableHeader>
           <TableRow>
@@ -51,7 +47,7 @@ export default async function ComunidadePage() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {pessoas.map((pessoa) => (
+          {pessoas?.map((pessoa) => (
             <TableRow key={pessoa.id}>
               <TableCell>#{pessoa.id}</TableCell>
               <TableCell className="font-bold">{pessoa.nome}</TableCell>

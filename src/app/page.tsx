@@ -30,7 +30,7 @@ export default function Home() {
               <div className="flex items-center">
                 <Label htmlFor="password">Senha</Label>
                 <Link
-                  href="/forgot-password"
+                  href="/dashboard"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Esqueceu sua senha ?
