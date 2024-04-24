@@ -28,27 +28,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-async function getEstadoCivil() {
-  const res = await fetch(`${BASE_URL}/api/ambrosio/configuracoes/estadoCivil`);
-  return res.json();
-}
-
-async function getEscolaridade() {
-  const res = await fetch(
-    `${BASE_URL}/api/ambrosio/configuracoes/escolaridade`
-  );
-  return res.json();
-}
-
-async function getTipoCarisma() {
-  const res = await fetch(`${BASE_URL}/api/ambrosio/configuracoes/tipoCarisma`);
-  return res.json();
-}
-
 export default function NovaPessoaPage() {
   const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
   const [tipoCarismas, setTipoCarismas] = useState<ITipoCarisma[]>();
+
+  async function getEstadoCivil() {
+    const res = await fetch(
+      `${BASE_URL}/api/ambrosio/configuracoes/estadoCivil`
+    );
+    return res.json();
+  }
+
+  async function getEscolaridade() {
+    const res = await fetch(
+      `${BASE_URL}/api/ambrosio/configuracoes/escolaridade`
+    );
+    return res.json();
+  }
+
+  async function getTipoCarisma() {
+    const res = await fetch(
+      `${BASE_URL}/api/ambrosio/configuracoes/tipoCarisma`
+    );
+    return res.json();
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -93,8 +97,13 @@ export default function NovaPessoaPage() {
   if (!estadoCivils || !escolaridades || !tipoCarismas) {
     return (
       <div>
-        <h2>Carregando BASE_URL: {BASE_URL} - process.env = {process.env.BASE_URL}</h2>
-        <h2>Carregando AmbroiosURL: {AmbrosioBaseUrl} - process.env = {process.env.AmbrosioBaseUrl}</h2>
+        <h2>
+          Carregando BASE_URL: {BASE_URL} - process.env = {process.env.BASE_URL}
+        </h2>
+        <h2>
+          Carregando AmbroiosURL: {AmbrosioBaseUrl} - process.env ={" "}
+          {process.env.AmbrosioBaseUrl}
+        </h2>
       </div>
     );
   }
