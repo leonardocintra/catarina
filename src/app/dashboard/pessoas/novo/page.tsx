@@ -93,7 +93,7 @@ export default function NovaPessoaPage() {
   if (!estadoCivils || !escolaridades || !tipoCarismas) {
     return (
       <div>
-        <h2>Carregando</h2>
+        <h2>Carregando {BASE_URL}</h2>
       </div>
     );
   }
