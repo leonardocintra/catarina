@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { BASE_URL } from "@/lib/utils";
+import { AmbrosioBaseUrl, BASE_URL } from "@/lib/utils";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { ITipoCarisma } from "@/interfaces/ITipoCarisma";
@@ -93,7 +93,8 @@ export default function NovaPessoaPage() {
   if (!estadoCivils || !escolaridades || !tipoCarismas) {
     return (
       <div>
-        <h2>Carregando {BASE_URL}</h2>
+        <h2>Carregando BASE_URL: {BASE_URL} - process.env = {process.env.BASE_URL}</h2>
+        <h2>Carregando AmbroiosURL: {AmbrosioBaseUrl} - process.env = {process.env.AmbrosioBaseUrl}</h2>
       </div>
     );
   }
