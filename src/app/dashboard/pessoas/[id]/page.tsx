@@ -35,8 +35,6 @@ export default function EditarPessoaPage() {
     fetchData();
   }, [pessoaId]);
 
-  console.log(pessoa);
-
   if (!pessoa) {
     return (
       <div>
