@@ -16,6 +16,8 @@ import { BASE_URL } from "@/lib/utils";
 import { Users } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 export default async function ComunidadePage() {
   const getPessoas = async () => {
     const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`, {
@@ -91,7 +93,9 @@ export default async function ComunidadePage() {
               <TableCell>
                 <div className="font-semibold">
                   {pessoa.nome}
-                  <p className="text-xs font-light lowercase text-slate-700 italic">{pessoa.tipoCarisma.descricao}</p>
+                  <p className="text-xs font-light lowercase text-slate-700 italic">
+                    {pessoa.tipoCarisma.descricao}
+                  </p>
                 </div>
               </TableCell>
               <TableCell>

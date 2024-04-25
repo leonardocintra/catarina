@@ -15,13 +15,13 @@ export default function EditarPessoaPage() {
 
   const [pessoa, setPessoa] = useState<IPessoa>();
 
-  async function getPessoa() {
-    const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`);
-    return res.json();
-  }
-
   useEffect(() => {
     const fetchData = async () => {
+      async function getPessoa() {
+        const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`);
+        return res.json();
+      }
+
       try {
         const [resPessoa] = await Promise.all([getPessoa()]);
         setPessoa(resPessoa.data);
@@ -31,7 +31,7 @@ export default function EditarPessoaPage() {
     };
 
     fetchData();
-  }, []);
+  }, [pessoaId]);
 
   return (
     <div>

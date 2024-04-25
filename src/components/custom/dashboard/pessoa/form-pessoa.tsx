@@ -41,29 +41,29 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
   const [tipoCarismas, setTipoCarismas] = useState<ITipoCarisma[]>();
 
-  async function getEstadoCivil() {
-    const res = await fetch(
-      `${urlBase}/api/ambrosio/configuracoes/estadoCivil`
-    );
-    return res.json();
-  }
-
-  async function getEscolaridade() {
-    const res = await fetch(
-      `${urlBase}/api/ambrosio/configuracoes/escolaridade`
-    );
-    return res.json();
-  }
-
-  async function getTipoCarisma() {
-    const res = await fetch(
-      `${urlBase}/api/ambrosio/configuracoes/tipoCarisma`
-    );
-    return res.json();
-  }
-
   useEffect(() => {
     const fetchData = async () => {
+      async function getEstadoCivil() {
+        const res = await fetch(
+          `${urlBase}/api/ambrosio/configuracoes/estadoCivil`
+        );
+        return res.json();
+      }
+
+      async function getEscolaridade() {
+        const res = await fetch(
+          `${urlBase}/api/ambrosio/configuracoes/escolaridade`
+        );
+        return res.json();
+      }
+
+      async function getTipoCarisma() {
+        const res = await fetch(
+          `${urlBase}/api/ambrosio/configuracoes/tipoCarisma`
+        );
+        return res.json();
+      }
+
       try {
         const [resEstadoCivil, resEscolaridade, resTipoCarisma] =
           await Promise.all([
@@ -81,7 +81,7 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
     };
 
     fetchData();
-  }, []);
+  }, [urlBase]);
 
   const formSchema = z.object({
     nome: z
