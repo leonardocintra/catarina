@@ -24,12 +24,19 @@ import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { ITipoCarisma } from "@/interfaces/ITipoCarisma";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
+import { IPessoa } from "@/interfaces/IPessoa";
+import { useToast } from "@/components/ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type PessoaFormProps = {
   urlBase: string;
+  pessoa?: IPessoa;
 };
 
 export default function PessoaForm({ urlBase }: PessoaFormProps) {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
   const [tipoCarismas, setTipoCarismas] = useState<ITipoCarisma[]>();
@@ -78,13 +85,14 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
 
   const formSchema = z.object({
     nome: z
-      .string({ message: "Campo obrigatório" })
+      .string()
       .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
       .max(50),
     nacionalidade: z.string().max(50),
-    estadoCivil: z.number().min(1),
-    escolaridade: z.number().min(1),
-    tipoCarima: z.number().min(1),
+    estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
+    escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
+    tipoCarisma: z.string({ message: "Campo obrigatório" }).min(1),
+    sexo: z.enum(["MASCULINO", "FEMININO"]),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -92,6 +100,7 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
     defaultValues: {
       nome: "",
       nacionalidade: "brasileira",
+      sexo: "MASCULINO",
     },
   });
 
@@ -103,7 +112,32 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
     );
   }
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log({ values });
+
+    const res = await fetch(`${urlBase}/api/ambrosio/pessoa`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (res.status === 201) {
+      toast({
+        title: `${values.nome}`,
+        variant: "default",
+        description: `Cadastrado(a) com sucesso!`,
+      });
+      router.push("/dashboard/pessoas");
+    } else {
+      toast({
+        title: `${values.nome} não foi cadastrado!`,
+        variant: "destructive",
+        description: `Erro: ${res.text}`,
+      });
+    }
+  };
 
   return (
     <div className="max-w-md mx-auto sm:mt-8">
@@ -121,6 +155,28 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
                 <FormControl>
                   <Input placeholder="Nome completo ..." {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="sexo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sexo</FormLabel>
+                <Select onValueChange={field.onChange}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={"MASCULINO"}>Masculino</SelectItem>
+                    <SelectItem value={"FEMININO"}>Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -178,7 +234,7 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
 
           <FormField
             control={form.control}
-            name="tipoCarima"
+            name="tipoCarisma"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Carisma</FormLabel>

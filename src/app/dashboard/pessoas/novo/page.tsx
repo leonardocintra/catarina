@@ -5,8 +5,6 @@ import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 
 export default function NovaPessoaPage() {
-  // https://youtu.be/oGq9o2BxlaI?t=1076
-
   return (
     <div>
       <div className="flex justify-between">

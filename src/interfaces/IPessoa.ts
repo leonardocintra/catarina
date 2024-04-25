@@ -8,4 +8,6 @@ export interface IPessoa {
   estadoCivil: IEstadoCivil;
   escolaridade: IEscolaridade;
   tipoCarisma: ITipoCarisma;
+  sexo: string;
+  nacionalidade: string;
 }
