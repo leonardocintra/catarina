@@ -1,3 +1,4 @@
+import { IEndereco } from "./IEndereco";
 import { IEscolaridade } from "./IEscolaridade";
 import { IEstadoCivil } from "./IEstadoCivil";
 import { ITipoCarisma } from "./ITipoCarisma";
@@ -10,4 +11,5 @@ export interface IPessoa {
   tipoCarisma: ITipoCarisma;
   sexo: string;
   nacionalidade: string;
+  enderecos: IEndereco[];
 }

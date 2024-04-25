@@ -3,6 +3,14 @@
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
@@ -54,23 +62,68 @@ export default function EditarPessoaPage() {
       <Separator className="mb-3 mt-2" />
 
       {!editar && (
-        <div className="flex flex-col gap-2 sm:pl-3">
-          <LabelData titulo="Nome" descricao={pessoa.nome} />
-          <LabelData titulo="Sexo" descricao={pessoa.sexo} />
-          <LabelData
-            titulo="Carisma"
-            descricao={pessoa.tipoCarisma.descricao}
-          />
-          <LabelData
-            titulo="Estado Civil"
-            descricao={pessoa.estadoCivil.descricao}
-          />
-          <LabelData
-            titulo="Escolaridade"
-            descricao={pessoa.escolaridade.descricao}
-          />
+        <div className="flex space-x-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>Dados principais</CardTitle>
+              <CardDescription>Dados principais</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabelData titulo="Nome" descricao={pessoa.nome} />
+              <LabelData titulo="Sexo" descricao={pessoa.sexo} />
+              <LabelData
+                titulo="Carisma"
+                descricao={pessoa.tipoCarisma.descricao}
+              />
+              <LabelData
+                titulo="Estado Civil"
+                descricao={pessoa.estadoCivil.descricao}
+              />
+              <LabelData
+                titulo="Escolaridade"
+                descricao={pessoa.escolaridade.descricao}
+              />
+            </CardContent>
+            <CardFooter>
+              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+            </CardFooter>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Endereços</CardTitle>
+              <CardDescription>Dados principais</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabelData titulo="CEP" descricao="COLOCAR INFO" />
+              <div className="flex space-x-2">
+                <LabelData titulo="Rua" descricao="COLOCAR INFO" />
+                <LabelData titulo="Nº" descricao="321" />
+              </div>
+              <div className="flex space-x-2">
+                <LabelData titulo="Cidade" descricao={"COLOCAR INFO"} />
+                <LabelData titulo="UF" descricao={"MG"} />
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+            </CardFooter>
+          </Card>
 
-          <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+          <Card>
+            <CardHeader>
+              <CardTitle>Comunidade</CardTitle>
+              <CardDescription>Historico de comunide</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabelData titulo="Comunidade" descricao="8" />
+              <LabelData titulo="Cidade" descricao="Franca" />
+              <LabelData titulo="Paroquia" descricao="Franca" />
+              <LabelData titulo="Regiao" descricao="Franca" />
+            </CardContent>
+            <CardFooter>
+              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+            </CardFooter>
+          </Card>
         </div>
       )}
 
