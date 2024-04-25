@@ -1,6 +1,7 @@
 "use client";
 
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
+import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { IPessoa } from "@/interfaces/IPessoa";
@@ -14,6 +15,7 @@ export default function EditarPessoaPage() {
   const pessoaId = params.id;
 
   const [pessoa, setPessoa] = useState<IPessoa>();
+  const [editar, setEditar] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -53,7 +55,28 @@ export default function EditarPessoaPage() {
       </div>
       <Separator className="mb-3 mt-2" />
 
-      <PessoaForm urlBase={BASE_URL} pessoa={pessoa} />
+      {!editar && (
+        <div className="flex flex-col gap-2 sm:pl-3">
+          <LabelData titulo="Nome" descricao={pessoa.nome} />
+          <LabelData titulo="Sexo" descricao={pessoa.sexo} />
+          <LabelData
+            titulo="Carisma"
+            descricao={pessoa.tipoCarisma.descricao}
+          />
+          <LabelData
+            titulo="Estado Civil"
+            descricao={pessoa.estadoCivil.descricao}
+          />
+          <LabelData
+            titulo="Escolaridade"
+            descricao={pessoa.escolaridade.descricao}
+          />
+
+          <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+        </div>
+      )}
+
+      {editar && <PessoaForm urlBase={BASE_URL} pessoa={pessoa} />}
     </div>
   );
 }

@@ -83,7 +83,7 @@ export default async function ComunidadePage() {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>Ação</TableHead>
+            <TableHead>Detalhes</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -101,7 +101,7 @@ export default async function ComunidadePage() {
               <TableCell>
                 <Link href={`/dashboard/pessoas/${pessoa.id}`}>
                   <Button variant={"link"} size={"sm"}>
-                    Editar
+                    Ver detalhes
                   </Button>
                 </Link>
               </TableCell>
