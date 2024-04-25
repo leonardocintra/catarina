@@ -24,7 +24,7 @@ export default function EditarPessoaPage() {
 
       try {
         const [resPessoa] = await Promise.all([getPessoa()]);
-        setPessoa(resPessoa.data);
+        setPessoa(resPessoa);
       } catch (error: any) {
         console.log(error);
       }
@@ -33,10 +33,20 @@ export default function EditarPessoaPage() {
     fetchData();
   }, [pessoaId]);
 
+  console.log(pessoa);
+
+  if (!pessoa) {
+    return (
+      <div>
+        <h2>Carregando ...</h2>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="flex justify-between">
-        <h2 className="text-3xl pl-3">Editar pessoa {pessoaId} </h2>
+        <h2 className="text-3xl pl-3">Editar {pessoa.nome} </h2>
         <Link href={"/dashboard/pessoas"}>
           <Button variant={"outline"}>Voltar</Button>
         </Link>

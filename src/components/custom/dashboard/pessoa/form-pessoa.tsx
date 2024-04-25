@@ -33,7 +33,7 @@ type PessoaFormProps = {
   pessoa?: IPessoa;
 };
 
-export default function PessoaForm({ urlBase }: PessoaFormProps) {
+export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
@@ -98,9 +98,12 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: "",
-      nacionalidade: "brasileira",
+      nome: pessoa?.nome || "",
+      nacionalidade: pessoa?.nacionalidade || "brasileira",
       sexo: "MASCULINO",
+      escolaridade: pessoa?.escolaridade.id.toString() || "",
+      tipoCarisma: pessoa?.tipoCarisma.id.toString() || "",
+      estadoCivil: pessoa?.estadoCivil.id.toString() || "",
     },
   });
 
@@ -113,23 +116,35 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
   }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log({ values });
+    let url = `${urlBase}/api/ambrosio/pessoa`;
+    let method = "POST";
 
-    const res = await fetch(`${urlBase}/api/ambrosio/pessoa`, {
-      method: "POST",
+    if (pessoa) {
+      url = `${url}/${pessoa.id}`;
+      method = "PATCH";
+    }
+
+    const res = await fetch(url, {
+      method,
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(values),
     });
 
-    if (res.status === 201) {
+    if (res.status === 201 && method === "POST") {
       toast({
         title: `${values.nome}`,
         variant: "default",
         description: `Cadastrado(a) com sucesso!`,
       });
       router.push("/dashboard/pessoas");
+    } else if (res.status === 200 && method === "PATCH") {
+      toast({
+        title: `${values.nome}`,
+        variant: "default",
+        description: `Editado(a) com sucesso!`,
+      });
     } else {
       toast({
         title: `${values.nome} não foi cadastrado!`,
@@ -166,7 +181,10 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Sexo</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={pessoa?.sexo}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -188,7 +206,10 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Estado Civil</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={pessoa?.estadoCivil.id.toString()}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -213,7 +234,10 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Escolaridade</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={pessoa?.escolaridade.id.toString()}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
@@ -238,7 +262,10 @@ export default function PessoaForm({ urlBase }: PessoaFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Carisma</FormLabel>
-                <Select onValueChange={field.onChange}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={pessoa?.tipoCarisma.id.toString()}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Selecione" />
