@@ -1,3 +1,4 @@
+import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -47,15 +48,12 @@ export default async function ComunidadePage() {
 
   return (
     <div className="">
-      <div>
-        <div className="flex justify-between">
-          <h2 className="text-3xl pl-3">Pessoas - {pessoas?.length}</h2>
-          <Link href={"/dashboard/pessoas/novo"}>
-            <Button>Cadastrar</Button>
-          </Link>
-        </div>
-        <Separator className="mb-3 mt-2" />
-      </div>
+      <PageSubtitle
+        title={`Pessoas - ${pessoas?.length}`}
+        buttonShow={true}
+        buttonText="Cadastrar"
+        buttonUrl="/dashboard/pessoas/novo"
+      />
 
       <div className="hidden sm:grid grid-cols-7 gap-3 mb-4">
         {tipoCarisma.map((tipo) => (

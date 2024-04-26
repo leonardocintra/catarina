@@ -1,5 +1,6 @@
 "use client";
 
+import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { Button } from "@/components/ui/button";
@@ -53,13 +54,13 @@ export default function EditarPessoaPage() {
 
   return (
     <div>
-      <div className="flex justify-between">
-        <h2 className="text-3xl pl-3">Editar {pessoa.nome} </h2>
-        <Link href={"/dashboard/pessoas"}>
-          <Button variant={"outline"}>Voltar</Button>
-        </Link>
-      </div>
-      <Separator className="mb-3 mt-2" />
+      <PageSubtitle
+        title={`Editar ${pessoa.nome}`}
+        buttonShow={true}
+        buttonText="Voltar"
+        buttonUrl="/dashboard/pessoas"
+        buttonVariant="outline"
+      />
 
       {!editar && (
         <div className="flex space-x-2">
@@ -111,7 +112,9 @@ export default function EditarPessoaPage() {
                 ))
               ) : (
                 <div>
-                  <Button variant={"outline"}>Cadastrar endereços</Button>
+                  <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
+                    <Button variant={"outline"}>Cadastrar endereços</Button>
+                  </Link>
                 </div>
               )}
             </CardContent>
