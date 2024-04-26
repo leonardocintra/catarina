@@ -10,11 +10,39 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { IPessoa } from "@/interfaces/IPessoa";
+import { useToast } from "@/components/ui/use-toast";
+import { IEndereco } from "@/interfaces/IEndereco";
+import { useRouter } from "next/navigation";
 
-export default function EnderecoForm() {
+type EnderecoFormProps = {
+  pessoa: IPessoa;
+  urlBase: string;
+};
+
+export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const [bairroDisabled, setBairroDisabled] = useState(false);
+  const [cidadeDisabled, setCidadeDisabled] = useState(false);
+  const [logradouroDisabled, setLogradouroDisabled] = useState(false);
+
   const onChangeCaptureHandler = (e: any) => {
     handleCep(e.target.value);
   };
+
+  function limpaCampos() {
+    form.setValue("bairro", "");
+    form.setValue("cidade", "");
+    form.setValue("logradouro", "");
+    form.setValue("numero", "");
+    form.setValue("uf", "");
+    form.setValue("cep", "");
+    form.setFocus("cep");
+  }
 
   async function handleCep(cepInput: string) {
     if (cepInput.length !== 8) {
@@ -28,17 +56,20 @@ export default function EnderecoForm() {
         return res;
       });
 
-    console.log(res);
-
     form.setValue("bairro", res.bairro);
     form.setValue("cidade", res.localidade);
     form.setValue("uf", res.uf);
     form.setValue("logradouro", res.logradouro);
     if (res.logradouro === "") {
       form.setFocus("logradouro");
+      setBairroDisabled(false);
+      setLogradouroDisabled(false);
     } else {
       form.setFocus("numero");
+      setBairroDisabled(true);
+      setLogradouroDisabled(true);
     }
+    setCidadeDisabled(true);
   }
 
   const formSchema = z.object({
@@ -63,7 +94,42 @@ export default function EnderecoForm() {
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    let url = `${urlBase}/api/ambrosio/endereco`;
+    let method = "POST";
+
+    const endereco: Partial<IEndereco> = {
+      cep: values.cep,
+      logradouro: values.logradouro,
+      cidade: values.cidade,
+      uf: values.uf,
+      bairro: values.bairro,
+      pessoaId: pessoa.id,
+      numero: values.numero,
+    };
+
+    const res = await fetch(url, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(endereco),
+    });
+
+    if (res.status === 201 && method === "POST") {
+      toast({
+        title: `Endereço da pessoa`,
+        variant: "default",
+        description: `Cadastrado(a) com sucesso!`,
+      });
+      limpaCampos();
+      router.push(`/dashboard/pessoas/${pessoa.id}`);
+    } else {
+      toast({
+        title: `Endereço não foi cadastrado!`,
+        variant: "destructive",
+        description: `Erro: ${res.text}`,
+      });
+    }
   };
 
   return (
@@ -94,7 +160,11 @@ export default function EnderecoForm() {
               <FormItem>
                 <FormLabel>Logradouro</FormLabel>
                 <FormControl>
-                  <Input placeholder="Logradouro ..." {...field} />
+                  <Input
+                    disabled={logradouroDisabled}
+                    placeholder="Logradouro ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -122,7 +192,11 @@ export default function EnderecoForm() {
               <FormItem>
                 <FormLabel>Bairro</FormLabel>
                 <FormControl>
-                  <Input placeholder="Bairro ..." {...field} />
+                  <Input
+                    disabled={bairroDisabled}
+                    placeholder="Bairro ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -136,7 +210,11 @@ export default function EnderecoForm() {
               <FormItem>
                 <FormLabel>Cidade</FormLabel>
                 <FormControl>
-                  <Input placeholder="Cidade ..." {...field} />
+                  <Input
+                    disabled={cidadeDisabled}
+                    placeholder="Cidade ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,12 +228,18 @@ export default function EnderecoForm() {
               <FormItem>
                 <FormLabel>Estado</FormLabel>
                 <FormControl>
-                  <Input placeholder="Estado ..." {...field} />
+                  <Input
+                    disabled={cidadeDisabled}
+                    placeholder="Estado ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          <Button type="submit">Salvar</Button>
         </form>
       </Form>
     </div>

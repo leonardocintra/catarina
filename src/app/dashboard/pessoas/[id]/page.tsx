@@ -63,7 +63,7 @@ export default function EditarPessoaPage() {
       />
 
       {!editar && (
-        <div className="flex space-x-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           <Card>
             <CardHeader>
               <CardTitle>Dados principais</CardTitle>
@@ -144,6 +144,8 @@ export default function EditarPessoaPage() {
               </Button>
             </CardFooter>
           </Card>
+
+          
         </div>
       )}
 
