@@ -5,6 +5,10 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function removerAcento(texto: string): string {
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 export const AmbrosioBaseUrl =
   process.env.NEXT_PUBLIC_AMBROSIO_URL || "http://localhost:3005";
 export const BASE_URL =
