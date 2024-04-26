@@ -107,9 +107,9 @@ export default function EditarPessoaPage() {
               <CardDescription>Todos os endereços dessa pessoa</CardDescription>
             </CardHeader>
             <CardContent>
-              {pessoa.enderecos.length > 0 ? (
+              {pessoa.enderecos.length > 0 &&
                 pessoa.enderecos.map((end) => (
-                  <div key={end.id} className="mb-2 text-sm">
+                  <div key={end.id} className="mb-2 text-sm flex gap-2 items-center">
                     <div>
                       <LabelData titulo="CEP" descricao={end.cep} />
                       <div className="flex space-x-2">
@@ -123,22 +123,16 @@ export default function EditarPessoaPage() {
                       </div>
                       <Separator />
                     </div>
+                    <Button variant={"link"}>Editar</Button>
                   </div>
-                ))
-              ) : (
-                <div>
-                  <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
-                    <Button variant={"outline"}>Cadastrar endereços</Button>
-                  </Link>
-                </div>
-              )}
+                ))}
             </CardContent>
             <CardFooter>
-              {pessoa.enderecos.length > 0 && (
-                <Button onClick={() => alert("Pendente de implementação")}>
-                  Editar endereço
-                </Button>
-              )}
+              <div>
+                <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
+                  <Button variant={"outline"}>Cadastrar endereços</Button>
+                </Link>
+              </div>
             </CardFooter>
           </Card>
 

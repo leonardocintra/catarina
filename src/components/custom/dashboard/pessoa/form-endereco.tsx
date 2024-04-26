@@ -119,7 +119,7 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
 
     if (res.status === 201 && method === "POST") {
       toast({
-        title: `Endereço da pessoa`,
+        title: `Endereço de ${pessoa.nome}`,
         variant: "default",
         description: `Cadastrado(a) com sucesso!`,
       });
@@ -127,7 +127,7 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
       router.push(`/dashboard/pessoas/${pessoa.id}`);
     } else {
       toast({
-        title: `Endereço não foi cadastrado!`,
+        title: `Endereço de ${pessoa.nome} não foi cadastrado!`,
         variant: "destructive",
         description: `Erro: ${res.text}`,
       });
