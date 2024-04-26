@@ -91,21 +91,36 @@ export default function EditarPessoaPage() {
           <Card>
             <CardHeader>
               <CardTitle>Endereços</CardTitle>
-              <CardDescription>Dados principais</CardDescription>
+              <CardDescription>Todos os endereços dessa pessoa</CardDescription>
             </CardHeader>
             <CardContent>
-              <LabelData titulo="CEP" descricao="COLOCAR INFO" />
-              <div className="flex space-x-2">
-                <LabelData titulo="Rua" descricao="COLOCAR INFO" />
-                <LabelData titulo="Nº" descricao="321" />
-              </div>
-              <div className="flex space-x-2">
-                <LabelData titulo="Cidade" descricao={"COLOCAR INFO"} />
-                <LabelData titulo="UF" descricao={"MG"} />
-              </div>
+              {pessoa.enderecos ? (
+                pessoa.enderecos.map((end, index) => (
+                  <div key={index}>
+                    <LabelData titulo="CEP" descricao="COLOCAR INFO" />
+                    <div className="flex space-x-2">
+                      <LabelData titulo="Rua" descricao="COLOCAR INFO" />
+                      <LabelData titulo="Nº" descricao="321" />
+                    </div>
+                    <div className="flex space-x-2">
+                      <LabelData titulo="Cidade" descricao={"COLOCAR INFO"} />
+                      <LabelData titulo="UF" descricao={"MG"} />
+                    </div>
+                    <Separator />
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <Button variant={"outline"}>Cadastrar endereços</Button>
+                </div>
+              )}
             </CardContent>
             <CardFooter>
-              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+              {pessoa.enderecos && (
+                <Button onClick={() => setEditar(!editar)}>
+                  Editar endereço
+                </Button>
+              )}
             </CardFooter>
           </Card>
 
@@ -121,7 +136,9 @@ export default function EditarPessoaPage() {
               <LabelData titulo="Regiao" descricao="Franca" />
             </CardContent>
             <CardFooter>
-              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+              <Button onClick={() => setEditar(!editar)}>
+                Editar comunidade
+              </Button>
             </CardFooter>
           </Card>
         </div>

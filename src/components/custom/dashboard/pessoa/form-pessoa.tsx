@@ -133,12 +133,13 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
     });
 
     if (res.status === 201 && method === "POST") {
+      const data = await res.json();
       toast({
         title: `${values.nome}`,
         variant: "default",
         description: `Cadastrado(a) com sucesso!`,
       });
-      router.push("/dashboard/pessoas");
+      router.push(`/dashboard/pessoas/${data.id}`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
         title: `${values.nome}`,

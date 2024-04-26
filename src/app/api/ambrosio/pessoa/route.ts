@@ -40,14 +40,9 @@ export async function POST(req: Request) {
   });
 
   if (res.status === 201) {
-    return Response.json(
-      {
-        message: "Cadastrado com sucesso",
-      },
-      {
-        status: 201,
-      }
-    );
+    return Response.json(await res.json(), {
+      status: 201,
+    });
   } else {
     return Response.json(res.json());
   }
