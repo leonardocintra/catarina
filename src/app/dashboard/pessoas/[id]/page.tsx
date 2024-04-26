@@ -13,23 +13,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/components/ui/use-toast";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function EditarPessoaPage() {
   const params = useParams();
+  const router = useRouter();
   const pessoaId = params.id;
 
   const [pessoa, setPessoa] = useState<IPessoa>();
   const [editar, setEditar] = useState<boolean>(false);
+  const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
       async function getPessoa() {
         const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`);
+
+        if (res.status === 404) {
+          setRedirectNotFound(true);
+        }
+
         return res.json();
       }
 
@@ -43,6 +51,10 @@ export default function EditarPessoaPage() {
 
     fetchData();
   }, [pessoaId]);
+
+  if (redirectNotFound) {
+    router.push("/dashboard/pessoas");
+  }
 
   if (!pessoa) {
     return (
@@ -95,19 +107,22 @@ export default function EditarPessoaPage() {
               <CardDescription>Todos os endereços dessa pessoa</CardDescription>
             </CardHeader>
             <CardContent>
-              {pessoa.enderecos ? (
-                pessoa.enderecos.map((end, index) => (
-                  <div key={index}>
-                    <LabelData titulo="CEP" descricao="COLOCAR INFO" />
-                    <div className="flex space-x-2">
-                      <LabelData titulo="Rua" descricao="COLOCAR INFO" />
-                      <LabelData titulo="Nº" descricao="321" />
+              {pessoa.enderecos.length > 0 ? (
+                pessoa.enderecos.map((end) => (
+                  <div key={end.id} className="mb-2 text-sm">
+                    <div>
+                      <LabelData titulo="CEP" descricao={end.cep} />
+                      <div className="flex space-x-2">
+                        <LabelData titulo="Rua" descricao={end.logradouro} />
+                        <LabelData titulo="Nº" descricao={end.numero} />
+                      </div>
+                      <LabelData titulo="Bairro" descricao={end.bairro} />
+                      <div className="flex space-x-2">
+                        <LabelData titulo="Cidade" descricao={end.cidade} />
+                        <LabelData titulo="UF" descricao={end.UF} />
+                      </div>
+                      <Separator />
                     </div>
-                    <div className="flex space-x-2">
-                      <LabelData titulo="Cidade" descricao={"COLOCAR INFO"} />
-                      <LabelData titulo="UF" descricao={"MG"} />
-                    </div>
-                    <Separator />
                   </div>
                 ))
               ) : (
@@ -119,8 +134,8 @@ export default function EditarPessoaPage() {
               )}
             </CardContent>
             <CardFooter>
-              {pessoa.enderecos && (
-                <Button onClick={() => setEditar(!editar)}>
+              {pessoa.enderecos.length > 0 && (
+                <Button onClick={() => alert("Pendente de implementação")}>
                   Editar endereço
                 </Button>
               )}
@@ -144,8 +159,6 @@ export default function EditarPessoaPage() {
               </Button>
             </CardFooter>
           </Card>
-
-          
         </div>
       )}
 

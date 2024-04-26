@@ -101,7 +101,7 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
       cep: values.cep,
       logradouro: values.logradouro,
       cidade: values.cidade,
-      uf: values.uf,
+      UF: values.uf,
       bairro: values.bairro,
       pessoaId: pessoa.id,
       numero: values.numero,
@@ -114,6 +114,8 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
       },
       body: JSON.stringify(endereco),
     });
+
+    console.log(await res.status);
 
     if (res.status === 201 && method === "POST") {
       toast({

@@ -3,7 +3,7 @@ export interface IEndereco {
   cep: string;
   logradouro: string;
   cidade: string;
-  uf: string;
+  UF: string;
   bairro: string;
   numero: string;
   pessoaId: number;

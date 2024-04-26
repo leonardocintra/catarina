@@ -10,6 +10,17 @@ export async function GET(
 ) {
   const res = await fetch(`${url}/${params.id}`);
 
+  if (res.status === 404) {
+    return Response.json(
+      {
+        message: "Pessoa não encontrada",
+      },
+      {
+        status: 404,
+      }
+    );
+  }
+
   const data = await res.json();
   return Response.json(data);
 }

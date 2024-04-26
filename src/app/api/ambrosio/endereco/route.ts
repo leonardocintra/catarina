@@ -1,24 +1,28 @@
 import { IEndereco } from "@/interfaces/IEndereco";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { NextRequest } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/endereco`;
 
-export async function GET() {
-  const res = await fetch(url);
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: number } }
+) {
+  const res = await fetch(`${url}/pessoa/${params.id}`);
 
   const data = await res.json();
-  return Response.json({ data });
+  return Response.json(data);
 }
 
 export async function POST(req: Request) {
   const data = await req.json();
 
+
   const endereco: Partial<IEndereco> = {
     cep: data.cep,
     logradouro: data.logradouro,
     cidade: data.cidade,
-    uf: data.uf,
+    UF: data.UF,
     bairro: data.bairro,
     numero: data.numero,
     pessoaId: parseInt(data.pessoaId),
