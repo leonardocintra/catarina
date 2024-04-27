@@ -2,10 +2,12 @@ import Link from "next/link";
 import {
   AlertCircleIcon,
   Bell,
+  Church,
   CircleUser,
   Home,
   LineChart,
   Menu,
+  Octagon,
   Package,
   Package2,
   Users,
@@ -72,7 +74,7 @@ export default function DashboardLayout({
                 href="/dashboard/comunidades"
                 className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
               >
-                <Package className="h-4 w-4" />
+                <Octagon className="h-4 w-4" />
                 Comunidades
               </Link>
               <Link
@@ -81,6 +83,13 @@ export default function DashboardLayout({
               >
                 <Users className="h-4 w-4" />
                 Pessoas
+              </Link>
+              <Link
+                href="/dashboard/paroquias"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+              >
+                <Church className="h-4 w-4" />
+                Paroquias
               </Link>
               <Link
                 href="/dashboard/relatorios"
@@ -155,8 +164,15 @@ export default function DashboardLayout({
                   href="/dashboard/comunidades"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Package className="h-5 w-5" />
+                  <Octagon className="h-5 w-5" />
                   Comunidades
+                </Link>
+                <Link
+                  href="/dashboard/paroquias"
+                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                >
+                  <Church className="h-5 w-5" />
+                  Paroquias
                 </Link>
                 <Link
                   href="/dashboard/pessoas"

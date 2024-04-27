@@ -25,10 +25,9 @@ export async function POST(req: Request) {
     UF: data.UF,
     bairro: data.bairro,
     numero: data.numero,
-    pessoaId: parseInt(data.pessoaId),
   };
 
-  const res = await fetch(url, {
+  const res = await fetch(`${url}/pessoa/${parseInt(data.pessoaId)}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
