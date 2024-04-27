@@ -32,7 +32,7 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
   useEffect(() => {
     const fetchData = async () => {
       async function getRegioes() {
-        const res = await fetch(`${baseUrl}/api/ambrosio/configuracoesa/estadoCivil`);
+        const res = await fetch(`${baseUrl}/api/ambrosio/configuracoes/estadoCivil`);
         return res.json();
       }
 
