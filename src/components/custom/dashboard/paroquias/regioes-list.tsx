@@ -35,19 +35,12 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
         const res = await fetch(`${baseUrl}/api/ambrosio/regioes`);
         return res.json();
       }
-
-      const data = await getRegioes();
-
-      console.log(baseUrl)
-      
-      setRegioes(data);
+      const data = await getRegioes();      
+      setRegioes(data.data);
     };
     
     fetchData();
   }, [baseUrl]);
-  
-  console.log(regioes)
-  console.log("cade as regioes ?");
 
   return (
     <Card>
