@@ -4,7 +4,12 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+### Esse projeto depende do backend 
+
+Favor baixar primeiro: https://github.com/leonardocintra/ambrosio
+
+Seguir os passos do [ReadMe](https://github.com/leonardocintra/ambrosio/blob/main/README.md) de ambrosio para manipulação de dados.
+
 
 ```bash
 npm run dev
@@ -31,8 +36,13 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Deploy on MagaluCloud
+Automaticamete ao aprovar o projeto o deploy é feito automagicamente.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+### Outros / Duvidas
+Abre uma issue
+
+ou
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
