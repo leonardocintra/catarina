@@ -58,7 +58,6 @@ export default function DashboardLayout({
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
               <SidebarMenuItem
                 href="/dashboard"
-                active={true}
                 description="Dashboard"
                 icon={<Home className={classNameIcon} />}
               />
@@ -131,7 +130,7 @@ export default function DashboardLayout({
             <SheetContent side="left" className="flex flex-col">
               <nav className="grid gap-2 text-lg font-medium">
                 <Link
-                  href="#"
+                  href="/"
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <Package2 className="h-6 w-6" />

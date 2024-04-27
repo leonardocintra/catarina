@@ -1,13 +1,15 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
-import { Home, LucideProps } from "lucide-react";
+import { Home } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
 type SidebarMenuItemProps = {
   description: string;
   href: string;
   icon: ReactNode;
-  active?: boolean;
   badge?: string;
 };
 
@@ -15,12 +17,13 @@ export default function SidebarMenuItem({
   description,
   href,
   icon,
-  active,
   badge,
 }: SidebarMenuItemProps) {
+  const path = usePathname();
+
   let activeItem =
     "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary";
-  if (active) {
+  if (path === href) {
     activeItem =
       "flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary";
   }
