@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,14 +10,20 @@ import {
 } from "@/components/ui/card";
 import { IRegioesCaminho } from "@/interfaces/IRegioesCaminho";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type RegioesCaminhoProps = {
   baseUrl: string;
 };
 
-export default async function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
-  const res = await fetch(`${baseUrl}/api/ambrosio/regioes`);
-  const regioes: IRegioesCaminho[] = await res.json();
+export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
+  const [regioes, setRegioes] = useState<IRegioesCaminho[]>();
+
+  useEffect(() => {
+    fetch(`${baseUrl}/api/ambrosio/regioes`)
+      .then((res) => res.json())
+      .then((regioes) => setRegioes(regioes));
+  }, []);
 
   return (
     <Card>
@@ -25,7 +33,7 @@ export default async function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
       </CardHeader>
       <CardContent>
         <ul>
-          {regioes.map((r) => (
+          {regioes?.map((r) => (
             <li key={r.id}>
               <Link href={"#"}>
                 <Button variant={"link"}>{r.descricao}</Button>

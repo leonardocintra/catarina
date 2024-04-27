@@ -11,7 +11,7 @@ import { BASE_URL } from "@/lib/utils";
 export default function ParoquiasPage() {
   return (
     <div className="grid sm:grid-cols-3 gap-2">
-      {/* <RegioesCaminho baseUrl={BASE_URL} /> */}
+      <RegioesCaminho baseUrl={BASE_URL} />
 
       <Card>
         <CardHeader>

@@ -8,7 +8,6 @@ import {
   LineChart,
   Menu,
   Octagon,
-  Package,
   Package2,
   Users,
 } from "lucide-react";
@@ -31,12 +30,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import SidebarMenuItem from "@/components/custom/dashboard/sidebar-menu-item";
 
 export default function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const classNameIcon = "h-4 w-4";
+  const classNameIconResponsive = "h-5 w-5";
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -47,57 +50,48 @@ export default function DashboardLayout({
               <span className="">CNC Gestão</span>
             </Link>
             <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-              <Bell className="h-4 w-4" />
+              <Bell className={classNameIcon} />
               <span className="sr-only">Toggle notifications</span>
             </Button>
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              <Link
+              <SidebarMenuItem
                 href="/dashboard"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Home className="h-4 w-4" />
-                Dashboard
-              </Link>
-              <Link
+                active={true}
+                description="Dashboard"
+                icon={<Home className={classNameIcon} />}
+              />
+              <SidebarMenuItem
                 href="/dashboard/avisos"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <AlertCircleIcon className="h-4 w-4" />
-                Avisos
-                <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                  8
-                </Badge>
-              </Link>
-              <Link
+                description="Avisos"
+                icon={<AlertCircleIcon className={classNameIcon} />}
+                badge="8"
+              />
+
+              <SidebarMenuItem
                 href="/dashboard/comunidades"
-                className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-primary transition-all hover:text-primary"
-              >
-                <Octagon className="h-4 w-4" />
-                Comunidades
-              </Link>
-              <Link
+                description="Comunidades"
+                icon={<Octagon className={classNameIcon} />}
+              />
+
+              <SidebarMenuItem
                 href="/dashboard/pessoas"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Users className="h-4 w-4" />
-                Pessoas
-              </Link>
-              <Link
+                description="Pessoas"
+                icon={<Users className={classNameIcon} />}
+              />
+
+              <SidebarMenuItem
                 href="/dashboard/paroquias"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <Church className="h-4 w-4" />
-                Paroquias
-              </Link>
-              <Link
+                description="Paróquias"
+                icon={<Church className={classNameIcon} />}
+              />
+
+              <SidebarMenuItem
                 href="/dashboard/relatorios"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
-              >
-                <LineChart className="h-4 w-4" />
-                Relatórios
-              </Link>
+                description="Relatórios"
+                icon={<LineChart className={classNameIcon} />}
+              />
             </nav>
           </div>
           <div className="mt-auto p-4">
@@ -130,7 +124,7 @@ export default function DashboardLayout({
                 size="icon"
                 className="shrink-0 md:hidden"
               >
-                <Menu className="h-5 w-5" />
+                <Menu className={classNameIconResponsive} />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
@@ -141,20 +135,20 @@ export default function DashboardLayout({
                   className="flex items-center gap-2 text-lg font-semibold"
                 >
                   <Package2 className="h-6 w-6" />
-                  <span className="sr-only">Acme Inc</span>
+                  <span className="sr-only">CNC - Gestão</span>
                 </Link>
                 <Link
                   href="/dashboard"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Home className="h-5 w-5" />
+                  <Home className={classNameIconResponsive} />
                   Dashboard
                 </Link>
                 <Link
                   href="/dashboard/avisos"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
                 >
-                  <AlertCircleIcon className="h-5 w-5" />
+                  <AlertCircleIcon className={classNameIconResponsive} />
                   Avisos
                   <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
                     8
@@ -164,28 +158,28 @@ export default function DashboardLayout({
                   href="/dashboard/comunidades"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Octagon className="h-5 w-5" />
+                  <Octagon className={classNameIconResponsive} />
                   Comunidades
                 </Link>
                 <Link
                   href="/dashboard/paroquias"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Church className="h-5 w-5" />
+                  <Church className={classNameIconResponsive} />
                   Paroquias
                 </Link>
                 <Link
                   href="/dashboard/pessoas"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <Users className="h-5 w-5" />
+                  <Users className={classNameIconResponsive} />
                   Pessoas
                 </Link>
                 <Link
                   href="/dashboard/relatorios"
                   className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
                 >
-                  <LineChart className="h-5 w-5" />
+                  <LineChart className={classNameIconResponsive} />
                   Relatórios
                 </Link>
               </nav>
@@ -211,7 +205,7 @@ export default function DashboardLayout({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
+                <CircleUser className={classNameIconResponsive} />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
             </DropdownMenuTrigger>
@@ -221,7 +215,7 @@ export default function DashboardLayout({
               <DropdownMenuItem>Configurações</DropdownMenuItem>
               <DropdownMenuItem>Ajuda</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>Logout / Sair</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
