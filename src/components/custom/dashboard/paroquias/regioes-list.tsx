@@ -38,12 +38,15 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
 
       const data = await getRegioes();
 
+      console.log(data)
+      
       setRegioes(data);
     };
-
+    
     fetchData();
   }, [baseUrl]);
-
+  
+  console.log(regioes)
   console.log("cade as regioes ?");
 
   return (
