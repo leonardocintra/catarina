@@ -44,6 +44,8 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
     fetchData();
   }, [baseUrl]);
 
+  console.log("cade as regioes ?");
+
   return (
     <Card>
       <CardHeader>
