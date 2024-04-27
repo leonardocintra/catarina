@@ -1,5 +1,4 @@
 import RegioesCaminho from "@/components/custom/dashboard/paroquias/regioes-list";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -7,11 +6,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { BASE_URL } from "@/lib/utils";
 
 export default function ParoquiasPage() {
   return (
     <div className="grid sm:grid-cols-3 gap-2">
-      <RegioesCaminho />
+      <RegioesCaminho baseUrl={BASE_URL} />
 
       <Card>
         <CardHeader>

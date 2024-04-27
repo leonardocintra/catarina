@@ -7,11 +7,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { IRegioesCaminho } from "@/interfaces/IRegioesCaminho";
-import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 
-export default async function RegioesCaminho() {
-  const res = await fetch(`${BASE_URL}/api/ambrosio/regioes`);
+type RegioesCaminhoProps = {
+  baseUrl: string;
+};
+
+export default async function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
+  const res = await fetch(`${baseUrl}/api/ambrosio/regioes`);
   const regioes: IRegioesCaminho[] = await res.json();
 
   return (
