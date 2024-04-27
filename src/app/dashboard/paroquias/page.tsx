@@ -16,7 +16,7 @@ export default function ParoquiasPage() {
       <Card>
         <CardHeader>
           <CardTitle>Dioceses</CardTitle>
-          <CardDescription>Consulta dioceses</CardDescription>
+          <CardDescription>Consulta dioceses do Brasil</CardDescription>
         </CardHeader>
         <CardContent>
           <ul>
