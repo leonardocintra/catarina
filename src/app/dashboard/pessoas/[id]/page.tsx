@@ -68,6 +68,7 @@ export default function EditarPessoaPage() {
     <div>
       <PageSubtitle
         title={`Editar ${pessoa.nome}`}
+        subTitle={pessoa.tipoPessoa.descricao}
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/pessoas"
@@ -82,7 +83,10 @@ export default function EditarPessoaPage() {
               <CardDescription>Dados principais</CardDescription>
             </CardHeader>
             <CardContent>
-              <LabelData titulo="Nome" descricao={pessoa.nome} />
+              <LabelData
+                titulo="Nome"
+                descricao={`${pessoa.nome} - ${pessoa.tipoPessoa.descricao}`}
+              />
               <LabelData titulo="Sexo" descricao={pessoa.sexo} />
               <LabelData
                 titulo="Carisma"
@@ -109,7 +113,10 @@ export default function EditarPessoaPage() {
             <CardContent>
               {pessoa.enderecos.length > 0 &&
                 pessoa.enderecos.map((end) => (
-                  <div key={end.id} className="mb-2 text-sm flex gap-2 items-center">
+                  <div
+                    key={end.id}
+                    className="mb-2 text-sm flex gap-2 items-center"
+                  >
                     <div>
                       <LabelData titulo="CEP" descricao={end.cep} />
                       <div className="flex space-x-2">

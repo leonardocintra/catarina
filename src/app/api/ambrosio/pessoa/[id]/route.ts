@@ -45,6 +45,10 @@ export async function PATCH(
       id: parseInt(data.tipoCarisma),
       descricao: "TipoCarisam",
     },
+    tipoPessoa: {
+      id: parseInt(data.tipoPessoa),
+      descricao: "TipoPessoa",
+    },
     sexo: data.sexo,
     nacionalidade: data.nacionalidade,
   };
@@ -57,5 +61,20 @@ export async function PATCH(
     body: JSON.stringify(pessoa),
   });
 
-  return Response.json(res.json());
+  const resData = await res.json();
+
+  if (res.status === 200) {
+    return Response.json(resData, {
+      status: 200,
+    });
+  } else {
+    return Response.json(
+      {
+        message: resData.message[0],
+      },
+      {
+        status: res.status,
+      }
+    );
+  }
 }
