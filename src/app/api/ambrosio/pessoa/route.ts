@@ -25,7 +25,11 @@ export async function POST(req: Request) {
     },
     tipoCarisma: {
       id: parseInt(data.tipoCarisma),
-      descricao: "TipoCarisam",
+      descricao: "TipoCarisama",
+    },
+    tipoPessoa: {
+      id: parseInt(data.tipoPessoa),
+      descricao: "TipoPessoa",
     },
     sexo: data.sexo,
     nacionalidade: data.nacionalidade,
@@ -39,11 +43,20 @@ export async function POST(req: Request) {
     body: JSON.stringify(pessoa),
   });
 
+  const resData = await res.json();
+
   if (res.status === 201) {
-    return Response.json(await res.json(), {
+    return Response.json(resData, {
       status: 201,
     });
   } else {
-    return Response.json(res.json());
+    return Response.json(
+      {
+        message: resData.message[0],
+      },
+      {
+        status: res.status,
+      }
+    );
   }
 }

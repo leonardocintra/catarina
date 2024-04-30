@@ -27,6 +27,8 @@ import { useState, useEffect } from "react";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 
 type PessoaFormProps = {
   urlBase: string;
@@ -40,6 +42,7 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
   const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
   const [tipoCarismas, setTipoCarismas] = useState<ITipoCarisma[]>();
+  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,24 +60,38 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
         return res.json();
       }
 
+      async function getTipoPessoa() {
+        const res = await fetch(
+          `${urlBase}/api/ambrosio/configuracoes/tipoPessoa`
+        );
+        return res.json();
+      }
+
       async function getTipoCarisma() {
         const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoCarisma`
+          `${urlBase}/api/ambrosio/configuracoes/tipoCarisma`,
+          {
+            next: {
+              revalidate: 5,
+            },
+          }
         );
         return res.json();
       }
 
       try {
-        const [resEstadoCivil, resEscolaridade, resTipoCarisma] =
+        const [resEstadoCivil, resEscolaridade, resTipoCarisma, resTipoPessoa] =
           await Promise.all([
             getEstadoCivil(),
             getEscolaridade(),
             getTipoCarisma(),
+            getTipoPessoa(),
           ]);
 
         setEstadoCivils(resEstadoCivil.data);
         setEscolaridades(resEscolaridade.data);
         setTipoCarismas(resTipoCarisma.data);
+        setTipoPessoas(resTipoPessoa.data);
       } catch (error: any) {
         console.log(error);
       }
@@ -92,6 +109,7 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
     escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
     tipoCarisma: z.string({ message: "Campo obrigatório" }).min(1),
+    tipoPessoa: z.string({ message: "Campo obrigatório" }).min(1),
     sexo: z.enum(["MASCULINO", "FEMININO"]),
   });
 
@@ -104,10 +122,11 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       escolaridade: pessoa?.escolaridade.id.toString() || "",
       tipoCarisma: pessoa?.tipoCarisma.id.toString() || "",
       estadoCivil: pessoa?.estadoCivil.id.toString() || "",
+      tipoPessoa: pessoa?.tipoPessoa.id.toString() || "",
     },
   });
 
-  if (!estadoCivils || !escolaridades || !tipoCarismas) {
+  if (!estadoCivils || !escolaridades || !tipoCarismas || !tipoPessoas) {
     return (
       <div>
         <h2>Carregando ...</h2>
@@ -132,8 +151,8 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       body: JSON.stringify(values),
     });
 
+    const data = await res.json();
     if (res.status === 201 && method === "POST") {
-      const data = await res.json();
       toast({
         title: `${values.nome}`,
         variant: "default",
@@ -147,11 +166,19 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
         description: `Editado(a) com sucesso!`,
       });
     } else {
-      toast({
-        title: `${values.nome} não foi cadastrado!`,
-        variant: "destructive",
-        description: `Erro: ${res.text}`,
-      });
+      if (res.status === 400) {
+        toast({
+          title: `${values.nome} não foi cadastrado!`,
+          variant: "destructive",
+          description: `Erro: ${data.message}`,
+        });
+      } else {
+        toast({
+          title: `${values.nome} não foi cadastrado!`,
+          variant: "destructive",
+          description: `Erro: ${res.text}`,
+        });
+      }
     }
   };
 
@@ -194,6 +221,34 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
                   <SelectContent>
                     <SelectItem value={"MASCULINO"}>Masculino</SelectItem>
                     <SelectItem value={"FEMININO"}>Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="tipoPessoa"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Tipo</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={pessoa?.tipoPessoa.id.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {tipoPessoas.map((es) => (
+                      <SelectItem key={es.id} value={es.id.toString()}>
+                        {es.descricao}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <FormMessage />
