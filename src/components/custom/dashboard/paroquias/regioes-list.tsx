@@ -1,35 +1,16 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { IRegioesCaminho } from "@/interfaces/IRegioesCaminho";
-import { Globe } from "lucide-react";
 import { useEffect, useState } from "react";
 
 type RegioesCaminhoProps = {
@@ -59,14 +40,11 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
           <CardHeader>
             <CardTitle className="flex space-x-2 justify-center">
               <h2 className="hover:underline">{r.descricao}</h2>
+              {r.macroRegiao && <Badge>Macro Região</Badge>}
             </CardTitle>
-            <CardDescription>
-              {r.macroRegiao ? "Macro-região" : ""}
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
-              <TableCaption>A list of your recent invoices.</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead>Equipe</TableHead>
