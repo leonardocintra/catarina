@@ -34,12 +34,12 @@ export default function RegioesCaminho({ baseUrl }: RegioesCaminhoProps) {
   }, [baseUrl]);
 
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid sm:grid-cols-3 gap-2">
       {regioes?.map((r) => (
         <Card key={r.id}>
           <CardHeader>
             <CardTitle className="flex space-x-2 justify-center">
-              <h2 className="hover:underline">{r.descricao}</h2>
+              <div className="hover:underline">{r.descricao}</div>
               {r.macroRegiao && <Badge>Macro Região</Badge>}
             </CardTitle>
           </CardHeader>

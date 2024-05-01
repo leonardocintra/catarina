@@ -67,7 +67,7 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
 
       <Table>
         <TableCaption>
-          Ultimos cadatros - Pessoas: {pessoas.length}
+          Ultimos cadastros - Pessoas: {pessoas.length}
         </TableCaption>
         <TableHeader>
           <TableRow>
@@ -77,7 +77,7 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {pessoasFiltradas.map((pessoa) => (
+          {pessoasFiltradas.slice(0, 10).map((pessoa) => (
             <TableRow key={pessoa.id}>
               <TableCell>#{pessoa.id}</TableCell>
               <TableCell>
