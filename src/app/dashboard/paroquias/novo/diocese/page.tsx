@@ -1,4 +1,5 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import DioceseForm from "@/components/custom/dashboard/paroquias/diocese/form-diocese";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,6 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { BASE_URL } from "@/lib/utils";
 
 export default function DiocesePage() {
   return (
@@ -20,22 +22,8 @@ export default function DiocesePage() {
         subTitle="Nova diocese"
         title="Cadastro de diocese"
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Nova diocese</CardTitle>
-          <CardDescription>
-            De preferencia informe o nome e a cidade. Ex: Catedral Sé (Franca)
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <Input placeholder="Diocese / Cidade" />
-          </form>
-        </CardContent>
-        <CardFooter className="border-t px-6 py-4">
-          <Button>Salvar</Button>
-        </CardFooter>
-      </Card>
+
+      <DioceseForm urlBase={BASE_URL} />
     </div>
   );
 }

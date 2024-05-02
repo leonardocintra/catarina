@@ -5,10 +5,10 @@ import ParoquiaCard from "@/components/custom/dashboard/paroquias/paroquia/paroq
 
 export default function ParoquiasPage() {
   return (
-    <div className="">
+    <div>
       <PageSubtitle
         title="Paroquias"
-        subTitle="Paroquias"
+        subTitle="Dioceses e Localidades"
         buttonShow={false}
         buttonText=""
         buttonUrl=""

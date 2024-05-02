@@ -27,7 +27,6 @@ import { useState, useEffect } from "react";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 
 type PessoaFormProps = {
