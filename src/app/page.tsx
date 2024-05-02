@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ThemeModeToggle } from "@/components/custom/theme-toggle";
 
 export default function Home() {
   return (
@@ -45,6 +46,12 @@ export default function Home() {
                 Entrar
               </Button>
             </Link>
+          </div>
+          <div className="flex justify-center items-center space-x-2 my-4">
+            <div>
+              <span>Escolha o tema </span>
+            </div>
+            <ThemeModeToggle />
           </div>
         </div>
       </div>
