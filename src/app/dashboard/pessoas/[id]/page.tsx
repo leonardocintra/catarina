@@ -1,6 +1,7 @@
 "use client";
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import { DialogPessoaCasada } from "@/components/custom/dashboard/pessoa/dialog-casal";
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { Button } from "@/components/ui/button";
@@ -169,21 +170,15 @@ export default function EditarPessoaPage() {
                 <CardDescription>Marido e Mulher</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="max-w-md space-y-2">
-                  <LabelData
-                    titulo={
-                      pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
-                    }
-                    descricao="Não iformado"
-                  />
-
-                  <Input placeholder="Digite o nome da mulher" />
-                </div>
+                <LabelData
+                  titulo={
+                    pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
+                  }
+                  descricao="Não iformado"
+                />
               </CardContent>
               <CardFooter>
-                <Button variant={"outline"} onClick={() => setEditar(!editar)}>
-                  Amarrar casal
-                </Button>
+                <DialogPessoaCasada sexo={pessoa.sexo} />
               </CardFooter>
             </Card>
           )}

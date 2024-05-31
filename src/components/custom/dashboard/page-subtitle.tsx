@@ -30,7 +30,7 @@ export default function PageSubtitle({
       <div className="flex justify-between">
         <div className="flex items-center space-x-2">
           <h2 className="text-3xl pl-3">{title}</h2>
-          <div>{"-"}</div>
+          <div>{" "}</div>
           <h4 className="text-slate-700 text-2xl font-extralight">{subTitle}</h4>
         </div>
         {buttonShow && (
