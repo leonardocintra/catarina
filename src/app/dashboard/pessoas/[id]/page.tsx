@@ -12,6 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { IPessoa } from "@/interfaces/IPessoa";
@@ -160,6 +161,32 @@ export default function EditarPessoaPage() {
               </Button>
             </CardFooter>
           </Card>
+
+          {pessoa.estadoCivil.descricao === "CASADO(A)" && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Casal</CardTitle>
+                <CardDescription>Marido e Mulher</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="max-w-md space-y-2">
+                  <LabelData
+                    titulo={
+                      pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
+                    }
+                    descricao="Não iformado"
+                  />
+
+                  <Input placeholder="Digite o nome da mulher" />
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant={"outline"} onClick={() => setEditar(!editar)}>
+                  Amarrar casal
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
         </div>
       )}
 
