@@ -31,6 +31,7 @@ interface IConjugue {
 export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
+  const [conjugueId, setConjugueId] = useState(0);
   const [conjugues, setConjugues] = useState<IConjugue[]>([]);
   const sexo = conjugue === "marido" ? "M" : "F";
 
@@ -48,8 +49,6 @@ export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
     fetchData();
   }, []);
 
-  console.log(value);
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -60,7 +59,7 @@ export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
           className="w-[295px]"
         >
           {value
-            ? conjugues.find((con) => con.id === Number(value))?.nome
+            ? conjugues.find((con) => con.nome === value)?.nome
             : `Conjugue - ${conjugue}`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -74,16 +73,17 @@ export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
               {conjugues.map((con) => (
                 <CommandItem
                   key={con.id}
-                  value={con.id.toString()}
+                  value={con.nome}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
+                    setConjugueId(con.id);
                   }}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === con.id.toString() ? "opacity-100" : "opacity-0"
+                      value === con.nome ? "opacity-100" : "opacity-0"
                     )}
                   />
                   {con.nome}
