@@ -1,7 +1,7 @@
 "use client";
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { DialogPessoaCasada } from "@/components/custom/dashboard/pessoa/dialog-casal";
+import { DialogPessoaCasada } from "@/components/custom/dashboard/pessoa/dialog-casal/dialog-casal";
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { Button } from "@/components/ui/button";
@@ -13,9 +13,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/components/ui/use-toast";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";

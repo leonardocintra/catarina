@@ -8,8 +8,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ComboboxCasal } from "./dialog-casal-combobox";
 
 type DialogProps = {
   sexo: string;
@@ -23,11 +23,12 @@ export function DialogPessoaCasada({ sexo }: DialogProps) {
       <DialogTrigger asChild>
         <Button variant="outline">Informar {conjugue}</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Informar {conjugue}</DialogTitle>
           <DialogDescription>
-            A listagem é baseada no cadastro do sexo da pessoa
+            Atenção: a listagem é baseada no sexo e estado civil. Caso o nome
+            não aparecer, verifique se o conjugue foi cadastrado corretamente.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -35,7 +36,7 @@ export function DialogPessoaCasada({ sexo }: DialogProps) {
             <Label htmlFor="name" className="text-right">
               {conjugue.toUpperCase()}
             </Label>
-            <Input id="name" defaultValue="" className="col-span-3" />
+            <ComboboxCasal conjugue={conjugue} />
           </div>
         </div>
         <DialogFooter>
