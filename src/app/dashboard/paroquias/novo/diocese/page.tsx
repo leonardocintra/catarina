@@ -1,15 +1,5 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import DioceseForm from "@/components/custom/dashboard/paroquias/diocese/form-diocese";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { BASE_URL } from "@/lib/utils";
 
 export default function DiocesePage() {

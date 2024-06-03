@@ -20,7 +20,7 @@ export default function LocalidadePage() {
         subTitle="Nova localidade"
         title="Cadastro de localidade"
       />
-      <Card>
+      <Card className="max-w-lg mx-auto">
         <CardHeader>
           <CardTitle>Nova localidade</CardTitle>
           <CardDescription>Informe todos os dados necessários</CardDescription>
