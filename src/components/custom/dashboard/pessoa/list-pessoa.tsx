@@ -1,7 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -16,7 +23,7 @@ import {
 import { IPessoa } from "@/interfaces/IPessoa";
 import { ITipoCarisma } from "@/interfaces/ITipoCarisma";
 import { removerAcento } from "@/lib/utils";
-import { Users } from "lucide-react";
+import { FolderSearch } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -39,30 +46,15 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
 
   return (
     <div>
-      <div className="flex items-center gap-2 max-w-md mb-3">
-        <Label>Pesquisa</Label>
+      <div className="flex items-center gap-2 max-w-lg mb-3">
+        <Label className="flex items-center gap-2">
+          <FolderSearch /> Pesquisa
+        </Label>
         <Input
           placeholder="Digite o nome da pessoa ..."
           onChange={(e) => setSearch(e.target.value)}
         />
-      </div>
-
-      <div className="hidden sm:grid grid-cols-7 gap-3 mb-4">
-        {tipoCarisma.map((tipo) => (
-          <Card key={tipo.id} x-chunk="dashboard-01-chunk-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {tipo.descricao}
-              </CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {pessoas.filter((p) => p.tipoCarisma.id === tipo.id).length}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {showDialogVisaoGeralCarisma()}
       </div>
 
       <Table>
@@ -101,4 +93,45 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
       </Table>
     </div>
   );
+
+  function showDialogVisaoGeralCarisma() {
+    return (
+      <div className="flex items-center justify-center p-2 rounded-lg border border-slate-700 min-w-32">
+        <Dialog>
+          <DialogTrigger>Visão Geral</DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Visão geral dos carismas</DialogTitle>
+              <DialogDescription>
+                <Table>
+                  <TableCaption>Carismas</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="">Carisma</TableHead>
+                      <TableHead>Descrição</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tipoCarisma.map((tipo) => (
+                      <TableRow key={tipo.id}>
+                        <TableCell className="font-medium">
+                          {tipo.descricao}
+                        </TableCell>
+                        <TableCell>
+                          {
+                            pessoas.filter((p) => p.tipoCarisma.id === tipo.id)
+                              .length
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 }
