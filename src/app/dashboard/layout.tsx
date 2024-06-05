@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   AlertCircleIcon,
   Bell,
+  CalendarDays,
   Church,
   CircleUser,
   Home,
@@ -96,10 +97,12 @@ export default function DashboardLayout({
           <div className="mt-auto p-4">
             <Card x-chunk="dashboard-02-chunk-0">
               <CardHeader className="p-2 pt-0 md:p-4">
-                <CardTitle>Atenção</CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <CalendarDays /> <div>Evento</div>
+                </CardTitle>
                 <CardDescription>
                   Peregrinação de 50 anos Caminho Neocatecumenal no Brasil dia
-                  14/07/2024 em Brasilia
+                  14/07/2024 em Aparecida - SP
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-2 pt-0 md:p-4 md:pt-0 flex space-x-2">

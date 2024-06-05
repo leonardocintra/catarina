@@ -176,7 +176,7 @@ export default function EditarPessoaPage() {
                 />
               </CardContent>
               <CardFooter>
-                <DialogPessoaCasada sexo={pessoa.sexo} />
+                <DialogPessoaCasada sexo={pessoa.sexo} pessoaId={pessoa.id} />
               </CardFooter>
             </Card>
           )}

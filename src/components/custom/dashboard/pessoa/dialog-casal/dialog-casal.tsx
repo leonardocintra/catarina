@@ -10,18 +10,34 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ComboboxCasal } from "./dialog-casal-combobox";
+import { useState } from "react";
 
 type DialogProps = {
   sexo: string;
+  pessoaId: number;
 };
 
-export function DialogPessoaCasada({ sexo }: DialogProps) {
+export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
   const conjugue = sexo === "MASCULINO" ? "mulher" : "marido";
+
+  const [selectedConjugue, setSelectedConjugue] = useState<number>(0);
+  const [vinculado, setVinculado] = useState<boolean>(false);
+
+  const handleSelectConjugue = (conjugue: number) => {
+    setSelectedConjugue(conjugue);
+  };
+
+  const vincularConjugue = (conjugue: number) => {
+    setVinculado(true);
+    alert(`Vincular ${pessoaId} com ${selectedConjugue}`);
+  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Informar {conjugue}</Button>
+        <Button onClick={() => setVinculado(false)} variant="outline">
+          Informar {conjugue}
+        </Button>
       </DialogTrigger>
       <DialogContent className="">
         <DialogHeader>
@@ -36,11 +52,19 @@ export function DialogPessoaCasada({ sexo }: DialogProps) {
             <Label htmlFor="name" className="text-right">
               {conjugue.toUpperCase()}
             </Label>
-            <ComboboxCasal conjugue={conjugue} />
+            <ComboboxCasal
+              conjugue={conjugue}
+              onSelect={handleSelectConjugue}
+            />
           </div>
         </div>
         <DialogFooter>
-          <Button type="submit">Vicular {conjugue}</Button>
+          <Button
+            variant={vinculado ? "default" : "secondary"}
+            onClick={() => vincularConjugue(selectedConjugue)}
+          >
+            {vinculado ? "Casal vinculado!" : `Vicular ${conjugue}`}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

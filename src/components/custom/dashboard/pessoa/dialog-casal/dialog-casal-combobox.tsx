@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 
 type ComboboxCasalProps = {
   conjugue: string;
+  onSelect: (conjugue: number) => void;
 };
 
 interface IConjugue {
@@ -28,10 +29,10 @@ interface IConjugue {
   nome: string;
 }
 
-export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
+export function ComboboxCasal({ conjugue, onSelect }: ComboboxCasalProps) {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("");
-  const [conjugueId, setConjugueId] = useState(0);
+  const [selected, setSelected] = useState(0);
   const [conjugues, setConjugues] = useState<IConjugue[]>([]);
   const sexo = conjugue === "marido" ? "M" : "F";
 
@@ -77,7 +78,8 @@ export function ComboboxCasal({ conjugue }: ComboboxCasalProps) {
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
-                    setConjugueId(con.id);
+                    setSelected(con.id);
+                    onSelect(con.id);
                   }}
                 >
                   <Check
