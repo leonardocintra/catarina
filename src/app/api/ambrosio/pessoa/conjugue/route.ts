@@ -1,7 +1,5 @@
-import { IPessoaCasal } from "@/interfaces/IPessoaCasal";
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { NextRequest } from "next/server";
-import { json } from "stream/consumers";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
 
@@ -17,8 +15,8 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: Request) {
-  const data: IPessoaCasal = await req.json();
-  
+  const data = await req.json();
+
   const res = await fetch(`${url}/casal`, {
     method: "POST",
     headers: {

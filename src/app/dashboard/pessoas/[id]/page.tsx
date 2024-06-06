@@ -172,7 +172,9 @@ export default function EditarPessoaPage() {
                   titulo={
                     pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
                   }
-                  descricao="Não iformado"
+                  descricao={
+                    pessoa.conjugue ? pessoa.conjugue.nome : "Não informado"
+                  }
                 />
               </CardContent>
               <CardFooter>

@@ -12,7 +12,6 @@ import { Label } from "@/components/ui/label";
 import { ComboboxCasal } from "./dialog-casal-combobox";
 import { useState } from "react";
 import { BASE_URL } from "@/lib/utils";
-import { IPessoaCasal } from "@/interfaces/IPessoaCasal";
 import { useToast } from "@/components/ui/use-toast";
 
 type DialogProps = {
@@ -34,17 +33,15 @@ export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
   const vincularConjugue = async (conjugueId: number) => {
     setVinculado(true);
 
-    const novoCasal: IPessoaCasal = {
-      pessoaId,
-      conjugueId,
-    };
-
     const response = await fetch(`${BASE_URL}/api/ambrosio/pessoa/conjugue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(novoCasal),
+      body: JSON.stringify({
+        pessoaId,
+        conjugueId,
+      }),
     });
 
     const result = await response.json();
