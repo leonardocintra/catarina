@@ -168,17 +168,23 @@ export default function EditarPessoaPage() {
                 <CardDescription>Marido e Mulher</CardDescription>
               </CardHeader>
               <CardContent>
-                <LabelData
-                  titulo={
-                    pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
-                  }
-                  descricao={
-                    pessoa.conjugue ? pessoa.conjugue.nome : "Não informado"
-                  }
-                />
+                {pessoa.conjugue ? (
+                  <Link className="text-2xl font-semibold underline" href={`/dashboard/pessoas/${pessoa.conjugue.id}`}>
+                    {pessoa.conjugue.nome}
+                  </Link>
+                ) : (
+                  <LabelData
+                    titulo={
+                      pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
+                    }
+                    descricao={"Não informado"}
+                  />
+                )}
               </CardContent>
               <CardFooter>
-                <DialogPessoaCasada sexo={pessoa.sexo} pessoaId={pessoa.id} />
+                {!pessoa.conjugue && (
+                  <DialogPessoaCasada sexo={pessoa.sexo} pessoaId={pessoa.id} />
+                )}
               </CardFooter>
             </Card>
           )}
