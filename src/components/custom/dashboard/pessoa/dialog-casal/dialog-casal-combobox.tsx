@@ -48,7 +48,7 @@ export function ComboboxCasal({ conjugue, onSelect }: ComboboxCasalProps) {
       setConjugues(data);
     };
     fetchData();
-  }, []);
+  }, [sexo]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

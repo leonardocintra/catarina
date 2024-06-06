@@ -169,7 +169,7 @@ export default function EditarPessoaPage() {
               </CardHeader>
               <CardContent>
                 {pessoa.conjugue ? (
-                  <Link className="text-2xl font-semibold underline" href={`/dashboard/pessoas/${pessoa.conjugue.id}`}>
+                  <Link className="text-2xl font-semibold underline decoration-sky-500" href={`/dashboard/pessoas/${pessoa.conjugue.id}`}>
                     {pessoa.conjugue.nome}
                   </Link>
                 ) : (
