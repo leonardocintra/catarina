@@ -1,15 +1,46 @@
+import { IPessoaCasal } from "@/interfaces/IPessoaCasal";
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { NextRequest } from "next/server";
+import { json } from "stream/consumers";
 
-const url = `${AmbrosioBaseUrl}/pessoa/conjugue`;
+const url = `${AmbrosioBaseUrl}/pessoa`;
 
 export async function GET(req: NextRequest) {
   const sexo = req.nextUrl.searchParams.get("sexo");
 
-  const res = await fetch(`${url}?sexo=${sexo}`, {
+  const res = await fetch(`${url}/conjugue?sexo=${sexo}`, {
     cache: "no-cache",
   });
 
   const data = await res.json();
   return Response.json(data);
+}
+
+export async function POST(req: Request) {
+  const data: IPessoaCasal = await req.json();
+  
+  const res = await fetch(`${url}/casal`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  const resData = await res.json();
+
+  if (res.status === 201) {
+    return Response.json(resData, {
+      status: 201,
+    });
+  } else {
+    return Response.json(
+      {
+        message: resData.message,
+      },
+      {
+        status: res.status,
+      }
+    );
+  }
 }

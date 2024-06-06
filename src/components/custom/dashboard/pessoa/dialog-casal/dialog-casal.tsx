@@ -11,6 +11,9 @@ import {
 import { Label } from "@/components/ui/label";
 import { ComboboxCasal } from "./dialog-casal-combobox";
 import { useState } from "react";
+import { BASE_URL } from "@/lib/utils";
+import { IPessoaCasal } from "@/interfaces/IPessoaCasal";
+import { useToast } from "@/components/ui/use-toast";
 
 type DialogProps = {
   sexo: string;
@@ -18,6 +21,7 @@ type DialogProps = {
 };
 
 export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
+  const { toast } = useToast();
   const conjugue = sexo === "MASCULINO" ? "mulher" : "marido";
 
   const [selectedConjugue, setSelectedConjugue] = useState<number>(0);
@@ -27,9 +31,38 @@ export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
     setSelectedConjugue(conjugue);
   };
 
-  const vincularConjugue = (conjugue: number) => {
+  const vincularConjugue = async (conjugueId: number) => {
     setVinculado(true);
-    alert(`Vincular ${pessoaId} com ${selectedConjugue}`);
+
+    const novoCasal: IPessoaCasal = {
+      pessoaId,
+      conjugueId,
+    };
+
+    const response = await fetch(`${BASE_URL}/api/ambrosio/pessoa/conjugue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(novoCasal),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      toast({
+        title: `Casal foi vinculado!`,
+        variant: "default",
+        description: `${conjugue} vinculado com sucesso`,
+      });
+    } else {
+      setVinculado(false);
+      toast({
+        title: `Casal não foi vinculado!`,
+        variant: "destructive",
+        description: `Erro: ${result.message}`,
+      });
+    }
   };
 
   return (
