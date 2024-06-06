@@ -15,7 +15,9 @@ export default function ParoquiasPage() {
       />
 
       <div className="grid sm:grid-cols-3 gap-2">
-        <DioceseCard />
+        {/* 
+        Esta com problema aqui.... no npm run build
+        <DioceseCard /> */}
 
         <LocalidadeCard />
 
