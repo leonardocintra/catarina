@@ -2,7 +2,7 @@ import { IEndereco } from "./IEndereco";
 import { IEscolaridade } from "./IEscolaridade";
 import { IEstadoCivil } from "./IEstadoCivil";
 import { IPessoaConjugue } from "./IPessoaConjugue";
-import { ITipoCarisma } from "./ITipoCarisma";
+import { IPessoaCarisma } from "./IPessoaCarimas";
 import { ITipoPessoa } from "./ITipoPessoa";
 
 export interface IPessoa {
@@ -11,7 +11,7 @@ export interface IPessoa {
   estadoCivil: IEstadoCivil;
   conjugue: IPessoaConjugue;
   escolaridade: IEscolaridade;
-  tipoCarisma: ITipoCarisma;
+  carimas: IPessoaCarisma[];
   tipoPessoa: ITipoPessoa;
   sexo: string;
   nacionalidade: string;

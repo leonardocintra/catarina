@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -21,7 +13,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { IPessoa } from "@/interfaces/IPessoa";
-import { ITipoCarisma } from "@/interfaces/ITipoCarisma";
 import { removerAcento } from "@/lib/utils";
 import { FolderSearch } from "lucide-react";
 import Link from "next/link";
@@ -29,10 +20,9 @@ import { useState } from "react";
 
 type ListPessoaProps = {
   pessoas: IPessoa[];
-  tipoCarisma: ITipoCarisma[];
 };
 
-export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
+export default function ListPessoa({ pessoas }: ListPessoaProps) {
   const [search, setSearch] = useState("");
 
   const pessoasFiltradas =
@@ -54,7 +44,6 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
           placeholder="Digite o nome da pessoa ..."
           onChange={(e) => setSearch(e.target.value)}
         />
-        {showDialogVisaoGeralCarisma()}
       </div>
 
       <Table>
@@ -73,12 +62,7 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
             <TableRow key={pessoa.id}>
               <TableCell>#{pessoa.id}</TableCell>
               <TableCell>
-                <div className="font-semibold">
-                  {pessoa.nome}
-                  <p className="text-xs font-light lowercase text-slate-700 italic">
-                    {pessoa.tipoCarisma.descricao}
-                  </p>
-                </div>
+                <div className="font-semibold">{pessoa.nome}</div>
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/pessoas/${pessoa.id}`}>
@@ -93,45 +77,4 @@ export default function ListPessoa({ pessoas, tipoCarisma }: ListPessoaProps) {
       </Table>
     </div>
   );
-
-  function showDialogVisaoGeralCarisma() {
-    return (
-      <div className="flex items-center justify-center p-2 rounded-lg border border-slate-700 min-w-32">
-        <Dialog>
-          <DialogTrigger>Visão Geral</DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Visão geral dos carismas</DialogTitle>
-              <DialogDescription>
-                <Table>
-                  <TableCaption>Carismas</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="">Carisma</TableHead>
-                      <TableHead>Descrição</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tipoCarisma.map((tipo) => (
-                      <TableRow key={tipo.id}>
-                        <TableCell className="font-medium">
-                          {tipo.descricao}
-                        </TableCell>
-                        <TableCell>
-                          {
-                            pessoas.filter((p) => p.tipoCarisma.id === tipo.id)
-                              .length
-                          }
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </DialogDescription>
-            </DialogHeader>
-          </DialogContent>
-        </Dialog>
-      </div>
-    );
-  }
 }

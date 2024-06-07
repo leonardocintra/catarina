@@ -89,10 +89,6 @@ export default function EditarPessoaPage() {
               />
               <LabelData titulo="Sexo" descricao={pessoa.sexo} />
               <LabelData
-                titulo="Carisma"
-                descricao={pessoa.tipoCarisma.descricao}
-              />
-              <LabelData
                 titulo="Estado Civil"
                 descricao={pessoa.estadoCivil.descricao}
               />

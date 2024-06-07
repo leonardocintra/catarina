@@ -21,7 +21,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
-import { ITipoCarisma } from "@/interfaces/ITipoCarisma";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { IPessoa } from "@/interfaces/IPessoa";
@@ -40,7 +39,6 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
 
   const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
-  const [tipoCarismas, setTipoCarismas] = useState<ITipoCarisma[]>();
   const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>();
 
   useEffect(() => {
@@ -66,30 +64,16 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
         return res.json();
       }
 
-      async function getTipoCarisma() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoCarisma`,
-          {
-            next: {
-              revalidate: 5,
-            },
-          }
-        );
-        return res.json();
-      }
-
       try {
-        const [resEstadoCivil, resEscolaridade, resTipoCarisma, resTipoPessoa] =
+        const [resEstadoCivil, resEscolaridade, resTipoPessoa] =
           await Promise.all([
             getEstadoCivil(),
             getEscolaridade(),
-            getTipoCarisma(),
             getTipoPessoa(),
           ]);
 
         setEstadoCivils(resEstadoCivil.data);
         setEscolaridades(resEscolaridade.data);
-        setTipoCarismas(resTipoCarisma.data);
         setTipoPessoas(resTipoPessoa.data);
       } catch (error: any) {
         console.log(error);
@@ -107,7 +91,6 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
     nacionalidade: z.string().max(50),
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
     escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
-    tipoCarisma: z.string({ message: "Campo obrigatório" }).min(1),
     tipoPessoa: z.string({ message: "Campo obrigatório" }).min(1),
     sexo: z.enum(["MASCULINO", "FEMININO"]),
   });
@@ -119,13 +102,12 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       nacionalidade: pessoa?.nacionalidade || "brasileira",
       sexo: "MASCULINO",
       escolaridade: pessoa?.escolaridade.id.toString() || "",
-      tipoCarisma: pessoa?.tipoCarisma.id.toString() || "",
       estadoCivil: pessoa?.estadoCivil.id.toString() || "",
       tipoPessoa: pessoa?.tipoPessoa.id.toString() || "",
     },
   });
 
-  if (!estadoCivils || !escolaridades || !tipoCarismas || !tipoPessoas) {
+  if (!estadoCivils || !escolaridades || !tipoPessoas) {
     return (
       <div>
         <h2>Carregando ...</h2>
@@ -300,34 +282,6 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
                   </FormControl>
                   <SelectContent>
                     {escolaridades.map((es) => (
-                      <SelectItem key={es.id} value={es.id.toString()}>
-                        {es.descricao}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="tipoCarisma"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Carisma</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={pessoa?.tipoCarisma.id.toString()}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {tipoCarismas.map((es) => (
                       <SelectItem key={es.id} value={es.id.toString()}>
                         {es.descricao}
                       </SelectItem>

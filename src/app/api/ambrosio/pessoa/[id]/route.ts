@@ -41,10 +41,6 @@ export async function PATCH(
       id: parseInt(data.escolaridade),
       descricao: "Escolaridade",
     },
-    tipoCarisma: {
-      id: parseInt(data.tipoCarisma),
-      descricao: "TipoCarisam",
-    },
     tipoPessoa: {
       id: parseInt(data.tipoPessoa),
       descricao: "TipoPessoa",

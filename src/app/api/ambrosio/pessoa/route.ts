@@ -23,10 +23,6 @@ export async function POST(req: Request) {
       id: parseInt(data.escolaridade),
       descricao: "Escolaridade",
     },
-    tipoCarisma: {
-      id: parseInt(data.tipoCarisma),
-      descricao: "TipoCarisama",
-    },
     tipoPessoa: {
       id: parseInt(data.tipoPessoa),
       descricao: "TipoPessoa",
