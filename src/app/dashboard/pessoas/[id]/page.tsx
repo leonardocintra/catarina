@@ -124,14 +124,13 @@ export default function EditarPessoaPage() {
               <CardDescription>Carismas de {pessoa.nome}</CardDescription>
             </CardHeader>
             <CardContent>
-              <LabelData titulo="Comunidade" descricao="8" />
-              <LabelData titulo="Cidade" descricao="Franca" />
-              <LabelData titulo="Paroquia" descricao="Franca" />
-              <LabelData titulo="Regiao" descricao="Franca" />
+              {pessoa.carismas.map((carisma) => (
+                <li key={carisma.id}>{carisma.descricao}</li>
+              ))}
             </CardContent>
             <CardFooter>
               <Link href={`/dashboard/pessoas/${pessoa.id}/carismas`}>
-                <Button variant={"outline"}>Cadastrar carismas</Button>
+                <Button variant={"outline"}>Ajustar carismas</Button>
               </Link>
             </CardFooter>
           </Card>

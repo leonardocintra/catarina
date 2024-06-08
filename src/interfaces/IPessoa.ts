@@ -11,7 +11,7 @@ export interface IPessoa {
   estadoCivil: IEstadoCivil;
   conjugue: IPessoaConjugue;
   escolaridade: IEscolaridade;
-  carimas: IPessoaCarisma[];
+  carismas: IPessoaCarisma[];
   tipoPessoa: ITipoPessoa;
   sexo: string;
   nacionalidade: string;

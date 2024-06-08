@@ -79,18 +79,15 @@ export default function PessoaCarismaPage() {
       return;
     }
 
-    selectedCarismas.map(async (carismaId) => {
-      console.log(carismaId);
-      await fetch(`${BASE_URL}/api/ambrosio/pessoa/carismas`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          pessoaId: pessoa.id,
-          tipoCarismaId: carismaId,
-        }),
-      });
+    await fetch(`${BASE_URL}/api/ambrosio/pessoa/carismas`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        pessoaId: pessoa.id,
+        carismas: selectedCarismas,
+      }),
     });
 
     console.log("finalizado");
