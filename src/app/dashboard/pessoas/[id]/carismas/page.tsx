@@ -73,6 +73,29 @@ export default function PessoaCarismaPage() {
     );
   }
 
+  const salvar = async () => {
+    if (selectedCarismas.length === 0) {
+      alert("Selecione pelo menos um carisma");
+      return;
+    }
+
+    selectedCarismas.map(async (carismaId) => {
+      console.log(carismaId);
+      await fetch(`${BASE_URL}/api/ambrosio/pessoa/carismas`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          pessoaId: pessoa.id,
+          tipoCarismaId: carismaId,
+        }),
+      });
+    });
+
+    console.log("finalizado");
+  };
+
   return (
     <div>
       <PageSubtitle
@@ -103,7 +126,9 @@ export default function PessoaCarismaPage() {
           ))}
         </div>
         <div className="mt-4">
-          <Button variant="default">Confirmar carismas</Button>
+          <Button onClick={() => salvar()} variant="default">
+            Confirmar carismas
+          </Button>
         </div>
       </div>
     </div>

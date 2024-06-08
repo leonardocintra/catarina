@@ -115,8 +115,6 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
       body: JSON.stringify(endereco),
     });
 
-    console.log(await res.status);
-
     if (res.status === 201 && method === "POST") {
       toast({
         title: `Endereço de ${pessoa.nome}`,
