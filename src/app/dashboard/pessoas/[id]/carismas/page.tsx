@@ -53,6 +53,13 @@ export default function PessoaCarismaPage() {
         ]);
         setTiposCarisma(resCarismas);
         setPessoa(resPessoa);
+
+        // Inicializar selectedCarismas com os carismas existentes
+        if (resPessoa && resPessoa.carismas) {
+          setSelectedCarismas(
+            resPessoa.carismas.map((carisma: any) => carisma.id)
+          );
+        }
       } catch (error: any) {
         console.log(error);
       }
@@ -89,8 +96,6 @@ export default function PessoaCarismaPage() {
         carismas: selectedCarismas,
       }),
     });
-
-    console.log("finalizado");
   };
 
   return (
