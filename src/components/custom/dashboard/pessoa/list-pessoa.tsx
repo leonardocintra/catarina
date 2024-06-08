@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/table";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { removerAcento } from "@/lib/utils";
-import { FolderSearch } from "lucide-react";
+import { CheckIcon, FolderSearch } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -53,7 +53,9 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
+            <TableHead>Tipo</TableHead>
             <TableHead>Nome</TableHead>
+            <TableHead>Status</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
         </TableHeader>
@@ -61,8 +63,14 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
           {pessoasFiltradas.slice(0, 10).map((pessoa) => (
             <TableRow key={pessoa.id}>
               <TableCell>#{pessoa.id}</TableCell>
+              <TableCell className="text-slate-600 uppercase font-light">
+                {pessoa.tipoPessoa.descricao}
+              </TableCell>
               <TableCell>
                 <div className="font-semibold">{pessoa.nome}</div>
+              </TableCell>
+              <TableCell>
+                <CheckIcon />
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/pessoas/${pessoa.id}`}>
