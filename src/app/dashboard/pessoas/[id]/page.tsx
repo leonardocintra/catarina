@@ -76,7 +76,7 @@ export default function EditarPessoaPage() {
       />
 
       {!editar && (
-        <div className="grid gap-2 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-3">
           <Card>
             <CardHeader>
               <CardTitle>Dados principais</CardTitle>
@@ -101,6 +101,41 @@ export default function EditarPessoaPage() {
               <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
             </CardFooter>
           </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Comunidade</CardTitle>
+              <CardDescription>Historico de comunide</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabelData titulo="Comunidade" descricao="8" />
+              <LabelData titulo="Cidade" descricao="Franca" />
+              <LabelData titulo="Paroquia" descricao="Franca" />
+              <LabelData titulo="Regiao" descricao="Franca" />
+            </CardContent>
+            <CardFooter>
+              <Button disabled>Editar comunidade</Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Carismas</CardTitle>
+              <CardDescription>Carismas de {pessoa.nome}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <LabelData titulo="Comunidade" descricao="8" />
+              <LabelData titulo="Cidade" descricao="Franca" />
+              <LabelData titulo="Paroquia" descricao="Franca" />
+              <LabelData titulo="Regiao" descricao="Franca" />
+            </CardContent>
+            <CardFooter>
+              <Link href={`/dashboard/pessoas/${pessoa.id}/carismas`}>
+                <Button variant={"outline"}>Cadastrar carismas</Button>
+              </Link>
+            </CardFooter>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>Endereços</CardTitle>
@@ -131,41 +166,27 @@ export default function EditarPessoaPage() {
                 ))}
             </CardContent>
             <CardFooter>
-              <div>
-                <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
-                  <Button variant={"outline"}>Cadastrar endereços</Button>
-                </Link>
-              </div>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Comunidade</CardTitle>
-              <CardDescription>Historico de comunide</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <LabelData titulo="Comunidade" descricao="8" />
-              <LabelData titulo="Cidade" descricao="Franca" />
-              <LabelData titulo="Paroquia" descricao="Franca" />
-              <LabelData titulo="Regiao" descricao="Franca" />
-            </CardContent>
-            <CardFooter>
-              <Button onClick={() => setEditar(!editar)}>
-                Editar comunidade
-              </Button>
+              <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
+                <Button variant={"outline"}>Cadastrar endereços</Button>
+              </Link>
             </CardFooter>
           </Card>
 
           {pessoa.estadoCivil.descricao === "CASADO(A)" && (
             <Card>
               <CardHeader>
-                <CardTitle>Casal</CardTitle>
-                <CardDescription>Marido e Mulher</CardDescription>
+                <CardTitle>Conjugue</CardTitle>
+                <CardDescription>
+                  {pessoa.nome} é
+                  {pessoa.sexo === "MASCULINO" ? " casado com" : " casada com"}
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 {pessoa.conjugue ? (
-                  <Link className="text-2xl font-semibold underline decoration-sky-500" href={`/dashboard/pessoas/${pessoa.conjugue.id}`}>
+                  <Link
+                    className="text-2xl font-semibold underline decoration-sky-500"
+                    href={`/dashboard/pessoas/${pessoa.conjugue.id}`}
+                  >
                     {pessoa.conjugue.nome}
                   </Link>
                 ) : (
