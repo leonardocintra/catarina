@@ -4,10 +4,10 @@ import { AmbrosioBaseUrl } from "@/lib/utils";
 const url = `${AmbrosioBaseUrl}/pessoa`;
 
 export async function GET() {
-  const res = await fetch(url);
+  const res = await fetch(`${url}?page=1&limit=3000`);
 
   const data = await res.json();
-  return Response.json({ data });
+  return Response.json(data);
 }
 
 export async function POST(req: Request) {
@@ -15,6 +15,8 @@ export async function POST(req: Request) {
 
   const pessoa: Partial<IPessoa> = {
     nome: data.nome,
+    conhecidoPor: data.conhecidoPor,
+    cpf: data.cpf,
     estadoCivil: {
       id: parseInt(data.estadoCivil),
       descricao: "EstadoCivil",
@@ -42,7 +44,7 @@ export async function POST(req: Request) {
   const resData = await res.json();
 
   if (res.status === 201) {
-    return Response.json(resData, {
+    return Response.json(resData.data, {
       status: 201,
     });
   } else {

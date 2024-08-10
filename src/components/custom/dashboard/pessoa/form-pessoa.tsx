@@ -88,6 +88,8 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       .string()
       .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
       .max(50),
+    conhecidoPor: z.string().optional(),
+    cpf: z.string().min(11).max(11),
     nacionalidade: z.string().max(50),
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
     escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
@@ -99,6 +101,8 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       nome: pessoa?.nome || "",
+      conhecidoPor: pessoa?.conhecidoPor || "",
+      cpf: pessoa?.cpf || "",
       nacionalidade: pessoa?.nacionalidade || "brasileira",
       sexo: "MASCULINO",
       escolaridade: pessoa?.escolaridade.id.toString() || "",
@@ -178,6 +182,34 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
                 <FormLabel>Nome</FormLabel>
                 <FormControl>
                   <Input placeholder="Nome completo ..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="conhecidoPor"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Conhecido por</FormLabel>
+                <FormControl>
+                  <Input placeholder="Apelido ou como é conhecido ..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="cpf"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CPF</FormLabel>
+                <FormControl>
+                  <Input placeholder="CPF ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

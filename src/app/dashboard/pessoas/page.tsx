@@ -15,7 +15,6 @@ export default async function ComunidadePage() {
     return res.json();
   };
   const data = await getPessoas();
-
   const pessoas: IPessoa[] = data.data;
 
   return (

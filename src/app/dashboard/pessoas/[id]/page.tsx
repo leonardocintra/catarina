@@ -87,7 +87,10 @@ export default function EditarPessoaPage() {
                 titulo="Nome"
                 descricao={`${pessoa.nome} - ${pessoa.tipoPessoa.descricao}`}
               />
-              <LabelData titulo="Sexo" descricao={pessoa.sexo} />
+              <div className="flex space-x-2">
+                <LabelData titulo="CPF" descricao={pessoa.cpf ? pessoa.cpf : "não informado"} />
+                <LabelData titulo="Sexo" descricao={pessoa.sexo} />
+              </div>
               <LabelData
                 titulo="Estado Civil"
                 descricao={pessoa.estadoCivil.descricao}

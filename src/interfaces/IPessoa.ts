@@ -8,6 +8,8 @@ import { ITipoPessoa } from "./ITipoPessoa";
 export interface IPessoa {
   id: number;
   nome: string;
+  conhecidoPor: string;
+  cpf: string;
   estadoCivil: IEstadoCivil;
   conjugue: IPessoaConjugue;
   escolaridade: IEscolaridade;

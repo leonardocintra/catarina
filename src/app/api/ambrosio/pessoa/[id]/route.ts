@@ -22,7 +22,7 @@ export async function GET(
   }
 
   const data = await res.json();
-  return Response.json(data);
+  return Response.json(data.data);
 }
 
 export async function PATCH(
@@ -33,6 +33,8 @@ export async function PATCH(
 
   const pessoa: Partial<IPessoa> = {
     nome: data.nome,
+    conhecidoPor: data.conhecidoPor,
+    cpf: data.cpf,
     estadoCivil: {
       id: parseInt(data.estadoCivil),
       descricao: "EstadoCivil",

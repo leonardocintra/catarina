@@ -3,5 +3,7 @@ import { AmbrosioBaseUrl } from "@/lib/utils";
 export async function GET() {
   const url = `${AmbrosioBaseUrl}/tipo-carisma`;
   const res = await fetch(url);
-  return Response.json(await res.json());
+  const data = await res.json();
+  
+  return Response.json(data.data);
 }
