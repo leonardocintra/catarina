@@ -4,7 +4,9 @@ import { AmbrosioBaseUrl } from "@/lib/utils";
 const url = `${AmbrosioBaseUrl}/diocese`;
 
 export async function GET() {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    cache: "no-cache"
+  });
 
   const data = await res.json();
   return Response.json(data);

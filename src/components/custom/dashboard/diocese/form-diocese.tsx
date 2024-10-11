@@ -61,7 +61,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const formSchema = z.object({
     descricao: z
       .string()
-      .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
+      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
       .max(50),
     tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1),
   });
@@ -106,7 +106,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         variant: "default",
         description: `Cadastrado(a) com sucesso!`,
       });
-      router.push(`/dashboard/paroquias/`);
+      router.push(`/dashboard/dioceses/`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
         title: `${values.descricao}`,
@@ -142,7 +142,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
             name="descricao"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome</FormLabel>
+                <FormLabel>Descrição</FormLabel>
                 <FormControl>
                   <Input placeholder="Descrição ..." {...field} />
                 </FormControl>

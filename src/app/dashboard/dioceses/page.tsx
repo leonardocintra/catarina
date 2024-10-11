@@ -9,7 +9,7 @@ export default async function DiocesesPage() {
   const getDioceses = async () => {
     const res = await fetch(`${BASE_URL}/api/ambrosio/configuracoes/diocese`, {
       next: {
-        revalidate: 5,
+        revalidate: 1,
       },
     });
     return res.json();
