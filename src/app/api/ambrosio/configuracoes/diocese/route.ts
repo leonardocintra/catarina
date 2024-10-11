@@ -7,12 +7,12 @@ export async function GET() {
   const res = await fetch(url);
 
   const data = await res.json();
-  return Response.json({ data });
+  return Response.json(data);
 }
 
 export async function POST(req: Request) {
   const data = await req.json();
-  
+
   const diocese: Partial<IDiocese> = {
     descricao: data.descricao,
     tipoDiocese: {

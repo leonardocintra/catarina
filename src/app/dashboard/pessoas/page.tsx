@@ -5,7 +5,7 @@ import { BASE_URL } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export default async function ComunidadePage() {
+export default async function PessoaPage() {
   const getPessoas = async () => {
     const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`, {
       next: {

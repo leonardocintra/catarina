@@ -88,6 +88,12 @@ export default function DashboardLayout({
               />
 
               <SidebarMenuItem
+                href="/dashboard/dioceses"
+                description="Dioceses"
+                icon={<Church className={classNameIcon} />}
+              />
+
+              <SidebarMenuItem
                 href="/dashboard/relatorios"
                 description="Relatórios"
                 icon={<LineChart className={classNameIcon} />}
@@ -169,6 +175,13 @@ export default function DashboardLayout({
                 >
                   <Church className={classNameIconResponsive} />
                   Paroquias
+                </Link>
+                <Link
+                  href="/dashboard/dioceses"
+                  className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
+                >
+                  <Church className={classNameIconResponsive} />
+                  Dioceses
                 </Link>
                 <Link
                   href="/dashboard/pessoas"

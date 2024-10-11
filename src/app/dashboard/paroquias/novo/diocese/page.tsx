@@ -1,5 +1,5 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import DioceseForm from "@/components/custom/dashboard/paroquias/diocese/form-diocese";
+import DioceseForm from "@/components/custom/dashboard/diocese/form-diocese";
 import { BASE_URL } from "@/lib/utils";
 
 export default function DiocesePage() {

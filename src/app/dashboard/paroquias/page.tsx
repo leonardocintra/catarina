@@ -1,5 +1,4 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import DioceseCard from "@/components/custom/dashboard/paroquias/diocese/diocese-card";
 import LocalidadeCard from "@/components/custom/dashboard/paroquias/localidade/localidade-card";
 import ParoquiaCard from "@/components/custom/dashboard/paroquias/paroquia/paroquia-card";
 
@@ -15,10 +14,6 @@ export default function ParoquiasPage() {
       />
 
       <div className="grid sm:grid-cols-3 gap-2">
-        {/* 
-        Esta com problema aqui.... no npm run build
-        <DioceseCard /> */}
-
         <LocalidadeCard />
 
         <ParoquiaCard />

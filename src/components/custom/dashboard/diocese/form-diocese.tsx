@@ -26,12 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type DioceseFormProps = {
+type FormDioceseProps = {
   urlBase: string;
   diocese?: IDiocese;
 };
 
-export default function DioceseForm({ urlBase, diocese }: DioceseFormProps) {
+export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const { toast } = useToast();
   const router = useRouter();
 
