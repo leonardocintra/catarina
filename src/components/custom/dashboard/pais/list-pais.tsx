@@ -12,27 +12,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IDiocese } from "@/interfaces/IDiocese";
+import { IPais } from "@/interfaces/IPais";
 import { removerAcento } from "@/lib/utils";
 import { FolderSearch } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-type ListDiocesesProps = {
-  dioceses: IDiocese[];
+type ListPaisesProps = {
+  paises: IPais[];
 };
 
-export default function ListDioceses({ dioceses }: ListDiocesesProps) {
+export default function ListPaises({ paises }: ListPaisesProps) {
   const [search, setSearch] = useState("");
 
   const diocesesFiltradas =
     search.length > 0
-      ? dioceses.filter((d) => {
-          const nome = removerAcento(d.descricao).toLowerCase();
+      ? paises.filter((p) => {
+          const nome = removerAcento(p.nome).toLowerCase();
           const nomePesquisa = removerAcento(search).toLowerCase();
           return nome.includes(nomePesquisa);
         })
-      : dioceses;
+      : paises;
 
   return (
     <div>
@@ -41,35 +41,34 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
           <FolderSearch /> Pesquisa
         </Label>
         <Input
-          placeholder="Digite o nome da diocese ..."
+          placeholder="Digite o nome do pais ..."
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       <Table>
-        <TableCaption>
-          Ultimos cadastros - Dioceses: {dioceses.length}
-        </TableCaption>
+        <TableCaption>Ultimos cadastros - Paises: {paises.length}</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Tipo</TableHead>
-            <TableHead>Descrição</TableHead>
-            <TableHead>Ações</TableHead>
+            <TableHead>Nome</TableHead>
+            <TableHead>Região</TableHead>
+            <TableHead>Subregião</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {diocesesFiltradas.slice(0, 10).map((diocese) => (
-            <TableRow key={diocese.id}>
-              <TableCell>#{diocese.id}</TableCell>
-              <TableCell className="text-slate-600 uppercase font-light">
-                {diocese.tipoDiocese.descricao}
+          {diocesesFiltradas.slice(0, 10).map((pais) => (
+            <TableRow key={pais.id}>
+              <TableCell>#{pais.id}</TableCell>
+              <TableCell className="text-slate-300 uppercase font-semibold">
+                {pais.nome}
               </TableCell>
               <TableCell>
-                <div className="font-semibold">{diocese.descricao}</div>
+                <div className="font-light">{pais.regiao}</div>
               </TableCell>
+              <TableCell>{pais.subRegiao}</TableCell>
               <TableCell>
-                <Link href={`/dashboard/dioceses/${diocese.id}`}>
+                <Link href={`/dashboard/pais/${pais.id}`}>
                   <Button variant={"link"} size={"sm"}>
                     Ver detalhes
                   </Button>

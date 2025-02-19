@@ -2,12 +2,9 @@
 
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { IDiocese } from "@/interfaces/IDiocese";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ITipoDiocese } from "@/interfaces/ITipoDiocese";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,76 +15,37 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { IPais } from "@/interfaces/IPais";
 
-type FormDioceseProps = {
+type FormPaisProps = {
   urlBase: string;
-  diocese?: IDiocese;
+  pais?: IPais;
 };
 
-export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
+export default function PaisForm({ urlBase, pais }: FormPaisProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [tipoDiocese, setTipoDiocese] = useState<ITipoDiocese[]>();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      async function getTipoDiocese() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoDiocese`
-        );
-        return res.json();
-      }
-
-      try {
-        const [dataDiocese] = await Promise.all([getTipoDiocese()]);
-
-        setTipoDiocese(dataDiocese.data);
-      } catch (error: any) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, [urlBase]);
-
   const formSchema = z.object({
-    descricao: z
+    nome: z
       .string()
-      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
+      .min(2, { message: "O nome deve ter no minimo 2 caracteres." })
       .max(50),
-    tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      descricao: diocese?.descricao || "",
-      tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
+      nome: pais?.nome,
     },
   });
 
-  if (!tipoDiocese) {
-    return (
-      <div>
-        <h2>Carregando ...</h2>
-      </div>
-    );
-  }
-
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    let url = `${urlBase}/api/ambrosio/configuracoes/diocese`;
+    let url = `${urlBase}/api/ambrosio/configuracoes/pais`;
     let method = "POST";
 
-    if (diocese) {
-      url = `${url}/${diocese.id}`;
+    if (pais) {
+      url = `${url}/${pais.id}`;
       method = "PATCH";
     }
 
@@ -102,27 +60,27 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     const data = await res.json();
     if (res.status === 201 && method === "POST") {
       toast({
-        title: `${values.descricao}`,
+        title: `${values.nome}`,
         variant: "default",
-        description: `Cadastrado(a) com sucesso!`,
+        description: `Pais cadastrado(a) com sucesso!`,
       });
-      router.push(`/dashboard/dioceses/`);
+      router.push(`/dashboard/pais`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
-        title: `${values.descricao}`,
+        title: `${values.nome}`,
         variant: "default",
-        description: `Editada com sucesso!`,
+        description: `Pais editado com sucesso!`,
       });
     } else {
-      if (res.status === 400) {
+      if (res.status === 400 || res.status === 404) {
         toast({
-          title: `${values.descricao} não foi cadastrado!`,
+          title: `${values.nome} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
         });
       } else {
         toast({
-          title: `${values.descricao} não foi cadastrado!`,
+          title: `${values.nome} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${res.text}`,
         });
@@ -139,41 +97,13 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         >
           <FormField
             control={form.control}
-            name="descricao"
+            name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Descrição</FormLabel>
+                <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Descrição ..." {...field} />
+                  <Input placeholder="Nome do pais ..." {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="tipoDiocese"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Tipo</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={diocese?.tipoDiocese.id.toString()}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {tipoDiocese.map((es) => (
-                      <SelectItem key={es.id} value={es.id.toString()}>
-                        {es.descricao}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
                 <FormMessage />
               </FormItem>
             )}
