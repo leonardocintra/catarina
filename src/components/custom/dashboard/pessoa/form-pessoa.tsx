@@ -36,52 +36,50 @@ type PessoaFormProps = {
 export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const urlBaseAPI = `${urlBase}/api/ambrosio/configuracoes`;
 
-  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
-  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
-  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>();
+  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>([]);
+  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>([]);
+  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  async function fetchWithErrorHandling(url: string) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) {
+        throw new Error(`Erro ao buscar ${url}: ${res.statusText}`);
+      }
+      return res.json();
+    } catch (error) {
+      // TODO: mostrar o erro com toaster
+      console.error(error);
+      return { data: [] }; // Retorna array vazio em caso de erro
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
-      async function getEstadoCivil() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/estadoCivil`
-        );
-        return res.json();
-      }
-
-      async function getEscolaridade() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/escolaridade`
-        );
-        return res.json();
-      }
-
-      async function getTipoPessoa() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoPessoa`
-        );
-        return res.json();
-      }
-
       try {
+        setLoading(true);
         const [resEstadoCivil, resEscolaridade, resTipoPessoa] =
           await Promise.all([
-            getEstadoCivil(),
-            getEscolaridade(),
-            getTipoPessoa(),
+            fetchWithErrorHandling(`${urlBaseAPI}/estadoCivil`),
+            fetchWithErrorHandling(`${urlBaseAPI}/escolaridade`),
+            fetchWithErrorHandling(`${urlBaseAPI}/tipoPessoa`),
           ]);
 
         setEstadoCivils(resEstadoCivil.data);
         setEscolaridades(resEscolaridade.data);
         setTipoPessoas(resTipoPessoa.data);
-      } catch (error: any) {
-        console.log(error);
+      } catch (error) {
+        console.error("Erro ao buscar os dados:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, [urlBase]);
+  }, [urlBaseAPI]);
 
   const formSchema = z.object({
     nome: z
@@ -111,10 +109,10 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
     },
   });
 
-  if (!estadoCivils || !escolaridades || !tipoPessoas) {
+  if (loading) {
     return (
       <div>
-        <h2>Carregando ...</h2>
+        <h2>Carregando dados...</h2>
       </div>
     );
   }
@@ -195,7 +193,10 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
               <FormItem>
                 <FormLabel>Conhecido por</FormLabel>
                 <FormControl>
-                  <Input placeholder="Apelido ou como é conhecido ..." {...field} />
+                  <Input
+                    placeholder="Apelido ou como é conhecido ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
