@@ -22,7 +22,6 @@ import { Input } from "@/components/ui/input";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -31,55 +30,20 @@ import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 type PessoaFormProps = {
   urlBase: string;
   pessoa?: IPessoa;
+  estadoCivils: IEstadoCivil[];
+  escolaridades: IEscolaridade[];
+  tipoPessoas: ITipoPessoa[];
 };
 
-export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
+export default function PessoaForm({
+  urlBase,
+  pessoa,
+  estadoCivils,
+  escolaridades,
+  tipoPessoas,
+}: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
-  const urlBaseAPI = `${urlBase}/api/ambrosio/configuracoes`;
-
-  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>([]);
-  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>([]);
-  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  async function fetchWithErrorHandling(url: string) {
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        throw new Error(`Erro ao buscar ${url}: ${res.statusText}`);
-      }
-      return res.json();
-    } catch (error) {
-      // TODO: mostrar o erro com toaster
-      console.error(error);
-      return { data: [] }; // Retorna array vazio em caso de erro
-    }
-  }
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [resEstadoCivil, resEscolaridade, resTipoPessoa] =
-          await Promise.all([
-            fetchWithErrorHandling(`${urlBaseAPI}/estadoCivil`),
-            fetchWithErrorHandling(`${urlBaseAPI}/escolaridade`),
-            fetchWithErrorHandling(`${urlBaseAPI}/tipoPessoa`),
-          ]);
-
-        setEstadoCivils(resEstadoCivil.data);
-        setEscolaridades(resEscolaridade.data);
-        setTipoPessoas(resTipoPessoa.data);
-      } catch (error) {
-        console.error("Erro ao buscar os dados:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [urlBaseAPI]);
 
   const formSchema = z.object({
     nome: z
@@ -108,14 +72,6 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       tipoPessoa: pessoa?.tipoPessoa.id.toString() || "",
     },
   });
-
-  if (loading) {
-    return (
-      <div>
-        <h2>Carregando dados...</h2>
-      </div>
-    );
-  }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     let url = `${urlBase}/api/ambrosio/pessoa`;

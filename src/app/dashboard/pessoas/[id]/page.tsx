@@ -14,55 +14,48 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { IEscolaridade } from "@/interfaces/IEscolaridade";
+import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IPessoa } from "@/interfaces/IPessoa";
+import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
+import { getDadosDaPessoa, getPessoa } from "@/lib/api/pessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function EditarPessoaPage() {
-  const params = useParams();
-  const router = useRouter();
-  const pessoaId = params.id;
-
-  const [pessoa, setPessoa] = useState<IPessoa>();
+export default function EditarPessoaPage({
+  params,
+}: {
+  params: { id: number };
+}) {
   const [editar, setEditar] = useState<boolean>(false);
-  const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
+  const [pessoa, setPessoa] = useState<IPessoa | null>(null);
+  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>([]);
+  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>([]);
+  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
-      async function getPessoa() {
-        const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`);
+      setLoading(true);
 
-        if (res.status === 404) {
-          setRedirectNotFound(true);
-        }
+      const pessoaData = await getPessoa(params.id);
+      const { estadoCivils, escolaridades, tipoPessoas } =
+        await getDadosDaPessoa();
 
-        return res.json();
-      }
-
-      try {
-        const [resPessoa] = await Promise.all([getPessoa()]);
-        setPessoa(resPessoa);
-      } catch (error: any) {
-        console.log(error);
-      }
+      setPessoa(pessoaData);
+      setEstadoCivils(estadoCivils);
+      setEscolaridades(escolaridades);
+      setTipoPessoas(tipoPessoas);
+      setLoading(false);
     };
 
     fetchData();
-  }, [pessoaId]);
+  }, [params.id]);
 
-  if (redirectNotFound) {
-    router.push("/dashboard/pessoas");
-  }
-
-  if (!pessoa) {
-    return (
-      <div>
-        <h2>Carregando ...</h2>
-      </div>
-    );
-  }
+  if (loading) return <p>Carregando...</p>;
+  if (!pessoa) return notFound();
 
   return (
     <div>
@@ -88,7 +81,10 @@ export default function EditarPessoaPage() {
                 descricao={`${pessoa.nome} - ${pessoa.tipoPessoa.descricao}`}
               />
               <div className="flex space-x-2">
-                <LabelData titulo="CPF" descricao={pessoa.cpf ? pessoa.cpf : "não informado"} />
+                <LabelData
+                  titulo="CPF"
+                  descricao={pessoa.cpf ? pessoa.cpf : "não informado"}
+                />
                 <LabelData titulo="Sexo" descricao={pessoa.sexo} />
               </div>
               <LabelData
@@ -210,7 +206,15 @@ export default function EditarPessoaPage() {
         </div>
       )}
 
-      {editar && <PessoaForm urlBase={BASE_URL} pessoa={pessoa} />}
+      {editar && (
+        <PessoaForm
+          urlBase={BASE_URL}
+          pessoa={pessoa}
+          escolaridades={escolaridades}
+          estadoCivils={estadoCivils}
+          tipoPessoas={tipoPessoas}
+        />
+      )}
     </div>
   );
 }
