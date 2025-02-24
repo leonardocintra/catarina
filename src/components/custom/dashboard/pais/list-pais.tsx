@@ -60,7 +60,7 @@ export default function ListPaises({ paises }: ListPaisesProps) {
           {diocesesFiltradas.slice(0, 10).map((pais) => (
             <TableRow key={pais.id}>
               <TableCell>#{pais.id}</TableCell>
-              <TableCell className="text-slate-300 uppercase font-semibold">
+              <TableCell className="text-slate-500 uppercase font-semibold">
                 {pais.nome}
               </TableCell>
               <TableCell>

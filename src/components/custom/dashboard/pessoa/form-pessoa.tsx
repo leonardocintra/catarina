@@ -22,7 +22,6 @@ import { Input } from "@/components/ui/input";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -31,57 +30,20 @@ import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 type PessoaFormProps = {
   urlBase: string;
   pessoa?: IPessoa;
+  estadoCivils: IEstadoCivil[];
+  escolaridades: IEscolaridade[];
+  tipoPessoas: ITipoPessoa[];
 };
 
-export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
+export default function PessoaForm({
+  urlBase,
+  pessoa,
+  estadoCivils,
+  escolaridades,
+  tipoPessoas,
+}: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
-
-  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>();
-  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>();
-  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      async function getEstadoCivil() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/estadoCivil`
-        );
-        return res.json();
-      }
-
-      async function getEscolaridade() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/escolaridade`
-        );
-        return res.json();
-      }
-
-      async function getTipoPessoa() {
-        const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoPessoa`
-        );
-        return res.json();
-      }
-
-      try {
-        const [resEstadoCivil, resEscolaridade, resTipoPessoa] =
-          await Promise.all([
-            getEstadoCivil(),
-            getEscolaridade(),
-            getTipoPessoa(),
-          ]);
-
-        setEstadoCivils(resEstadoCivil.data);
-        setEscolaridades(resEscolaridade.data);
-        setTipoPessoas(resTipoPessoa.data);
-      } catch (error: any) {
-        console.log(error);
-      }
-    };
-
-    fetchData();
-  }, [urlBase]);
 
   const formSchema = z.object({
     nome: z
@@ -110,14 +72,6 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
       tipoPessoa: pessoa?.tipoPessoa.id.toString() || "",
     },
   });
-
-  if (!estadoCivils || !escolaridades || !tipoPessoas) {
-    return (
-      <div>
-        <h2>Carregando ...</h2>
-      </div>
-    );
-  }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     let url = `${urlBase}/api/ambrosio/pessoa`;
@@ -195,7 +149,10 @@ export default function PessoaForm({ urlBase, pessoa }: PessoaFormProps) {
               <FormItem>
                 <FormLabel>Conhecido por</FormLabel>
                 <FormControl>
-                  <Input placeholder="Apelido ou como é conhecido ..." {...field} />
+                  <Input
+                    placeholder="Apelido ou como é conhecido ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
