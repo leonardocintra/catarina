@@ -121,6 +121,15 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [versao, setVersao] = React.useState("0.0.0");
+
+  React.useEffect(() => {
+    const res = fetch("/api/catarina/version", {
+      cache: "force-cache",
+    });
+    res.then((res) => res.json()).then((data) => setVersao(data.version));
+  }, []);
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -132,6 +141,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
+      </SidebarFooter>
+      <SidebarFooter className="text-xs font-extralight uppercase text-center">
+        Versão: {versao}
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
