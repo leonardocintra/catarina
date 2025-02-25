@@ -16,6 +16,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { IPais } from "@/interfaces/IPais";
+import { useEffect, useState } from "react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { getTodosOsPaises } from "@/lib/api/geolocation";
+import { removerAcento } from "@/lib/utils";
 
 type FormPaisProps = {
   urlBase: string;
@@ -24,7 +35,37 @@ type FormPaisProps = {
 
 export default function PaisForm({ urlBase, pais }: FormPaisProps) {
   const { toast } = useToast();
+  const [disabled, setDisabled] = useState(false);
+  const [input, setInput] = useState("");
+  const [paisSelecionado, setPaisSelecionado] = useState("");
   const router = useRouter();
+  const [paises, setPaises] = useState<string[]>([]);
+  const [paisesFiltrados, setPaisesFiltrados] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Esse primeiro useEffect é somente para buscar os paises
+    const fetchPaises = async () => {
+      const resultado: any = await getTodosOsPaises();
+      if (resultado) setPaises(resultado);
+    };
+
+    fetchPaises();
+  }, []);
+
+  useEffect(() => {
+    // Esse segundo useEffect é somente para filtrar os paises
+    if (input.length > 1) {
+      setPaisesFiltrados(
+        paises.filter((pais) =>
+          removerAcento(pais.toLowerCase()).includes(
+            removerAcento(input.toLowerCase())
+          )
+        )
+      );
+    } else {
+      setPaisesFiltrados([]);
+    }
+  }, [input, paises]);
 
   const formSchema = z.object({
     nome: z
@@ -36,11 +77,13 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: pais?.nome,
+      nome: paisSelecionado,
     },
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setDisabled(true);
+
     let url = `${urlBase}/api/ambrosio/configuracoes/pais`;
     let method = "POST";
 
@@ -58,12 +101,14 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
     });
 
     const data = await res.json();
+
     if (res.status === 201 && method === "POST") {
       toast({
         title: `${values.nome}`,
         variant: "default",
         description: `Pais cadastrado(a) com sucesso!`,
       });
+
       router.push(`/dashboard/pais`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
@@ -71,7 +116,10 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
         variant: "default",
         description: `Pais editado com sucesso!`,
       });
+      router.push(`/dashboard/pais`);
     } else {
+      setDisabled(false);
+
       if (res.status === 400 || res.status === 404) {
         toast({
           title: `${values.nome} não foi cadastrado!`,
@@ -90,6 +138,31 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
   return (
     <div className="max-w-md mx-auto sm:mt-8">
+      <div>
+        <Command>
+          <CommandInput
+            placeholder="Digite o nome do pais ..."
+            value={input}
+            onValueChange={setInput}
+          />
+          <CommandList>
+            <CommandEmpty>Nenhum resultado encontrado...</CommandEmpty>
+            <CommandGroup heading="Sugestões">
+              {paisesFiltrados.map((p, index) => (
+                <CommandItem
+                  key={index}
+                  onSelect={() => {
+                    form.setValue("nome", p); // Define o valor do formulário
+                    setInput(p); // Atualiza o input de busca
+                  }}
+                >
+                  {p}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -98,18 +171,21 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
           <FormField
             control={form.control}
             name="nome"
+            disabled
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nome do pais ..." {...field} />
+                  <Input placeholder="Nome do pais ..." {...field} disabled />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <Button type="submit">Salvar</Button>
+          <Button disabled={disabled} type="submit">
+            Salvar
+          </Button>
         </form>
       </Form>
     </div>
