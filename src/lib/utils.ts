@@ -6,7 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function removerAcento(texto: string): string {
-  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return texto.normalize("NFD") // Separa acentos das letras
+    .replace(/\p{Diacritic}/gu, "") // Remove acentos
+    .replace(/ç/g, "c") // Substitui "ç" por "c")
+    .replace(/Ç/g, "C"); // Substitui "Ç" por "C");
 }
 
 export const AmbrosioBaseUrl =
