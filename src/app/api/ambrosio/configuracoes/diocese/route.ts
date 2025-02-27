@@ -21,6 +21,15 @@ export async function POST(req: Request) {
       id: parseInt(data.tipoDiocese),
       descricao: "TipoDiocese",
     },
+    observacao: data.observacao,
+    endereco: {
+      logradouro: data.logradouro,
+      numero: data.numero,
+      bairro: data.bairro,
+      cidade: data.cidade,
+      UF: data.uf,
+      cep: data.cep,
+    }
   };
 
   const res = await fetch(url, {
@@ -40,7 +49,7 @@ export async function POST(req: Request) {
   } else {
     return Response.json(
       {
-        message: resData.message[0],
+        message: resData.message,
       },
       {
         status: res.status,
