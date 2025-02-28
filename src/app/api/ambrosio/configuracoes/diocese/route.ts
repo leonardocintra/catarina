@@ -22,14 +22,18 @@ export async function POST(req: Request) {
       descricao: "TipoDiocese",
     },
     observacao: data.observacao,
-    endereco: {
-      logradouro: data.logradouro,
-      numero: data.numero,
-      bairro: data.bairro,
-      cidade: data.cidade,
-      UF: data.uf,
-      cep: data.cep,
-    }
+    localidade: [
+      {
+        endereco: {
+          logradouro: data.logradouro,
+          numero: data.numero,
+          bairro: data.bairro,
+          cidade: data.cidade,
+          UF: data.uf,
+          cep: data.cep,
+        }
+      }
+    ]
   };
 
   const res = await fetch(url, {

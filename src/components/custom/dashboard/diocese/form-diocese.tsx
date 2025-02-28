@@ -121,6 +121,12 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     defaultValues: {
       descricao: diocese?.descricao || "",
       tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
+      cep: diocese?.localidade[0].endereco.cep || "",
+      bairro: diocese?.localidade[0].endereco.bairro || "",
+      cidade: diocese?.localidade[0].endereco.cidade || "",
+      numero: diocese?.localidade[0].endereco.numero || "",
+      logradouro: diocese?.localidade[0].endereco.logradouro || "",
+      uf: diocese?.localidade[0].endereco.UF || "",
     },
   });
 
