@@ -37,9 +37,9 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const router = useRouter();
 
   const [tipoDiocese, setTipoDiocese] = useState<ITipoDiocese[]>();
-  const [bairroDisabled, setBairroDisabled] = useState(false);
-  const [cidadeDisabled, setCidadeDisabled] = useState(false);
-  const [logradouroDisabled, setLogradouroDisabled] = useState(false);
+  const [bairroDisabled, setBairroDisabled] = useState(true);
+  const [cidadeDisabled, setCidadeDisabled] = useState(true);
+  const [logradouroDisabled, setLogradouroDisabled] = useState(true);
 
   const onChangeCaptureHandler = (e: any) => {
     handleCep(e.target.value);
