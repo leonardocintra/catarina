@@ -12,12 +12,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { IDiocese } from "@/interfaces/IDiocese";
 import { BASE_URL } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function EditarDiocesePage() {
+  const { toast } = useToast();
   const params = useParams();
   const router = useRouter();
   const dioceseId = params.id;
@@ -34,6 +36,12 @@ export default function EditarDiocesePage() {
         );
 
         if (res.status === 404) {
+          // TODO: esta dando erro no console log quando usa esse toast
+          toast({
+            title: `Diocese não encontrada`,
+            variant: "destructive",
+            description: `Diocese não encontrada. Tente novamente`,
+          });
           setRedirectNotFound(true);
         }
 
@@ -44,12 +52,16 @@ export default function EditarDiocesePage() {
         const [resDiocese] = await Promise.all([getDiocese()]);
         setDiocese(resDiocese);
       } catch (error: any) {
-        console.log(error);
+        toast({
+          title: `Erro ao buscar diocese`,
+          variant: "destructive",
+          description: `Erro: ${error}`,
+        });
       }
     };
 
     fetchData();
-  }, [dioceseId]);
+  }, [dioceseId, toast]);
 
   if (redirectNotFound) {
     router.push("/dashboard/dioceses");
@@ -62,7 +74,7 @@ export default function EditarDiocesePage() {
       </div>
     );
   }
-  
+
   return (
     <div>
       <PageSubtitle

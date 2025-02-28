@@ -76,7 +76,10 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
     logradouro: z.string().max(50),
     numero: z.string().max(5),
     bairro: z.string().max(50),
-    cep: z.string().min(8).max(8),
+    cep: z
+      .string({ message: "O CEP é obrigatório" })
+      .min(8, { message: "O CEP precisa ter 8 digitos" })
+      .max(8, { message: "O CEP precisa ter 8 digitos" }),
     cidade: z.string().max(50),
     uf: z.string().max(2).min(2),
   });
@@ -146,7 +149,12 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
               <FormItem>
                 <FormLabel>CEP</FormLabel>
                 <FormControl onChangeCapture={onChangeCaptureHandler}>
-                  <Input max={8} placeholder="CEP ..." {...field} />
+                  <Input
+                    maxLength={8}
+                    minLength={8}
+                    placeholder="CEP ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
