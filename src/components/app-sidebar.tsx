@@ -96,11 +96,15 @@ const data = {
           url: "/dashboard/cidades",
         },
         {
-          title: "Billing",
+          title: "Carisma Primitivo",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "Carisma Vinculado",
+          url: "#",
+        },
+        {
+          title: "Carisma Serviço",
           url: "#",
         },
       ],
