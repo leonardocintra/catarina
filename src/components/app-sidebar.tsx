@@ -65,6 +65,10 @@ const data = {
           title: "Paroquias",
           url: "/dashboard/paroquias",
         },
+        {
+          title: "Localidades",
+          url: "/dashboard/localidade",
+        },
       ],
     },
     {

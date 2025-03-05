@@ -2,12 +2,10 @@
 
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { IDiocese } from "@/interfaces/IDiocese";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ITipoDiocese } from "@/interfaces/ITipoDiocese";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,59 +23,69 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ITipoLocalidade } from "@/interfaces/ITipoLocalidade";
+import { ILocalidade } from "@/interfaces/ILocalidade";
 
 type LocalidadeFormProps = {
   urlBase: string;
-  diocese?: IDiocese;
+  localidade?: ILocalidade;
 };
 
 export default function LocalidadeForm({
   urlBase,
-  diocese,
+  localidade,
 }: LocalidadeFormProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [tipoDiocese, setTipoDiocese] = useState<ITipoDiocese[]>();
+  const [tipoLocalidade, setTipoLocalidade] = useState<ITipoLocalidade[]>();
 
   useEffect(() => {
     const fetchData = async () => {
-      async function getTipoDiocese() {
+      async function getTipoLocalidade() {
         const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoDiocese`
+          `${urlBase}/api/ambrosio/configuracoes/tipoLocalidade`,
+          {
+            cache: "force-cache",
+          }
         );
         return res.json();
       }
 
       try {
-        const [dataDiocese] = await Promise.all([getTipoDiocese()]);
+        const [dataLocalidade] = await Promise.all([getTipoLocalidade()]);
 
-        setTipoDiocese(dataDiocese.data);
+        setTipoLocalidade(dataLocalidade.data);
       } catch (error: any) {
+        toast({
+          title: `Erro ao buscar os Tipos de Localidade`,
+          variant: "destructive",
+          description: `Erro: ${error}`,
+        });
         console.log(error);
       }
     };
 
     fetchData();
-  }, [urlBase]);
+  }, [urlBase, toast]);
 
   const formSchema = z.object({
     descricao: z
       .string()
       .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
       .max(50),
-    tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1),
+    tipoLocalidade: z.string({ message: "Campo obrigatório" }).min(1),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      descricao: diocese?.descricao || "",
-      tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
+      descricao: localidade?.descricao || "",
+      tipoLocalidade: localidade?.tipoLocalidade?.id.toString() || "",
     },
   });
 
-  if (!tipoDiocese) {
+  if (!tipoLocalidade) {
     return (
       <div>
         <h2>Carregando ...</h2>
@@ -86,11 +94,11 @@ export default function LocalidadeForm({
   }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    let url = `${urlBase}/api/ambrosio/configuracoes/diocese`;
+    let url = `${urlBase}/api/ambrosio/configuracoes/localidade`;
     let method = "POST";
 
-    if (diocese) {
-      url = `${url}/${diocese.id}`;
+    if (localidade) {
+      url = `${url}/${localidade.id}`;
       method = "PATCH";
     }
 
@@ -109,7 +117,7 @@ export default function LocalidadeForm({
         variant: "default",
         description: `Cadastrado(a) com sucesso!`,
       });
-      router.push(`/dashboard/paroquias/`);
+      router.push(`/dashboard/localidade/`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
         title: `${values.descricao}`,
@@ -156,13 +164,13 @@ export default function LocalidadeForm({
 
           <FormField
             control={form.control}
-            name="tipoDiocese"
+            name="tipoLocalidade"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Tipo</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={diocese?.tipoDiocese.id.toString()}
+                  defaultValue={localidade?.tipoLocalidade?.id.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -170,7 +178,7 @@ export default function LocalidadeForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {tipoDiocese.map((es) => (
+                    {tipoLocalidade.map((es) => (
                       <SelectItem key={es.id} value={es.id.toString()}>
                         {es.descricao}
                       </SelectItem>
