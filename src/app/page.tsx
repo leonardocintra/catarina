@@ -1,14 +1,64 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ThemeModeToggle } from "@/components/custom/theme-toggle";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function Home() {
+export default function HomeLogin() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const schema = z.object({
+    email: z.string().min(1, "Informe o e-mail ou CPF"),
+    password: z.string().min(1, "Informe a senha"),
+  });
+
+  const handleLogin = async () => {
+    setErrorMsg("");
+
+    const parsed = schema.safeParse({ email, password });
+    if (!parsed.success) {
+      setErrorMsg(parsed.error.errors[0].message);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/ambrosio/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) {
+        setErrorMsg("Credenciais inválidas");
+        return;
+      }
+
+      const { access_token } = await res.json();
+
+      console.log(access_token);
+
+      // 💡 Por enquanto salvando em localStorage (depois podemos mudar pra cookie HttpOnly)
+      localStorage.setItem("token", access_token);
+
+      router.push("/dashboard");
+    } catch (error) {
+      setErrorMsg("Erro ao tentar logar");
+      console.error(error);
+    }
+  };
+
   return (
-    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+    <div className="w-full h-screen lg:grid lg:grid-cols-2">
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid max-w-md">
           <div className="grid gap-2 text-center">
@@ -24,7 +74,9 @@ export default function Home() {
               <Label htmlFor="email">Email ou CPF</Label>
               <Input
                 id="email"
-                type="email"
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="m@example.com"
                 required
               />
@@ -33,19 +85,26 @@ export default function Home() {
               <div className="flex items-center">
                 <Label htmlFor="password">Senha</Label>
                 <Link
-                  href="/dashboard"
+                  href="/esqueci-senha"
                   className="ml-auto inline-block text-sm underline"
                 >
-                  Esqueceu sua senha ?
+                  Esqueceu sua senha?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
             </div>
-            <Link href={"/dashboard"}>
-              <Button type="submit" className="w-full">
-                Entrar
-              </Button>
-            </Link>
+            {errorMsg && (
+              <p className="text-red-500 text-sm text-center">{errorMsg}</p>
+            )}
+            <Button type="button" className="w-full" onClick={handleLogin}>
+              Entrar
+            </Button>
           </div>
           <div className="flex justify-center items-center space-x-2 my-4">
             <div>
@@ -55,8 +114,14 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="hidden bg-muted lg:block">
-        <Image src="/logo.webp" alt="Image" width="1920" height="1080" />
+      <div className="hidden lg:block relative">
+        <Image
+          src="/logo.webp"
+          alt="Image"
+          fill
+          className="object-cover w-full h-full"
+          priority
+        />
       </div>
     </div>
   );

@@ -20,13 +20,13 @@ export default async function PessoaPage() {
   return (
     <div className="">
       <PageSubtitle
-        title={`Pessoas - ${pessoas?.length}`}
+        title={`Pessoas - ${pessoas ? pessoas.length : 0}`}
         buttonShow={true}
         buttonText="Cadastrar"
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      <ListPessoa pessoas={pessoas} />
+      {pessoas && <ListPessoa pessoas={pessoas} />}
     </div>
   );
 }
