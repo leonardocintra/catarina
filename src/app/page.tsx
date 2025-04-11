@@ -42,14 +42,7 @@ export default function HomeLogin() {
         setErrorMsg("Credenciais inválidas");
         return;
       }
-
-      const { access_token } = await res.json();
-
-      console.log(access_token);
-
-      // 💡 Por enquanto salvando em localStorage (depois podemos mudar pra cookie HttpOnly)
-      localStorage.setItem("token", access_token);
-
+      
       router.push("/dashboard");
     } catch (error) {
       setErrorMsg("Erro ao tentar logar");

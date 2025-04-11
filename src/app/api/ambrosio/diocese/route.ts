@@ -1,11 +1,19 @@
 import { IDiocese } from "@/interfaces/IDiocese";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 const url = `${AmbrosioBaseUrl}/diocese`;
 
 export async function GET() {
+  const token = cookies().get("token")?.value;
+  
   const res = await fetch(url, {
-    cache: "no-cache"
+    cache: "no-cache",
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   const data = await res.json();
@@ -31,9 +39,9 @@ export async function POST(req: Request) {
           cidade: data.cidade,
           UF: data.uf,
           cep: data.cep,
-        }
-      }
-    ]
+        },
+      },
+    ],
   };
 
   const res = await fetch(url, {

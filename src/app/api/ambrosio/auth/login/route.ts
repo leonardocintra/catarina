@@ -20,13 +20,17 @@ export async function POST(request: NextRequest) {
   const json = await response.json();
   const { access_token } = json.data;
 
-  const res = NextResponse.json({ success: true });
+  const res = new NextResponse(JSON.stringify({ success: true }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
 
   res.cookies.set("token", access_token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: 60 * 60, // 1 hora
     path: "/",
+    sameSite: "lax",
   });
 
   return res;

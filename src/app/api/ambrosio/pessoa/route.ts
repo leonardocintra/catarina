@@ -1,10 +1,17 @@
 import { IPessoa } from "@/interfaces/IPessoa";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
 
 export async function GET() {
-  const res = await fetch(`${url}?page=1&limit=3000`);
+  const token = cookies().get("token")?.value;
+  const res = await fetch(`${url}?page=1&limit=3000`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   const data = await res.json();
   return Response.json(data);

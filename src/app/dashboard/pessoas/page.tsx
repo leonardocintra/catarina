@@ -1,32 +1,40 @@
+"use client";
+
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
 import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-export const dynamic = "force-dynamic";
+export default function PessoaPage() {
+  const [pessoas, setPessoas] = useState<IPessoa[]>([]);
 
-export default async function PessoaPage() {
-  const getPessoas = async () => {
-    const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`, {
-      next: {
-        revalidate: 5,
-      },
-    });
-    return res.json();
-  };
-  const data = await getPessoas();
-  const pessoas: IPessoa[] = data.data;
+  useEffect(() => {
+    const getPessoas = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/ambrosio/pessoa`, {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+        setPessoas(data.data);
+      } catch (error) {
+        console.error("Erro ao buscar pessoas", error);
+      }
+    };
+    getPessoas();
+  }, []);
 
   return (
     <div className="">
       <PageSubtitle
-        title={`Pessoas - ${pessoas ? pessoas.length : 0}`}
+        title={`Pessoas - ${pessoas?.length}`}
         buttonShow={true}
         buttonText="Cadastrar"
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      {pessoas && <ListPessoa pessoas={pessoas} />}
+      <ListPessoa pessoas={pessoas} />
     </div>
   );
 }
