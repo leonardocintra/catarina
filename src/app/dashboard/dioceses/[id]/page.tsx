@@ -32,7 +32,7 @@ export default function EditarDiocesePage() {
     const fetchData = async () => {
       async function getDiocese() {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/configuracoes/diocese/${dioceseId}`
+          `${BASE_URL}/api/ambrosio/diocese/${dioceseId}`
         );
 
         if (res.status === 404) {
@@ -41,6 +41,16 @@ export default function EditarDiocesePage() {
             title: `Diocese não encontrada`,
             variant: "destructive",
             description: `Diocese não encontrada. Tente novamente`,
+          });
+          setRedirectNotFound(true);
+        }
+
+        if (res.status === 401) {
+          // TODO: esta dando erro no console log quando usa esse toast
+          toast({
+            title: `Sem permissão`,
+            variant: "destructive",
+            description: `Você não tem permissão para ver essa diocese`,
           });
           setRedirectNotFound(true);
         }
@@ -87,16 +97,16 @@ export default function EditarDiocesePage() {
       />
 
       {!editar && (
-        <div className="grid gap-2 sm:grid-cols-3">
+        <div className="max-w-lg mx-auto">
           <Card>
             <CardHeader>
-              <CardTitle>Dados principais</CardTitle>
-              <CardDescription>Dados principais</CardDescription>
+              <CardTitle>{diocese.descricao}</CardTitle>
+              <CardDescription>{diocese.tipoDiocese.descricao}</CardDescription>
             </CardHeader>
             <CardContent>
               <LabelData
-                titulo="Descricao"
-                descricao={`${diocese.descricao}`}
+                titulo="Cidade"
+                descricao={`${diocese.endereco.cidade} - ${diocese.endereco.UF}`}
               />
               <LabelData
                 titulo="Tipo"

@@ -121,12 +121,12 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     defaultValues: {
       descricao: diocese?.descricao || "",
       tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
-      cep: diocese?.localidade[0].endereco.cep || "",
-      bairro: diocese?.localidade[0].endereco.bairro || "",
-      cidade: diocese?.localidade[0].endereco.cidade || "",
-      numero: diocese?.localidade[0].endereco.numero || "",
-      logradouro: diocese?.localidade[0].endereco.logradouro || "",
-      uf: diocese?.localidade[0].endereco.UF || "",
+      cep: diocese?.endereco.cep || "",
+      bairro: diocese?.endereco.bairro || "",
+      cidade: diocese?.endereco.cidade || "",
+      numero: diocese?.endereco.numero || "",
+      logradouro: diocese?.endereco.logradouro || "",
+      uf: diocese?.endereco.UF || "",
     },
   });
 
@@ -139,7 +139,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    let url = `${urlBase}/api/ambrosio/configuracoes/diocese`;
+    let url = `${urlBase}/api/ambrosio/diocese`;
     let method = "POST";
 
     if (diocese) {
@@ -175,6 +175,14 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
           title: `${values.descricao} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
+        });
+      } else if (res.status === 401 || res.status === 403) {
+        toast({
+          title: `Sem permissão - ${res.status}`,
+          variant: "default",
+          description: `Você não tem permissão para ${
+            method === "POST" ? "cadastrar" : "editar"
+          } diocese`,
         });
       } else {
         toast({

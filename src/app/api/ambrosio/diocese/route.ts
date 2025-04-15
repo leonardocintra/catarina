@@ -15,14 +15,15 @@ export async function GET() {
       Authorization: `Bearer ${token}`,
     },
   });
-
+  
   const data = await res.json();
   return Response.json(data);
 }
 
 export async function POST(req: Request) {
+  const token = cookies().get("token")?.value;
   const data = await req.json();
-
+  
   const diocese: Partial<IDiocese> = {
     descricao: data.descricao,
     tipoDiocese: {
@@ -30,24 +31,21 @@ export async function POST(req: Request) {
       descricao: "TipoDiocese",
     },
     observacao: data.observacao,
-    localidade: [
-      {
-        endereco: {
-          logradouro: data.logradouro,
-          numero: data.numero,
-          bairro: data.bairro,
-          cidade: data.cidade,
-          UF: data.uf,
-          cep: data.cep,
-        },
-      },
-    ],
+    endereco: {
+      logradouro: data.logradouro,
+      numero: data.numero,
+      bairro: data.bairro,
+      cidade: data.cidade,
+      UF: data.uf,
+      cep: data.cep,
+    },
   };
 
   const res = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(diocese),
   });

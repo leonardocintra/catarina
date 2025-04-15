@@ -1,5 +1,6 @@
 import { IDiocese } from "@/interfaces/IDiocese";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/diocese`;
@@ -8,7 +9,13 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: number } }
 ) {
-  const res = await fetch(`${url}/${params.id}`);
+  const token = cookies().get("token")?.value;
+  const res = await fetch(`${url}/${params.id}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
 
   if (res.status === 404) {
     return Response.json(
@@ -17,6 +24,17 @@ export async function GET(
       },
       {
         status: 404,
+      }
+    );
+  }
+
+  if (res.status === 401) {
+    return Response.json(
+      {
+        message: "Você não tem permissão para acessar essa diocese",
+      },
+      {
+        status: 401,
       }
     );
   }
@@ -30,6 +48,7 @@ export async function PATCH(
   { params }: { params: { id: number } }
 ) {
   const data = await req.json();
+  const token = cookies().get("token")?.value;
 
   const diocese: Partial<IDiocese> = {
     descricao: data.descricao,
@@ -38,24 +57,21 @@ export async function PATCH(
       descricao: "TipoDiocese",
     },
     observacao: data.observacao,
-    localidade: [
-      {
-        endereco: {
-          logradouro: data.logradouro,
-          numero: data.numero,
-          bairro: data.bairro,
-          cidade: data.cidade,
-          UF: data.uf,
-          cep: data.cep,
-        }
-      }
-    ]
+    endereco: {
+      logradouro: data.logradouro,
+      numero: data.numero,
+      bairro: data.bairro,
+      cidade: data.cidade,
+      UF: data.uf,
+      cep: data.cep,
+    },
   };
 
   const res = await fetch(`${url}/${params.id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(diocese),
   });
