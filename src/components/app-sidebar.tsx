@@ -65,6 +65,10 @@ const data = {
           title: "Paroquias",
           url: "/dashboard/paroquias",
         },
+        {
+          title: "Localidades",
+          url: "/dashboard/localidade",
+        },
       ],
     },
     {
@@ -96,11 +100,15 @@ const data = {
           url: "/dashboard/cidades",
         },
         {
-          title: "Billing",
+          title: "Carisma Primitivo",
           url: "#",
         },
         {
-          title: "Limits",
+          title: "Carisma Vinculado",
+          url: "#",
+        },
+        {
+          title: "Carisma Serviço",
           url: "#",
         },
       ],

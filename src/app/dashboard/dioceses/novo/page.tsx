@@ -9,7 +9,7 @@ export default function NovaDiocesePage() {
         title="Cadatro de nova diocese"
         buttonShow={true}
         buttonText="Voltar"
-        buttonUrl="/dashboard/diceses"
+        buttonUrl="/dashboard/dioceses"
         buttonVariant="outline"
       />
 

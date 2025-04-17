@@ -25,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 type FormDioceseProps = {
   urlBase: string;
@@ -36,20 +37,58 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const router = useRouter();
 
   const [tipoDiocese, setTipoDiocese] = useState<ITipoDiocese[]>();
+  const [bairroDisabled, setBairroDisabled] = useState(true);
+  const [cidadeDisabled, setCidadeDisabled] = useState(true);
+  const [logradouroDisabled, setLogradouroDisabled] = useState(true);
+
+  const onChangeCaptureHandler = (e: any) => {
+    handleCep(e.target.value);
+  };
+
+  async function handleCep(cepInput: string) {
+    if (cepInput.length !== 8) {
+      //TODO: CEP tem 8 digitos mas so funciona com 7
+      return;
+    }
+
+    const res = await fetch(`https://viacep.com.br/ws/${cepInput}/json/`)
+      .then((res) => res.json())
+      .then((res) => {
+        return res;
+      });
+
+    form.setValue("bairro", res.bairro);
+    form.setValue("cidade", res.localidade);
+    form.setValue("uf", res.uf);
+    form.setValue("logradouro", res.logradouro);
+    if (res.logradouro === "") {
+      form.setFocus("logradouro");
+      setBairroDisabled(false);
+      setLogradouroDisabled(false);
+    } else {
+      form.setFocus("numero");
+      setBairroDisabled(true);
+      setLogradouroDisabled(true);
+    }
+    setCidadeDisabled(true);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       async function getTipoDiocese() {
         const res = await fetch(
-          `${urlBase}/api/ambrosio/configuracoes/tipoDiocese`
+          `${urlBase}/api/ambrosio/configuracoes/tipoDiocese`,
+          {
+            cache: "force-cache",
+          }
         );
         return res.json();
       }
 
       try {
-        const [dataDiocese] = await Promise.all([getTipoDiocese()]);
+        const [dataTipoDiocese] = await Promise.all([getTipoDiocese()]);
 
-        setTipoDiocese(dataDiocese.data);
+        setTipoDiocese(dataTipoDiocese.data);
       } catch (error: any) {
         console.log(error);
       }
@@ -60,10 +99,21 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
 
   const formSchema = z.object({
     descricao: z
-      .string()
-      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
-      .max(50),
-    tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1),
+      .string({ message: "Nome da diocese é obrigatório" })
+      .min(2, { message: "Nome da diocese deve ter no minimo 2 caracteres." })
+      .max(50, { message: "Tamanho máximo é 50 caracteres." }),
+    tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1, {
+      message: "Selecion o tipo...",
+    }),
+    logradouro: z.string().max(50),
+    numero: z.string().max(5, { message: "Tamanho máximo é 5 caracteres." }),
+    bairro: z.string().max(50, { message: "Tamanho máximo é 50 caracteres." }),
+    cep: z
+      .string({ message: "O CEP é obrigatório" })
+      .min(8, { message: "O CEP precisa ter 8 digitos" })
+      .max(8, { message: "O CEP precisa ter 8 digitos" }),
+    cidade: z.string().max(50, { message: "Tamanho máximo é 50 caracteres." }),
+    uf: z.string().max(2).min(2),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -71,6 +121,12 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     defaultValues: {
       descricao: diocese?.descricao || "",
       tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
+      cep: diocese?.endereco.cep || "",
+      bairro: diocese?.endereco.bairro || "",
+      cidade: diocese?.endereco.cidade || "",
+      numero: diocese?.endereco.numero || "",
+      logradouro: diocese?.endereco.logradouro || "",
+      uf: diocese?.endereco.UF || "",
     },
   });
 
@@ -83,7 +139,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    let url = `${urlBase}/api/ambrosio/configuracoes/diocese`;
+    let url = `${urlBase}/api/ambrosio/diocese`;
     let method = "POST";
 
     if (diocese) {
@@ -114,11 +170,19 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         description: `Editada com sucesso!`,
       });
     } else {
-      if (res.status === 400) {
+      if (res.status === 400 || res.status === 404) {
         toast({
           title: `${values.descricao} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
+        });
+      } else if (res.status === 401 || res.status === 403) {
+        toast({
+          title: `Sem permissão - ${res.status}`,
+          variant: "default",
+          description: `Você não tem permissão para ${
+            method === "POST" ? "cadastrar" : "editar"
+          } diocese`,
         });
       } else {
         toast({
@@ -144,7 +208,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
               <FormItem>
                 <FormLabel>Descrição</FormLabel>
                 <FormControl>
-                  <Input placeholder="Descrição ..." {...field} />
+                  <Input placeholder="Nome da diocese ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -174,6 +238,114 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
                     ))}
                   </SelectContent>
                 </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Separator />
+          <h2>Endereço</h2>
+
+          <FormField
+            control={form.control}
+            name="cep"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>CEP</FormLabel>
+                <FormControl onChangeCapture={onChangeCaptureHandler}>
+                  <Input
+                    maxLength={8}
+                    minLength={8}
+                    placeholder="CEP da diocese ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="logradouro"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Logradouro</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={logradouroDisabled}
+                    placeholder="Logradouro ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="numero"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Numero</FormLabel>
+                <FormControl>
+                  <Input placeholder="Numero ..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="bairro"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bairro</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={bairroDisabled}
+                    placeholder="Bairro ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="cidade"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Cidade</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={cidadeDisabled}
+                    placeholder="Cidade ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="uf"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Estado</FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={cidadeDisabled}
+                    placeholder="Estado ..."
+                    {...field}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

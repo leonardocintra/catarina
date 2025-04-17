@@ -16,7 +16,7 @@ export default function LocalidadePage() {
       <PageSubtitle
         buttonShow={true}
         buttonText="Voltar"
-        buttonUrl="/dashboard/paroquias"
+        buttonUrl="/dashboard/localidade"
         subTitle="Nova localidade"
         title="Cadastro de localidade"
       />

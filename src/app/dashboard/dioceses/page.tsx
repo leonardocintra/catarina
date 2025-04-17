@@ -1,24 +1,34 @@
+"use client";
+
 import ListDioceses from "@/components/custom/dashboard/diocese/list-dioceses";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { IDiocese } from "@/interfaces/IDiocese";
-import { BASE_URL } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-export const dynamic = "force-dynamic";
+export default function DiocesesPage() {
+  const [dioceses, setDioceses] = useState<IDiocese[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default async function DiocesesPage() {
-  const getDioceses = async () => {
-    const res = await fetch(`${BASE_URL}/api/ambrosio/configuracoes/diocese`, {
-      next: {
-        revalidate: 1,
-      },
-    });
-    return res.json();
-  };
-  const data = await getDioceses();
-  const dioceses: IDiocese[] = data.data;
+  useEffect(() => {
+    const getDioceses = async () => {
+      try {
+        const res = await fetch("/api/ambrosio/diocese", {
+          credentials: "include",
+        });
+        const data = await res.json();
+        setDioceses(data.data);
+      } catch (error) {
+        console.error("Erro ao buscar dioceses", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getDioceses();
+  }, []);
 
   return (
-    <div className="">
+    <div>
       <PageSubtitle
         title={`Dioceses - ${dioceses?.length}`}
         subTitle="do Brasil"
@@ -27,7 +37,7 @@ export default async function DiocesesPage() {
         buttonUrl="/dashboard/dioceses/novo"
       />
 
-      <ListDioceses dioceses={dioceses} />
+      {loading ? "Carregando..." : <ListDioceses dioceses={dioceses} />}
     </div>
   );
 }
