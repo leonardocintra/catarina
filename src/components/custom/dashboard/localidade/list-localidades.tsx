@@ -1,5 +1,3 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,10 +31,6 @@ export default function ListLocalidades({ localidades }: ListLocalidadeProps) {
           return nome.includes(nomePesquisa);
         })
       : localidades;
-
-  if (localidades.length === 0) {
-    return <div>Carregando ...</div>;
-  }
 
   return (
     <div>

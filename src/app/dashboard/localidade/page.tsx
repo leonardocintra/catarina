@@ -8,30 +8,48 @@ import { BASE_URL } from "@/lib/utils";
 
 export default function LocalidadePage() {
   const [localidades, setLocalidades] = useState<ILocalidade[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const res = await fetch(
-        `${BASE_URL}/api/ambrosio/configuracoes/localidade`
-      );
-      const data = await res.json();
-      setLocalidades(data.data);
+    const getLocalidade = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/ambrosio/configuracoes/localidade`,
+          {
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        setLocalidades(data.data);
+      } catch (error) {
+        console.error("Erro ao listar localidades", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData();
+    getLocalidade();
   }, []);
+
+  const listar = () => {
+    if (localidades) {
+      return <ListLocalidades localidades={localidades} />;
+    } else {
+      return <h2>Nenhuma localidade cadastrada</h2>;
+    }
+  };
 
   return (
     <div>
       <PageSubtitle
-        title={`Localidades - ${localidades.length}`}
+        title={`Localidades - ${localidades ? localidades.length : 0}`}
         subTitle="do Brasil"
         buttonShow={false}
         buttonText="Cadastrar"
         buttonUrl="/dashboard/localidade/novo"
       />
-      
-      <ListLocalidades localidades={localidades} />
+
+      {loading ? "Carregando ..." : listar()}
     </div>
   );
 }

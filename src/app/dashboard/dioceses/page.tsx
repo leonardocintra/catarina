@@ -18,7 +18,7 @@ export default function DiocesesPage() {
         const data = await res.json();
         setDioceses(data.data);
       } catch (error) {
-        console.error("Erro ao buscar dioceses", error);
+        console.error("Erro ao listar dioceses", error);
       } finally {
         setLoading(false);
       }
@@ -26,6 +26,14 @@ export default function DiocesesPage() {
 
     getDioceses();
   }, []);
+
+  const listar = () => {
+    if (dioceses) {
+      return <ListDioceses dioceses={dioceses} />;
+    } else {
+      return <h2>Nenhuma diocese cadastrada</h2>;
+    }
+  };
 
   return (
     <div>
@@ -37,7 +45,7 @@ export default function DiocesesPage() {
         buttonUrl="/dashboard/dioceses/novo"
       />
 
-      {loading ? "Carregando..." : <ListDioceses dioceses={dioceses} />}
+      {loading ? "Carregando..." : listar()}
     </div>
   );
 }
