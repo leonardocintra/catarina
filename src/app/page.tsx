@@ -10,12 +10,14 @@ import { Label } from "@/components/ui/label";
 import { ThemeModeToggle } from "@/components/custom/theme-toggle";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { ButtonLoading } from "@/components/custom/ui/ButtonLoading";
 
 export default function HomeLogin() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+  const [autenticando, setAutenticando] = useState(false);
 
   const schema = z.object({
     email: z.string().min(1, "Informe o e-mail ou CPF"),
@@ -23,6 +25,7 @@ export default function HomeLogin() {
   });
 
   const handleLogin = async () => {
+    setAutenticando(true);
     setErrorMsg("");
 
     const parsed = schema.safeParse({ email, password });
@@ -42,11 +45,13 @@ export default function HomeLogin() {
         setErrorMsg("Credenciais inválidas");
         return;
       }
-      
+
       router.push("/dashboard");
     } catch (error) {
       setErrorMsg("Erro ao tentar logar");
       console.error(error);
+    } finally {
+      setAutenticando(false);
     }
   };
 
@@ -95,9 +100,14 @@ export default function HomeLogin() {
             {errorMsg && (
               <p className="text-red-500 text-sm text-center">{errorMsg}</p>
             )}
-            <Button type="button" className="w-full" onClick={handleLogin}>
-              Entrar
-            </Button>
+
+            {autenticando ? (
+              <ButtonLoading text="Autenticando ..." />
+            ) : (
+              <Button type="button" className="w-full" onClick={handleLogin}>
+                Entrar
+              </Button>
+            )}
           </div>
           <div className="flex justify-center items-center space-x-2 my-4">
             <div>
