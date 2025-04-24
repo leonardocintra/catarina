@@ -52,7 +52,7 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Tipo</TableHead>
-            <TableHead>Descrição</TableHead>
+            <TableHead>Nome | Cidade</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -63,8 +63,11 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
               <TableCell className="text-slate-600 uppercase font-light">
                 {diocese.tipoDiocese.descricao}
               </TableCell>
-              <TableCell>
+              <TableCell className="flex space-x-2">
                 <div className="font-semibold">{diocese.descricao}</div>
+                <div className="font-light text-slate-800 italic">
+                  {diocese.endereco.cidade} - {diocese.endereco.UF}
+                </div>
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/dioceses/${diocese.id}`}>
