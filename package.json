@@ -1,7 +1,7 @@
 {
   "name": "catarina",
   "description": "Front administrativo para manipulacao de dados do caminho",
-  "version": "0.2.4",
+  "version": "0.3.0",
   "author": {
     "name": "Leonardo Nascimento Cintra",
     "email": "leonardo.ncintra@outlook.com"
@@ -33,6 +33,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "lucide-react": "^0.371.0",
+    "neocatecumenal": "^2.1.3",
     "next": "^14.2.3",
     "next-themes": "^0.3.0",
     "react": "^18",

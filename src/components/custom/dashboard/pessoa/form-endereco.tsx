@@ -12,13 +12,13 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { IEndereco } from "@/interfaces/IEndereco";
 import { useRouter } from "next/navigation";
+import { Pessoa } from "neocatecumenal";
 
 type EnderecoFormProps = {
-  pessoa: IPessoa;
+  pessoa: Pessoa;
   urlBase: string;
 };
 

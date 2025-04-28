@@ -2,7 +2,6 @@
 
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
-import { IDiocese } from "@/interfaces/IDiocese";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,10 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Diocese } from "neocatecumenal";
 
 type FormDioceseProps = {
   urlBase: string;
-  diocese?: IDiocese;
+  diocese?: Diocese;
 };
 
 export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
@@ -105,6 +105,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1, {
       message: "Selecion o tipo...",
     }),
+    enderecoId: z.string().optional(),
     logradouro: z.string().max(50),
     numero: z.string().max(5, { message: "Tamanho máximo é 5 caracteres." }),
     bairro: z.string().max(50, { message: "Tamanho máximo é 50 caracteres." }),
@@ -121,12 +122,13 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
     defaultValues: {
       descricao: diocese?.descricao || "",
       tipoDiocese: diocese?.tipoDiocese.id.toString() || "",
+      enderecoId: diocese?.endereco.id.toString() || "",
       cep: diocese?.endereco.cep || "",
       bairro: diocese?.endereco.bairro || "",
-      cidade: diocese?.endereco.cidade || "",
+      cidade: diocese?.endereco.cidade.nome || "",
       numero: diocese?.endereco.numero || "",
       logradouro: diocese?.endereco.logradouro || "",
-      uf: diocese?.endereco.UF || "",
+      uf: diocese?.endereco.cidade.estado.sigla || "",
     },
   });
 
@@ -170,9 +172,14 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         description: `Editada com sucesso!`,
       });
     } else {
+      let acao = "cadastrado";
+      if (method === "PATCH") {
+        acao = "editado";
+      }
+
       if (res.status === 400 || res.status === 404) {
         toast({
-          title: `${values.descricao} não foi cadastrado!`,
+          title: `${values.descricao} não foi ${acao}!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
         });
@@ -186,7 +193,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         });
       } else {
         toast({
-          title: `${values.descricao} não foi cadastrado!`,
+          title: `${values.descricao} não foi ${acao}!`,
           variant: "destructive",
           description: `Erro: ${res.text}`,
         });

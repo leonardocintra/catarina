@@ -13,8 +13,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { IDiocese } from "@/interfaces/IDiocese";
 import { BASE_URL } from "@/lib/utils";
+import { Diocese } from "neocatecumenal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -24,7 +24,7 @@ export default function EditarDiocesePage() {
   const router = useRouter();
   const dioceseId = params.id;
 
-  const [diocese, setDiocese] = useState<IDiocese>();
+  const [diocese, setDiocese] = useState<Diocese>();
   const [editar, setEditar] = useState<boolean>(false);
   const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
 
@@ -106,7 +106,7 @@ export default function EditarDiocesePage() {
             <CardContent>
               <LabelData
                 titulo="Cidade"
-                descricao={`${diocese.endereco.cidade} - ${diocese.endereco.UF}`}
+                descricao={`${diocese.endereco.cidade.nome} - ${diocese.endereco.cidade.estado.sigla}`}
               />
               <LabelData
                 titulo="Tipo"

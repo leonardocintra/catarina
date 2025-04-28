@@ -30,7 +30,7 @@ export default function NovaPessoaPage() {
   return (
     <div>
       <PageSubtitle
-        title="Cadatro de nova pessoa"
+        title="Cadastro de nova pessoa"
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/pessoas"

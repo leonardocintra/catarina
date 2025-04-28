@@ -30,7 +30,7 @@ export async function GET(
 // ) {
 //   const data = await req.json();
 
-//   const diocese: Partial<IDiocese> = {
+//   const diocese: Partial<Diocese> = {
 //     descricao: data.descricao,
 //     tipoDiocese: {
 //       id: parseInt(data.tipoDiocese),

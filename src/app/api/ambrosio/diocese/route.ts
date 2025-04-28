@@ -1,4 +1,3 @@
-import { IDiocese } from "@/interfaces/IDiocese";
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 
@@ -6,7 +5,7 @@ const url = `${AmbrosioBaseUrl}/diocese`;
 
 export async function GET() {
   const token = cookies().get("token")?.value;
-  
+
   const res = await fetch(url, {
     cache: "no-cache",
     method: "GET",
@@ -15,7 +14,7 @@ export async function GET() {
       Authorization: `Bearer ${token}`,
     },
   });
-  
+
   const data = await res.json();
   return Response.json(data);
 }
@@ -23,8 +22,8 @@ export async function GET() {
 export async function POST(req: Request) {
   const token = cookies().get("token")?.value;
   const data = await req.json();
-  
-  const diocese: Partial<IDiocese> = {
+
+  const diocese = {
     descricao: data.descricao,
     tipoDiocese: {
       id: parseInt(data.tipoDiocese),
@@ -36,8 +35,8 @@ export async function POST(req: Request) {
       numero: data.numero,
       bairro: data.bairro,
       cidade: data.cidade,
-      UF: data.uf,
       cep: data.cep,
+      UF: data.uf,
     },
   };
 

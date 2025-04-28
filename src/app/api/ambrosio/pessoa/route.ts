@@ -1,5 +1,5 @@
-import { IPessoa } from "@/interfaces/IPessoa";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { Pessoa } from "neocatecumenal";
 import { cookies } from "next/headers";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
@@ -20,7 +20,7 @@ export async function GET() {
 export async function POST(req: Request) {
   const data = await req.json();
 
-  const pessoa: Partial<IPessoa> = {
+  const pessoa: Partial<Pessoa> = {
     nome: data.nome,
     conhecidoPor: data.conhecidoPor,
     cpf: data.cpf,
@@ -32,9 +32,9 @@ export async function POST(req: Request) {
       id: parseInt(data.escolaridade),
       descricao: "Escolaridade",
     },
-    tipoPessoa: {
-      id: parseInt(data.tipoPessoa),
-      descricao: "TipoPessoa",
+    situacaoReligiosa: {
+      id: parseInt(data.situacaoReligiosa),
+      descricao: "SituacaoReligiosa",
     },
     sexo: data.sexo,
     nacionalidade: data.nacionalidade,

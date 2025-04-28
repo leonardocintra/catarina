@@ -16,13 +16,13 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 import { getDadosDaPessoa, getPessoa } from "@/lib/api/pessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Pessoa } from "neocatecumenal";
 
 export default function EditarPessoaPage({
   params,
@@ -30,7 +30,7 @@ export default function EditarPessoaPage({
   params: { id: number };
 }) {
   const [editar, setEditar] = useState<boolean>(false);
-  const [pessoa, setPessoa] = useState<IPessoa | null>(null);
+  const [pessoa, setPessoa] = useState<Pessoa | null>(null);
   const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>([]);
   const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>([]);
   const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>([]);
@@ -61,7 +61,7 @@ export default function EditarPessoaPage({
     <div>
       <PageSubtitle
         title={`Editar ${pessoa.nome}`}
-        subTitle={pessoa.tipoPessoa.descricao}
+        subTitle={pessoa.situacaoReligiosa.descricao}
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/pessoas"
@@ -78,7 +78,7 @@ export default function EditarPessoaPage({
             <CardContent>
               <LabelData
                 titulo="Nome"
-                descricao={`${pessoa.nome} - ${pessoa.tipoPessoa.descricao}`}
+                descricao={`${pessoa.nome} - ${pessoa.situacaoReligiosa.descricao}`}
               />
               <div className="flex space-x-2">
                 <LabelData
@@ -123,7 +123,7 @@ export default function EditarPessoaPage({
               <CardDescription>Carismas de {pessoa.nome}</CardDescription>
             </CardHeader>
             <CardContent>
-              {pessoa.carismas.map((carisma) => (
+              {pessoa.carismas?.map((carisma) => (
                 <li key={carisma.id}>{carisma.descricao}</li>
               ))}
             </CardContent>
@@ -140,28 +140,30 @@ export default function EditarPessoaPage({
               <CardDescription>Todos os endereços dessa pessoa</CardDescription>
             </CardHeader>
             <CardContent>
-              {pessoa.enderecos.length > 0 &&
-                pessoa.enderecos.map((end) => (
-                  <div
-                    key={end.id}
-                    className="mb-2 text-sm flex gap-2 items-center"
-                  >
-                    <div>
-                      <LabelData titulo="CEP" descricao={end.cep} />
-                      <div className="flex space-x-2">
-                        <LabelData titulo="Rua" descricao={end.logradouro} />
-                        <LabelData titulo="Nº" descricao={end.numero} />
-                      </div>
-                      <LabelData titulo="Bairro" descricao={end.bairro} />
-                      <div className="flex space-x-2">
-                        <LabelData titulo="Cidade" descricao={end.cidade} />
-                        <LabelData titulo="UF" descricao={end.UF} />
-                      </div>
-                      <Separator />
+              {pessoa.enderecos?.map((end) => (
+                <div
+                  key={end.id}
+                  className="mb-2 text-sm flex gap-2 items-center"
+                >
+                  <div>
+                    <LabelData titulo="CEP" descricao={end.cep} />
+                    <div className="flex space-x-2">
+                      <LabelData titulo="Rua" descricao={end.logradouro} />
+                      <LabelData titulo="Nº" descricao={end.numero} />
                     </div>
-                    <Button variant={"link"}>Editar</Button>
+                    <LabelData titulo="Bairro" descricao={end.bairro} />
+                    <div className="flex space-x-2">
+                      <LabelData titulo="Cidade" descricao={end.cidade.nome} />
+                      <LabelData
+                        titulo="UF"
+                        descricao={end.cidade.estado.nome}
+                      />
+                    </div>
+                    <Separator />
                   </div>
-                ))}
+                  <Button variant={"link"}>Editar</Button>
+                </div>
+              ))}
             </CardContent>
             <CardFooter>
               <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
@@ -185,7 +187,7 @@ export default function EditarPessoaPage({
                     className="text-2xl font-semibold underline decoration-sky-500"
                     href={`/dashboard/pessoas/${pessoa.conjugue.id}`}
                   >
-                    {pessoa.conjugue.nome}
+                    {pessoa.conjugue.esposa.nome}
                   </Link>
                 ) : (
                   <LabelData

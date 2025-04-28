@@ -2,10 +2,10 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { Button } from "@/components/ui/button";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { ITipoCarisma } from "@/interfaces/ITIpoCarisma";
 import { BASE_URL } from "@/lib/utils";
 import { CheckIcon } from "lucide-react";
+import { Pessoa } from "neocatecumenal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,7 +14,7 @@ export default function PessoaCarismaPage() {
   const router = useRouter();
   const pessoaId = params.id;
 
-  const [pessoa, setPessoa] = useState<IPessoa>();
+  const [pessoa, setPessoa] = useState<Pessoa>();
   const [tiposCarisma, setTiposCarisma] = useState<ITipoCarisma[]>([]);
   const [selectedCarismas, setSelectedCarismas] = useState<number[]>([]);
   const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
