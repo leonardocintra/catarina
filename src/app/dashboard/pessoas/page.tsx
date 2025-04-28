@@ -2,12 +2,12 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
+import { Pessoa } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
 export default function PessoaPage() {
-  const [pessoas, setPessoas] = useState<IPessoa[]>([]);
+  const [pessoas, setPessoas] = useState<Pessoa[]>([]);
 
   useEffect(() => {
     const getPessoas = async () => {

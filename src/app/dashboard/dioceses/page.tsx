@@ -2,11 +2,11 @@
 
 import ListDioceses from "@/components/custom/dashboard/diocese/list-dioceses";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { IDiocese } from "@/interfaces/IDiocese";
+import { Diocese } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
 export default function DiocesesPage() {
-  const [dioceses, setDioceses] = useState<IDiocese[]>([]);
+  const [dioceses, setDioceses] = useState<Diocese[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

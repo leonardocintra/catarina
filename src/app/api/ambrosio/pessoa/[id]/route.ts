@@ -1,5 +1,5 @@
-import { IPessoa } from "@/interfaces/IPessoa";
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { Pessoa } from "neocatecumenal";
 import { NextRequest } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
@@ -31,7 +31,7 @@ export async function PATCH(
 ) {
   const data = await req.json();
 
-  const pessoa: Partial<IPessoa> = {
+  const pessoa: Partial<Pessoa> = {
     nome: data.nome,
     conhecidoPor: data.conhecidoPor,
     cpf: data.cpf,
@@ -43,9 +43,9 @@ export async function PATCH(
       id: parseInt(data.escolaridade),
       descricao: "Escolaridade",
     },
-    tipoPessoa: {
-      id: parseInt(data.tipoPessoa),
-      descricao: "TipoPessoa",
+    situacaoReligiosa: {
+      id: parseInt(data.situacaoReligiosa),
+      descricao: "situacaoReligiosa",
     },
     sexo: data.sexo,
     nacionalidade: data.nacionalidade,

@@ -10,14 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IDiocese } from "@/interfaces/IDiocese";
 import { removerAcento } from "@/lib/utils";
 import { FolderSearch } from "lucide-react";
+import { Diocese } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
 
 type ListDiocesesProps = {
-  dioceses: IDiocese[];
+  dioceses: Diocese[];
 };
 
 export default function ListDioceses({ dioceses }: ListDiocesesProps) {
@@ -66,7 +66,8 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
               <TableCell className="flex space-x-2">
                 <div className="font-semibold">{diocese.descricao}</div>
                 <div className="font-light text-slate-800 italic">
-                  {diocese.endereco.cidade} - {diocese.endereco.UF}
+                  {diocese.endereco.cidade.nome} -{" "}
+                  {diocese.endereco.cidade.estado.sigla}
                 </div>
               </TableCell>
               <TableCell>

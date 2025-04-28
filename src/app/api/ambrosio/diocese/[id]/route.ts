@@ -1,4 +1,3 @@
-import { IDiocese } from "@/interfaces/IDiocese";
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
@@ -50,7 +49,7 @@ export async function PATCH(
   const data = await req.json();
   const token = cookies().get("token")?.value;
 
-  const diocese: Partial<IDiocese> = {
+  const diocese = {
     descricao: data.descricao,
     tipoDiocese: {
       id: parseInt(data.tipoDiocese),
@@ -58,6 +57,7 @@ export async function PATCH(
     },
     observacao: data.observacao,
     endereco: {
+      id: parseInt(data.enderecoId),
       logradouro: data.logradouro,
       numero: data.numero,
       bairro: data.bairro,

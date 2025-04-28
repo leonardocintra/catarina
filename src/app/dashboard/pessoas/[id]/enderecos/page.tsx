@@ -2,8 +2,8 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import EnderecoForm from "@/components/custom/dashboard/pessoa/form-endereco";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { BASE_URL } from "@/lib/utils";
+import { Pessoa } from "neocatecumenal";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -11,7 +11,7 @@ export default function PessoaEnderecoPage() {
   const params = useParams();
   const pessoaId = params.id;
 
-  const [pessoa, setPessoa] = useState<IPessoa>();
+  const [pessoa, setPessoa] = useState<Pessoa>();
 
   useEffect(() => {
     const fetchData = async () => {

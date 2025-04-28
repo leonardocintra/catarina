@@ -14,7 +14,7 @@ export async function GET() {
 // export async function POST(req: Request) {
 //   const data = await req.json();
 
-//   const diocese: Partial<IDiocese> = {
+//   const diocese: Partial<Diocese> = {
 //     descricao: data.descricao,
 //     tipoDiocese: {
 //       id: parseInt(data.tipoDiocese),

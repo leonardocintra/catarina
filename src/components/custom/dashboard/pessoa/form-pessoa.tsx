@@ -22,14 +22,14 @@ import { Input } from "@/components/ui/input";
 import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
 import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { Button } from "@/components/ui/button";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
+import { Pessoa } from "neocatecumenal";
 
 type PessoaFormProps = {
   urlBase: string;
-  pessoa?: IPessoa;
+  pessoa?: Pessoa;
   estadoCivils: IEstadoCivil[];
   escolaridades: IEscolaridade[];
   tipoPessoas: ITipoPessoa[];
@@ -69,7 +69,7 @@ export default function PessoaForm({
       sexo: "MASCULINO",
       escolaridade: pessoa?.escolaridade.id.toString() || "",
       estadoCivil: pessoa?.estadoCivil.id.toString() || "",
-      tipoPessoa: pessoa?.tipoPessoa.id.toString() || "",
+      tipoPessoa: pessoa?.situacaoReligiosa.id.toString() || "",
     },
   });
 
@@ -105,6 +105,7 @@ export default function PessoaForm({
         description: `Editado(a) com sucesso!`,
       });
     } else {
+      console.log(res.body);
       if (res.status === 400) {
         toast({
           title: `${values.nome} não foi cadastrado!`,
@@ -206,7 +207,7 @@ export default function PessoaForm({
                 <FormLabel>Tipo</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.tipoPessoa.id.toString()}
+                  defaultValue={pessoa?.situacaoReligiosa.id.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>

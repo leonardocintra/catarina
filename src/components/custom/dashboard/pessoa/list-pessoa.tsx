@@ -10,14 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IPessoa } from "@/interfaces/IPessoa";
 import { removerAcento } from "@/lib/utils";
 import { CheckIcon, FolderSearch } from "lucide-react";
+import { Pessoa } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
 
 type ListPessoaProps = {
-  pessoas: IPessoa[];
+  pessoas: Pessoa[];
 };
 
 export default function ListPessoa({ pessoas }: ListPessoaProps) {
@@ -62,7 +62,7 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
             <TableRow key={pessoa.id}>
               <TableCell>#{pessoa.id}</TableCell>
               <TableCell className="text-slate-600 uppercase font-light">
-                {pessoa.tipoPessoa.descricao}
+                {pessoa.situacaoReligiosa.descricao}
               </TableCell>
               <TableCell>
                 <div className="font-semibold">{pessoa.nome}</div>
