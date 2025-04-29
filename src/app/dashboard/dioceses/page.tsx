@@ -2,6 +2,7 @@
 
 import ListDioceses from "@/components/custom/dashboard/diocese/list-dioceses";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Diocese } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
@@ -45,7 +46,11 @@ export default function DiocesesPage() {
         buttonUrl="/dashboard/dioceses/novo"
       />
 
-      {loading ? "Carregando..." : listar()}
+      {loading ? (
+        <SkeletonLoading mensagem="Carregando dioceses ..." />
+      ) : (
+        listar()
+      )}
     </div>
   );
 }

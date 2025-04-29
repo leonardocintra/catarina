@@ -14,15 +14,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { IEscolaridade } from "@/interfaces/IEscolaridade";
-import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
-import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
 import { getDadosDaPessoa, getPessoa } from "@/lib/api/pessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Pessoa } from "neocatecumenal";
+import {
+  Escolaridade,
+  EstadoCivil,
+  Pessoa,
+  SituacaoReligiosa,
+} from "neocatecumenal";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 
 export default function EditarPessoaPage({
   params,
@@ -31,9 +34,11 @@ export default function EditarPessoaPage({
 }) {
   const [editar, setEditar] = useState<boolean>(false);
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
-  const [estadoCivils, setEstadoCivils] = useState<IEstadoCivil[]>([]);
-  const [escolaridades, setEscolaridades] = useState<IEscolaridade[]>([]);
-  const [tipoPessoas, setTipoPessoas] = useState<ITipoPessoa[]>([]);
+  const [estadoCivils, setEstadoCivils] = useState<EstadoCivil[]>([]);
+  const [escolaridades, setEscolaridades] = useState<Escolaridade[]>([]);
+  const [situacaoReligiosas, setSituacaoReligiosas] = useState<
+    SituacaoReligiosa[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -41,20 +46,20 @@ export default function EditarPessoaPage({
       setLoading(true);
 
       const pessoaData = await getPessoa(params.id);
-      const { estadoCivils, escolaridades, tipoPessoas } =
+      const { estadoCivils, escolaridades, situacaoReligosas } =
         await getDadosDaPessoa();
 
       setPessoa(pessoaData);
       setEstadoCivils(estadoCivils);
       setEscolaridades(escolaridades);
-      setTipoPessoas(tipoPessoas);
+      setSituacaoReligiosas(situacaoReligosas);
       setLoading(false);
     };
 
     fetchData();
   }, [params.id]);
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return <SkeletonLoading mensagem="Carregando pessoa ..." />;
   if (!pessoa) return notFound();
 
   return (
@@ -76,9 +81,12 @@ export default function EditarPessoaPage({
               <CardDescription>Dados principais</CardDescription>
             </CardHeader>
             <CardContent>
+              <LabelData titulo="Nome" descricao={`${pessoa.nome}`} />
               <LabelData
-                titulo="Nome"
-                descricao={`${pessoa.nome} - ${pessoa.situacaoReligiosa.descricao}`}
+                titulo="Conhecido por"
+                descricao={`${
+                  pessoa.conhecidoPor ? pessoa.conhecidoPor : pessoa.nome
+                }`}
               />
               <div className="flex space-x-2">
                 <LabelData
@@ -214,7 +222,7 @@ export default function EditarPessoaPage({
           pessoa={pessoa}
           escolaridades={escolaridades}
           estadoCivils={estadoCivils}
-          situacaoReligiosas={tipoPessoas}
+          situacaoReligiosas={situacaoReligiosas}
         />
       )}
     </div>

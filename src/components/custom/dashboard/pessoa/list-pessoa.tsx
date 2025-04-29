@@ -51,7 +51,7 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            <TableHead>Tipo</TableHead>
+            <TableHead>Situação Religiosa</TableHead>
             <TableHead>Nome</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Detalhes</TableHead>
@@ -66,6 +66,7 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
               </TableCell>
               <TableCell>
                 <div className="font-semibold">{pessoa.nome}</div>
+                <div className="font-extralight italic">{pessoa.conhecidoPor}</div>
               </TableCell>
               <TableCell>
                 <CheckIcon />

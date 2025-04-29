@@ -172,7 +172,7 @@ export default function PessoaForm({
               <FormItem>
                 <FormLabel>CPF</FormLabel>
                 <FormControl>
-                  <Input placeholder="CPF ..." {...field} />
+                  <Input placeholder="CPF ..." {...field} maxLength={11} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

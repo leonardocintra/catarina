@@ -2,6 +2,7 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { Pessoa } from "neocatecumenal";
 import { useEffect, useState } from "react";
@@ -45,7 +46,7 @@ export default function PessoaPage() {
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      {loading ? "Carregando..." : listar()}
+      {loading ? <SkeletonLoading mensagem="Carregando pessoas ..." /> : listar()}
     </div>
   );
 }

@@ -16,12 +16,12 @@ export default function NovaPessoaPage() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const { estadoCivils, escolaridades, tipoPessoas } =
+      const { estadoCivils, escolaridades, situacaoReligosas } =
         await getDadosDaPessoa();
 
       setEstadoCivils(estadoCivils);
       setEscolaridades(escolaridades);
-      setSituacaoReligiosas(tipoPessoas);
+      setSituacaoReligiosas(situacaoReligosas);
     };
 
     fetchData();
