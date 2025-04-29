@@ -225,7 +225,7 @@ export default function PessoaForm({
                         key={situacao.id}
                         value={situacao.id.toString()}
                       >
-                        {situacao.id} - {situacao.descricao}
+                        {situacao.descricao}
                       </SelectItem>
                     ))}
                   </SelectContent>

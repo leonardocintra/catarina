@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -79,7 +78,7 @@ export default function HomeLogin() {
               />
             </div>
             <div className="grid gap-2">
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <Label htmlFor="password">Senha</Label>
                 <Link
                   href="/esqueci-senha"
@@ -87,7 +86,7 @@ export default function HomeLogin() {
                 >
                   Esqueceu sua senha?
                 </Link>
-              </div>
+              </div> */}
               <Input
                 id="password"
                 type="password"
