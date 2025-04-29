@@ -62,7 +62,7 @@ export default function LocalidadeForm({
           variant: "destructive",
           description: `Erro: ${error}`,
         });
-        console.log(error);
+        console.error(error);
       }
     };
 

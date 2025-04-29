@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ITipoDiocese } from "@/interfaces/ITipoDiocese";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,7 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { Diocese } from "neocatecumenal";
+import { Diocese, TipoDiocese } from "neocatecumenal";
 
 type FormDioceseProps = {
   urlBase: string;
@@ -36,7 +35,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const { toast } = useToast();
   const router = useRouter();
 
-  const [tipoDiocese, setTipoDiocese] = useState<ITipoDiocese[]>();
+  const [tipoDiocese, setTipoDiocese] = useState<TipoDiocese[]>();
   const [bairroDisabled, setBairroDisabled] = useState(true);
   const [cidadeDisabled, setCidadeDisabled] = useState(true);
   const [logradouroDisabled, setLogradouroDisabled] = useState(true);
@@ -90,7 +89,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
 
         setTipoDiocese(dataTipoDiocese.data);
       } catch (error: any) {
-        console.log(error);
+        console.error(error);
       }
     };
 

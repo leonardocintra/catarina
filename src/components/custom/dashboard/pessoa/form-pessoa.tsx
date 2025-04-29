@@ -1,5 +1,3 @@
-"use client";
-
 import * as z from "zod";
 import {
   Form,
@@ -19,20 +17,22 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { IEstadoCivil } from "@/interfaces/IEstadoCivil";
-import { IEscolaridade } from "@/interfaces/IEscolaridade";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { ITipoPessoa } from "@/interfaces/ITipoPessoa";
-import { Pessoa } from "neocatecumenal";
+import {
+  Escolaridade,
+  EstadoCivil,
+  Pessoa,
+  SituacaoReligiosa,
+} from "neocatecumenal";
 
 type PessoaFormProps = {
   urlBase: string;
   pessoa?: Pessoa;
-  estadoCivils: IEstadoCivil[];
-  escolaridades: IEscolaridade[];
-  tipoPessoas: ITipoPessoa[];
+  estadoCivils: EstadoCivil[];
+  escolaridades: Escolaridade[];
+  situacaoReligiosas: SituacaoReligiosa[];
 };
 
 export default function PessoaForm({
@@ -40,7 +40,7 @@ export default function PessoaForm({
   pessoa,
   estadoCivils,
   escolaridades,
-  tipoPessoas,
+  situacaoReligiosas,
 }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -55,7 +55,7 @@ export default function PessoaForm({
     nacionalidade: z.string().max(50),
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
     escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
-    tipoPessoa: z.string({ message: "Campo obrigatório" }).min(1),
+    situacaoReligiosa: z.string({ message: "Campo obrigatório" }).min(1),
     sexo: z.enum(["MASCULINO", "FEMININO"]),
   });
 
@@ -69,7 +69,7 @@ export default function PessoaForm({
       sexo: "MASCULINO",
       escolaridade: pessoa?.escolaridade.id.toString() || "",
       estadoCivil: pessoa?.estadoCivil.id.toString() || "",
-      tipoPessoa: pessoa?.situacaoReligiosa.id.toString() || "",
+      situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
     },
   });
 
@@ -105,8 +105,13 @@ export default function PessoaForm({
         description: `Editado(a) com sucesso!`,
       });
     } else {
-      console.log(res.body);
-      if (res.status === 400) {
+      if (res.status === 401) {
+        toast({
+          title: `${values.nome} não foi cadastrado!`,
+          variant: "destructive",
+          description: `Você não tem permissão para cadastro`,
+        });
+      } else if (res.status === 400) {
         toast({
           title: `${values.nome} não foi cadastrado!`,
           variant: "destructive",
@@ -167,7 +172,7 @@ export default function PessoaForm({
               <FormItem>
                 <FormLabel>CPF</FormLabel>
                 <FormControl>
-                  <Input placeholder="CPF ..." {...field} />
+                  <Input placeholder="CPF ..." {...field} maxLength={11} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -201,10 +206,10 @@ export default function PessoaForm({
 
           <FormField
             control={form.control}
-            name="tipoPessoa"
+            name="situacaoReligiosa"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Tipo</FormLabel>
+                <FormLabel>Situação Religiosa</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={pessoa?.situacaoReligiosa.id.toString()}
@@ -215,9 +220,12 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {tipoPessoas.map((es) => (
-                      <SelectItem key={es.id} value={es.id.toString()}>
-                        {es.descricao}
+                    {situacaoReligiosas.map((situacao) => (
+                      <SelectItem
+                        key={situacao.id}
+                        value={situacao.id.toString()}
+                      >
+                        {situacao.descricao}
                       </SelectItem>
                     ))}
                   </SelectContent>

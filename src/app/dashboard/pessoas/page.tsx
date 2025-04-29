@@ -2,12 +2,14 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { Pessoa } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
 export default function PessoaPage() {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPessoas = async () => {
@@ -20,10 +22,20 @@ export default function PessoaPage() {
         setPessoas(data.data);
       } catch (error) {
         console.error("Erro ao buscar pessoas", error);
+      } finally {
+        setLoading(false);
       }
     };
     getPessoas();
   }, []);
+
+  const listar = () => {
+    if (pessoas) {
+      return <ListPessoa pessoas={pessoas} />;
+    } else {
+      return <h2>Nenhuma pessoa cadastrada</h2>;
+    }
+  };
 
   return (
     <div className="">
@@ -34,7 +46,7 @@ export default function PessoaPage() {
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      <ListPessoa pessoas={pessoas} />
+      {loading ? <SkeletonLoading mensagem="Carregando pessoas ..." /> : listar()}
     </div>
   );
 }

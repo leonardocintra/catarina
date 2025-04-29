@@ -13,18 +13,19 @@ export async function getDadosDaPessoa() {
   const urls = [
     `${BASE_URL}/api/ambrosio/configuracoes/estadoCivil`,
     `${BASE_URL}/api/ambrosio/configuracoes/escolaridade`,
-    `${BASE_URL}/api/ambrosio/configuracoes/tipoPessoa`,
+    `${BASE_URL}/api/ambrosio/configuracoes/situacaoReligiosa`,
   ];
 
-  const [estadoCivilRes, escolaridadeRes, tipoPessoaRes] = await Promise.all(
-    urls.map((url) =>
-      fetch(url).then((res) => (res.ok ? res.json() : { data: [] }))
-    )
-  );
+  const [estadoCivilRes, escolaridadeRes, situacaoReligosas] =
+    await Promise.all(
+      urls.map((url) =>
+        fetch(url).then((res) => (res.ok ? res.json() : { data: [] }))
+      )
+    );
 
   return {
     estadoCivils: estadoCivilRes.data,
     escolaridades: escolaridadeRes.data,
-    tipoPessoas: tipoPessoaRes.data,
+    situacaoReligosas: situacaoReligosas.data,
   };
 }

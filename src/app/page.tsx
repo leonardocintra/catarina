@@ -43,14 +43,13 @@ export default function HomeLogin() {
 
       if (!res.ok) {
         setErrorMsg("Credenciais inválidas");
+        setAutenticando(false);
         return;
       }
-
       router.push("/dashboard");
     } catch (error) {
       setErrorMsg("Erro ao tentar logar");
       console.error(error);
-    } finally {
       setAutenticando(false);
     }
   };

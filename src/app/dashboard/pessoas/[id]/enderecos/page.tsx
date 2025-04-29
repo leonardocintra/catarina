@@ -24,7 +24,7 @@ export default function PessoaEnderecoPage() {
         const [resPessoa] = await Promise.all([getPessoa()]);
         setPessoa(resPessoa);
       } catch (error: any) {
-        console.log(error);
+        console.error(error);
       }
     };
 
