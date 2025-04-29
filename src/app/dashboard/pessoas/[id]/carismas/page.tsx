@@ -61,7 +61,7 @@ export default function PessoaCarismaPage() {
           );
         }
       } catch (error: any) {
-        console.log(error);
+        console.error(error);
       }
     };
 

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function PessoaPage() {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getPessoas = async () => {
@@ -20,10 +21,20 @@ export default function PessoaPage() {
         setPessoas(data.data);
       } catch (error) {
         console.error("Erro ao buscar pessoas", error);
+      } finally {
+        setLoading(false);
       }
     };
     getPessoas();
   }, []);
+
+  const listar = () => {
+    if (pessoas) {
+      return <ListPessoa pessoas={pessoas} />;
+    } else {
+      return <h2>Nenhuma pessoa cadastrada</h2>;
+    }
+  };
 
   return (
     <div className="">
@@ -34,7 +45,7 @@ export default function PessoaPage() {
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      <ListPessoa pessoas={pessoas} />
+      {loading ? "Carregando..." : listar()}
     </div>
   );
 }

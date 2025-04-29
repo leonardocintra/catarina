@@ -90,7 +90,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
 
         setTipoDiocese(dataTipoDiocese.data);
       } catch (error: any) {
-        console.log(error);
+        console.error(error);
       }
     };
 

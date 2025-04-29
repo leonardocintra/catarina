@@ -214,7 +214,7 @@ export default function EditarPessoaPage({
           pessoa={pessoa}
           escolaridades={escolaridades}
           estadoCivils={estadoCivils}
-          tipoPessoas={tipoPessoas}
+          situacaoReligiosas={tipoPessoas}
         />
       )}
     </div>

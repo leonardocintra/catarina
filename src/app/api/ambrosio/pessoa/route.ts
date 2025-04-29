@@ -18,6 +18,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const token = cookies().get("token")?.value;
   const data = await req.json();
 
   const pessoa: Partial<Pessoa> = {
@@ -44,6 +45,7 @@ export async function POST(req: Request) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(pessoa),
   });
