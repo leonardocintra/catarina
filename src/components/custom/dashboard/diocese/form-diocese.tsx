@@ -1,6 +1,7 @@
 "use client";
 
 import * as z from "zod";
+import InputMask from "react-input-mask";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -25,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Diocese, TipoDiocese } from "neocatecumenal";
+import { SkeletonLoading } from "../../ui/SkeletonLoading";
 
 type FormDioceseProps = {
   urlBase: string;
@@ -40,36 +42,43 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   const [cidadeDisabled, setCidadeDisabled] = useState(true);
   const [logradouroDisabled, setLogradouroDisabled] = useState(true);
 
-  const onChangeCaptureHandler = (e: any) => {
-    handleCep(e.target.value);
-  };
-
   async function handleCep(cepInput: string) {
-    if (cepInput.length !== 8) {
-      //TODO: CEP tem 8 digitos mas so funciona com 7
-      return;
-    }
-
-    const res = await fetch(`https://viacep.com.br/ws/${cepInput}/json/`)
+    const cep = cepInput.replace(/\D/g, "");
+    const res = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
       .then((res) => res.json())
       .then((res) => {
         return res;
       });
 
-    form.setValue("bairro", res.bairro);
-    form.setValue("cidade", res.localidade);
-    form.setValue("uf", res.uf);
-    form.setValue("logradouro", res.logradouro);
-    if (res.logradouro === "") {
-      form.setFocus("logradouro");
-      setBairroDisabled(false);
-      setLogradouroDisabled(false);
+    if (res.erro) {
+      toast({
+        title: `CEP ${cepInput} não encontrado`,
+        variant: "destructive",
+        description: `Verifique se o CEP realmente existe`,
+      });
+      form.setValue("bairro", "");
+      form.setValue("cidade", "");
+      form.setValue("uf", "");
+      form.setValue("logradouro", "");
+      form.setValue("numero", "");
+      form.setFocus("cep");
+
     } else {
-      form.setFocus("numero");
-      setBairroDisabled(true);
-      setLogradouroDisabled(true);
+      form.setValue("bairro", res.bairro);
+      form.setValue("cidade", res.localidade);
+      form.setValue("uf", res.uf);
+      form.setValue("logradouro", res.logradouro);
+      if (res.logradouro === "") {
+        form.setFocus("logradouro");
+        setBairroDisabled(false);
+        setLogradouroDisabled(false);
+      } else {
+        form.setFocus("numero");
+        setBairroDisabled(true);
+        setLogradouroDisabled(true);
+      }
+      setCidadeDisabled(true);
     }
-    setCidadeDisabled(true);
   }
 
   useEffect(() => {
@@ -112,8 +121,14 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
       .string({ message: "O CEP é obrigatório" })
       .min(8, { message: "O CEP precisa ter 8 digitos" })
       .max(8, { message: "O CEP precisa ter 8 digitos" }),
-    cidade: z.string().max(50, { message: "Tamanho máximo é 50 caracteres." }),
-    uf: z.string().max(2).min(2),
+    cidade: z
+      .string({ message: "Nome da cidade é obrigatório" })
+      .min(2, { message: "Cidade precisa ter no minimo 2 caracteres" })
+      .max(50, { message: "Tamanho máximo é 50 caracteres." }),
+    uf: z
+      .string({ message: "Obrigatório informar o estado" })
+      .max(2, { message: "Obrigatório ter 2 caracteres" })
+      .min(2, { message: "Obrigatório ter 2 caracteres" }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -132,11 +147,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
   });
 
   if (!tipoDiocese) {
-    return (
-      <div>
-        <h2>Carregando ...</h2>
-      </div>
-    );
+    return <SkeletonLoading mensagem="Carregando tipos de diocese ..." />;
   }
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -258,13 +269,22 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>CEP</FormLabel>
-                <FormControl onChangeCapture={onChangeCaptureHandler}>
-                  <Input
-                    maxLength={8}
-                    minLength={8}
-                    placeholder="CEP da diocese ..."
-                    {...field}
-                  />
+                <FormControl>
+                  <InputMask
+                    mask="99999-999"
+                    value={field.value}
+                    onChange={(e) => {
+                      const numericCep = e.target.value.replace(/\D/g, ""); // remove hífen e tudo que não for número
+                      field.onChange(numericCep); // salva o valor limpo no react-hook-form
+                      if (numericCep.length === 8) {
+                        handleCep(numericCep);
+                      }
+                    }}
+                  >
+                    {(inputProps) => (
+                      <Input {...inputProps} placeholder="CEP da diocese ..." />
+                    )}
+                  </InputMask>
                 </FormControl>
                 <FormMessage />
               </FormItem>
