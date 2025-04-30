@@ -5,6 +5,7 @@ import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPaises from "@/components/custom/dashboard/pais/list-pais";
 import { IPais } from "@/interfaces/IPais";
 import { BASE_URL } from "@/lib/utils";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 
 export default function PaisPage() {
   const [paises, setPaises] = useState<IPais[]>([]);
@@ -26,7 +27,7 @@ export default function PaisPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p>Carregando...</p>;
+  if (loading) return <SkeletonLoading mensagem="Carregando paises ..." />;
 
   return (
     <div>
