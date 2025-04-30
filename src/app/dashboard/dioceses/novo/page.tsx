@@ -6,7 +6,7 @@ export default function NovaDiocesePage() {
   return (
     <div>
       <PageSubtitle
-        title="Cadatro de nova diocese"
+        title="Cadastro de nova diocese"
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/dioceses"
