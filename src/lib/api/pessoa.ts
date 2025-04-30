@@ -16,7 +16,7 @@ export async function getDadosDaPessoa() {
     `${BASE_URL}/api/ambrosio/configuracoes/situacaoReligiosa`,
   ];
 
-  const [estadoCivilRes, escolaridadeRes, situacaoReligosasRes] =
+  const [estadoCivilRes, escolaridadeRes, situacoesReligiosaRes] =
     await Promise.all(
       urls.map((url) =>
         fetch(url).then((res) => (res.ok ? res.json() : { data: [] }))
@@ -24,8 +24,8 @@ export async function getDadosDaPessoa() {
     );
 
   return {
-    estadoCivils: estadoCivilRes.data,
-    escolaridades: escolaridadeRes.data,
-    situacaoReligosas: situacaoReligosasRes.data,
+    estadosCivilData: estadoCivilRes.data,
+    escolaridadesData: escolaridadeRes.data,
+    situacoesReligiosaData: situacoesReligiosaRes.data,
   };
 }

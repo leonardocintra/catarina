@@ -34,9 +34,9 @@ export default function EditarPessoaPage({
 }) {
   const [editar, setEditar] = useState<boolean>(false);
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
-  const [estadoCivils, setEstadoCivils] = useState<EstadoCivil[]>([]);
+  const [estadosCivil, setEstadosCivil] = useState<EstadoCivil[]>([]);
   const [escolaridades, setEscolaridades] = useState<Escolaridade[]>([]);
-  const [situacaoReligiosas, setSituacaoReligiosas] = useState<
+  const [situacoesReligiosa, setSituacoesReligiosa] = useState<
     SituacaoReligiosa[]
   >([]);
   const [loading, setLoading] = useState(true);
@@ -46,13 +46,13 @@ export default function EditarPessoaPage({
       setLoading(true);
 
       const pessoaData = await getPessoa(params.id);
-      const { estadoCivils, escolaridades, situacaoReligosas } =
+      const { estadosCivilData, escolaridadesData, situacoesReligiosaData } =
         await getDadosDaPessoa();
 
       setPessoa(pessoaData);
-      setEstadoCivils(estadoCivils);
-      setEscolaridades(escolaridades);
-      setSituacaoReligiosas(situacaoReligosas);
+      setEstadosCivil(estadosCivilData);
+      setEscolaridades(escolaridadesData);
+      setSituacoesReligiosa(situacoesReligiosaData);
       setLoading(false);
     };
 
@@ -221,8 +221,8 @@ export default function EditarPessoaPage({
           urlBase={BASE_URL}
           pessoa={pessoa}
           escolaridades={escolaridades}
-          estadoCivils={estadoCivils}
-          situacaoReligiosas={situacaoReligiosas}
+          estadosCivil={estadosCivil}
+          situacoesReligiosa={situacoesReligiosa}
         />
       )}
     </div>

@@ -30,17 +30,17 @@ import {
 type PessoaFormProps = {
   urlBase: string;
   pessoa?: Pessoa;
-  estadoCivils: EstadoCivil[];
+  estadosCivil: EstadoCivil[];
   escolaridades: Escolaridade[];
-  situacaoReligiosas: SituacaoReligiosa[];
+  situacoesReligiosa: SituacaoReligiosa[];
 };
 
 export default function PessoaForm({
   urlBase,
   pessoa,
-  estadoCivils,
+  estadosCivil,
   escolaridades,
-  situacaoReligiosas,
+  situacoesReligiosa,
 }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -220,7 +220,7 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {situacaoReligiosas.map((situacao) => (
+                    {situacoesReligiosa.map((situacao) => (
                       <SelectItem
                         key={situacao.id}
                         value={situacao.id.toString()}
@@ -251,7 +251,7 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {estadoCivils.map((es) => (
+                    {estadosCivil.map((es) => (
                       <SelectItem key={es.id} value={es.id.toString()}>
                         {es.descricao}
                       </SelectItem>
