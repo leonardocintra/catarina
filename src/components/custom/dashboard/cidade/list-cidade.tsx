@@ -1,6 +1,3 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,27 +9,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { IPais } from "@/interfaces/IPais";
 import { removerAcento } from "@/lib/utils";
 import { FolderSearch } from "lucide-react";
-import Link from "next/link";
+import { Cidade } from "neocatecumenal";
 import { useState } from "react";
 
-type ListPaisesProps = {
-  paises: IPais[];
+type ListCidadesProps = {
+  cidades: Cidade[];
 };
 
-export default function ListPaises({ paises }: ListPaisesProps) {
+export default function ListCidades({ cidades }: ListCidadesProps) {
   const [search, setSearch] = useState("");
 
-  const paisesFiltrados =
+  const cidadesFiltradas =
     search.length > 0
-      ? paises.filter((p) => {
-          const nome = removerAcento(p.nome).toLowerCase();
+      ? cidades.filter((c) => {
+          const nome = removerAcento(c.nome).toLowerCase();
           const nomePesquisa = removerAcento(search).toLowerCase();
           return nome.includes(nomePesquisa);
         })
-      : paises;
+      : cidades;
 
   return (
     <div>
@@ -41,39 +37,36 @@ export default function ListPaises({ paises }: ListPaisesProps) {
           <FolderSearch /> Pesquisa
         </Label>
         <Input
-          placeholder="Digite o nome do pais ..."
+          placeholder="Digite o nome da cidade ..."
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
       <Table>
-        <TableCaption>Ultimos cadastros - Paises: {paises.length}</TableCaption>
+        <TableCaption>
+          Ultimos cadastros - Cidades: {cidades.length}
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>Região</TableHead>
-            <TableHead>Subregião</TableHead>
+            <TableHead>Estado</TableHead>
+            <TableHead>Pais</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {paisesFiltrados.slice(0, 10).map((pais) => (
-            <TableRow key={pais.id}>
-              <TableCell>#{pais.id}</TableCell>
+          {cidadesFiltradas.slice(0, 50).map((cidade) => (
+            <TableRow key={cidade.id}>
+              <TableCell>#{cidade.id}</TableCell>
               <TableCell className="text-slate-500 uppercase font-semibold">
-                {pais.nome}
+                {cidade.nome}
               </TableCell>
               <TableCell>
-                <div className="font-light">{pais.regiao}</div>
+                <div className="font-light">
+                  {cidade.estado.sigla} - {cidade.estado.nome}
+                </div>
               </TableCell>
-              <TableCell>{pais.subRegiao}</TableCell>
-              <TableCell>
-                <Link href={`/dashboard/pais/${pais.id}`}>
-                  <Button variant={"link"} size={"sm"}>
-                    Ver detalhes
-                  </Button>
-                </Link>
-              </TableCell>
+              <TableCell>{cidade.estado.pais.nome}</TableCell>
             </TableRow>
           ))}
         </TableBody>
