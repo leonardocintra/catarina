@@ -53,9 +53,10 @@ const data = {
       ],
     },
     {
-      title: "Locais",
+      title: "Pontos fisicos",
       url: "#",
       icon: MapPin,
+      isActive: true,
       items: [
         {
           title: "Dioceses",

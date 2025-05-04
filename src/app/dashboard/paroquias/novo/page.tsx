@@ -1,39 +1,32 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
+import Link from "next/link";
 
-export default function LocalidadePage() {
+export default function NovaParoquiaPage() {
   return (
     <div>
       <PageSubtitle
+        title="Cadastro de nova paroquia"
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/paroquias"
-        subTitle="Nova localidade"
-        title="Cadastro de localidade"
+        buttonVariant="outline"
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Nova paroquia</CardTitle>
-          <CardDescription>Informe todos os dados necessários</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form>
-            <Input placeholder="Paroquia" />
-          </form>
-        </CardContent>
-        <CardFooter className="border-t px-6 py-4">
-          <Button>Salvar</Button>
-        </CardFooter>
-      </Card>
+
+      <Alert>
+        <Terminal className="h-4 w-4" />
+        <AlertTitle>Atenção!</AlertTitle>
+        <AlertDescription>
+          Para cadastrar uma paróquia você precisa ir na pagina de{" "}
+          <Link
+            className="font-semibold underline"
+            href={"/dashboard/dioceses"}
+          >
+            diocese
+          </Link>
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
