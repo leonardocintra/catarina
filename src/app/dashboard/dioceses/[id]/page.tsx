@@ -12,9 +12,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/utils";
-import { Diocese } from "neocatecumenal";
+import { Diocese, Paroquia } from "neocatecumenal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -25,6 +26,7 @@ export default function EditarDiocesePage() {
   const dioceseId = params.id;
 
   const [diocese, setDiocese] = useState<Diocese>();
+  const [paroquias, setParoquias] = useState<Paroquia[]>([]);
   const [editar, setEditar] = useState<boolean>(false);
   const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
 
@@ -73,6 +75,31 @@ export default function EditarDiocesePage() {
     fetchData();
   }, [dioceseId, toast]);
 
+  useEffect(() => {
+    const fetchParoquias = async () => {
+      try {
+        const res = await fetch(
+          `${BASE_URL}/api/ambrosio/paroquia?dioceseId=${dioceseId}`
+        );
+        if (!res.ok) {
+          throw new Error("Erro ao buscar paróquias");
+        }
+        const data = await res.json();
+        setParoquias(data.data);
+      } catch (error) {
+        toast({
+          title: "Erro ao buscar paróquias",
+          variant: "destructive",
+          description: String(error),
+        });
+      }
+    };
+
+    if (dioceseId) {
+      fetchParoquias();
+    }
+  }, [dioceseId, toast]);
+
   if (redirectNotFound) {
     router.push("/dashboard/dioceses");
   }
@@ -113,9 +140,33 @@ export default function EditarDiocesePage() {
                 descricao={`${diocese.tipoDiocese.descricao}`}
               />
             </CardContent>
-            <CardFooter>
+            <CardFooter className="space-x-2">
               <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
+              <Button onClick={() => router.push(`/dashboard/paroquias/novo?dioceseId=${dioceseId}`)} variant="outline">Cadastrar paroquias</Button>
             </CardFooter>
+          </Card>
+          <Separator className="my-4" />
+          <Card>
+            <CardHeader>
+              <CardTitle>Paróquias</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {paroquias.length === 0 ? (
+                <p>Nenhuma paróquia cadastrada.</p>
+              ) : (
+                <ul className="space-y-2">
+                  {paroquias.map((paroquia) => (
+                    <li key={paroquia.id} className="border p-2 rounded">
+                      <div className="font-semibold">{paroquia.descricao}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {paroquia.endereco?.cidade?.nome} -{" "}
+                        {paroquia.endereco?.cidade?.estado?.sigla}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </CardContent>
           </Card>
         </div>
       )}
