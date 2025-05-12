@@ -142,7 +142,7 @@ export default function EditarDiocesePage() {
             </CardContent>
             <CardFooter className="space-x-2">
               <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
-              <Button variant="outline">Cadastrar paroquias</Button>
+              <Button onClick={() => router.push(`/dashboard/paroquias/novo?dioceseId=${dioceseId}`)} variant="outline">Cadastrar paroquias</Button>
             </CardFooter>
           </Card>
           <Separator className="my-4" />

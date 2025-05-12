@@ -33,7 +33,7 @@ export async function POST(req: Request) {
   const paroquia = {
     descricao: data.descricao,
     diocese: {
-      id: parseInt(data.tipoDiocese),
+      id: parseInt(data.dioceseId),
     },
     observacao: data.observacao,
     endereco: {
