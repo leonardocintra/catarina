@@ -11,7 +11,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Diocese } from "neocatecumenal";
 import ParoquiaForm from "@/components/custom/dashboard/paroquias/form-paroquia";
 
-export default function NovaParoquiaPage() {
+export default function NovaParoquiaInner() {
   const { toast } = useToast();
   const router = useRouter();
   const searchParams = useSearchParams();
