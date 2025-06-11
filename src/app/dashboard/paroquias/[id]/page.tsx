@@ -108,24 +108,7 @@ export default function EditarParoquiaPage() {
                 titulo="Cidade"
                 descricao={`${paroquia.endereco.cidade.nome} - ${paroquia.endereco.cidade.estado.sigla}`}
               />
-              <LabelData
-                titulo="Tipo"
-                descricao={`${paroquia.diocese.descricao}`}
-              />
             </CardContent>
-            <CardFooter className="space-x-2">
-              <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
-              <Button
-                onClick={() =>
-                  router.push(
-                    `/dashboard/paroquias/novo?dioceseId=${paroquiaId}`
-                  )
-                }
-                variant="outline"
-              >
-                Cadastrar paroquias
-              </Button>
-            </CardFooter>
           </Card>
         </div>
       )}

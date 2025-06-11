@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/utils";
 import { Diocese, Paroquia } from "neocatecumenal";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -142,7 +143,16 @@ export default function EditarDiocesePage() {
             </CardContent>
             <CardFooter className="space-x-2">
               <Button onClick={() => setEditar(!editar)}>Editar dados</Button>
-              <Button onClick={() => router.push(`/dashboard/paroquias/novo?dioceseId=${dioceseId}`)} variant="outline">Cadastrar paroquias</Button>
+              <Button
+                onClick={() =>
+                  router.push(
+                    `/dashboard/paroquias/novo?dioceseId=${dioceseId}`
+                  )
+                }
+                variant="outline"
+              >
+                Cadastrar paroquias
+              </Button>
             </CardFooter>
           </Card>
           <Separator className="my-4" />
@@ -156,13 +166,20 @@ export default function EditarDiocesePage() {
               ) : (
                 <ul className="space-y-2">
                   {paroquias.map((paroquia) => (
-                    <li key={paroquia.id} className="border p-2 rounded">
-                      <div className="font-semibold">{paroquia.descricao}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {paroquia.endereco?.cidade?.nome} -{" "}
-                        {paroquia.endereco?.cidade?.estado?.sigla}
-                      </div>
-                    </li>
+                    <Link
+                      key={paroquia.id}
+                      href={`/dashboard/paroquias/${paroquia.id}`}
+                    >
+                      <li className="border p-2 rounded hover:bg-slate-200 transition mb-1">
+                        <div className="font-semibold">
+                          {paroquia.descricao}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          #{paroquia.id} - {paroquia.endereco?.cidade?.nome} -{" "}
+                          {paroquia.endereco?.cidade?.estado?.sigla}
+                        </div>
+                      </li>
+                    </Link>
                   ))}
                 </ul>
               )}
