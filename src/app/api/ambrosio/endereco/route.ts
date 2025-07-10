@@ -6,9 +6,10 @@ const url = `${AmbrosioBaseUrl}/endereco`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const res = await fetch(`${url}/pessoa/${params.id}`);
+  const { id } = await params;
+  const res = await fetch(`${url}/pessoa/${id}`);
 
   const data = await res.json();
   return Response.json(data);
@@ -16,7 +17,6 @@ export async function GET(
 
 export async function POST(req: Request) {
   const data = await req.json();
-
 
   const endereco: Partial<IEndereco> = {
     cep: data.cep,

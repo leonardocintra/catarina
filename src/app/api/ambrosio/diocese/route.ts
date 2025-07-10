@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 const url = `${AmbrosioBaseUrl}/diocese`;
 
 export async function GET() {
-  const token = cookies().get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   const res = await fetch(url, {
     cache: "no-cache",
@@ -20,7 +21,8 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const token = cookies().get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   const data = await req.json();
 
   const diocese = {

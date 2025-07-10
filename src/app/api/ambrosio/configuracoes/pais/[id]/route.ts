@@ -6,9 +6,10 @@ const url = `${AmbrosioBaseUrl}/pais`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const res = await fetch(`${url}/${params.id}`);
+  const { id } = await params;
+  const res = await fetch(`${url}/${id}`);
 
   if (res.status === 404) {
     return Response.json(
@@ -27,15 +28,16 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const data = await req.json();
+  const { id } = await params;
 
   const pais: Partial<IPais> = {
     nome: data.nome,
   };
 
-  const res = await fetch(`${url}/${params.id}`, {
+  const res = await fetch(`${url}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
