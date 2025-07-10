@@ -6,7 +6,7 @@ export default function NovoPaisPage() {
   return (
     <div>
       <PageSubtitle
-        title="Cadatro de novo pais"
+        title="Cadastro de novo país"
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/pais"

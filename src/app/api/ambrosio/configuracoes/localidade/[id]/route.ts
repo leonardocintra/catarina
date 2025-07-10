@@ -5,7 +5,7 @@ const url = `${AmbrosioBaseUrl}/localidade`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: { id: string } }
 ) {
   const res = await fetch(`${url}/${params.id}`);
 
