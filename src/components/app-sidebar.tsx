@@ -130,11 +130,11 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [versao, setVersao] = React.useState("0.0.0");
+  const [versao, setVersao] = React.useState("0.0.1");
 
   React.useEffect(() => {
     const res = fetch("/api/catarina/version", {
-      cache: "force-cache",
+      cache: "no-cache",
     });
     res.then((res) => res.json()).then((data) => setVersao(data.version));
   }, []);
