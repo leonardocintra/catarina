@@ -18,7 +18,7 @@ import { getDadosDaPessoa, getPessoa } from "@/lib/api/pessoa";
 import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import {
   Escolaridade,
   EstadoCivil,
@@ -30,7 +30,7 @@ import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 export default function EditarPessoaPage({
   params,
 }: {
-  params: { id: number };
+  params: Promise<{ id: string }>;
 }) {
   const [editar, setEditar] = useState<boolean>(false);
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
@@ -40,12 +40,13 @@ export default function EditarPessoaPage({
     SituacaoReligiosa[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const { id } = use(params);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
 
-      const pessoaData = await getPessoa(params.id);
+      const pessoaData = await getPessoa(parseInt(id));
       const { estadosCivilData, escolaridadesData, situacoesReligiosaData } =
         await getDadosDaPessoa();
 
@@ -57,7 +58,7 @@ export default function EditarPessoaPage({
     };
 
     fetchData();
-  }, [params.id]);
+  }, [id]);
 
   if (loading) return <SkeletonLoading mensagem="Carregando pessoa ..." />;
   if (!pessoa) return notFound();

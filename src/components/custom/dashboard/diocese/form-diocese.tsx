@@ -1,7 +1,7 @@
 "use client";
 
 import * as z from "zod";
-import InputMask from "react-input-mask";
+import { IMaskInput } from "react-imask";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -75,7 +75,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
         .min(2, { message: "Nome da diocese deve ter no minimo 2 caracteres." })
         .max(50, { message: "Tamanho máximo é 50 caracteres." }),
       tipoDiocese: z.string({ message: "Campo obrigatório" }).min(1, {
-        message: "Selecion o tipo...",
+        message: "Selecione o tipo de diocese...",
       }),
       enderecoId: z.string().optional(),
     })
@@ -227,21 +227,19 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
               <FormItem>
                 <FormLabel>CEP</FormLabel>
                 <FormControl>
-                  <InputMask
-                    mask="99999-999"
+                  <IMaskInput
+                    mask="00000-000"
+                    placeholder="CEP da diocese ..."
                     value={field.value}
-                    onChange={(e) => {
-                      const numericCep = e.target.value.replace(/\D/g, ""); // remove hífen e tudo que não for número
+                    onAccept={(value, mask) => {
+                      const numericCep = value.replace(/\D/g, ""); // remove hífen e tudo que não for número
                       field.onChange(numericCep); // salva o valor limpo no react-hook-form
                       if (numericCep.length === 8) {
                         handleCep(numericCep);
                       }
                     }}
-                  >
-                    {(inputProps) => (
-                      <Input {...inputProps} placeholder="CEP da diocese ..." />
-                    )}
-                  </InputMask>
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

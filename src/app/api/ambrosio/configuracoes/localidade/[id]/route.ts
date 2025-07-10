@@ -1,22 +1,18 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
-const url = `${AmbrosioBaseUrl}/localidade`;
-
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: number } }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const res = await fetch(`${url}/${params.id}`);
+  const { id } = await params;
+
+  const res = await fetch(`${AmbrosioBaseUrl}/localidade/${id}`);
 
   if (res.status === 404) {
     return Response.json(
-      {
-        message: "Localidade não encontrada",
-      },
-      {
-        status: 404,
-      }
+      { message: "Localidade não encontrada" },
+      { status: 404 }
     );
   }
 

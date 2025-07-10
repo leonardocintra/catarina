@@ -1,5 +1,4 @@
 import * as z from "zod";
-import InputMask from "react-input-mask";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { Paroquia } from "neocatecumenal";
 import { addressSchema } from "@/schemas/addressSchema";
 import { useCepHandler } from "@/hooks/useCepHandler";
+import { IMaskInput } from "react-imask";
 
 type FormParoquiaProps = {
   urlBase: string;
@@ -183,21 +183,19 @@ export default function ParoquiaForm({
               <FormItem>
                 <FormLabel>CEP</FormLabel>
                 <FormControl>
-                  <InputMask
-                    mask="99999-999"
+                  <IMaskInput
+                    mask="00000-000"
+                    placeholder="CEP da paroquia ..."
                     value={field.value}
-                    onChange={(e) => {
-                      const numericCep = e.target.value.replace(/\D/g, ""); // remove hífen e tudo que não for número
+                    onAccept={(value, mask) => {
+                      const numericCep = value.replace(/\D/g, ""); // remove hífen e tudo que não for número
                       field.onChange(numericCep); // salva o valor limpo no react-hook-form
                       if (numericCep.length === 8) {
                         handleCep(numericCep);
                       }
                     }}
-                  >
-                    {(inputProps) => (
-                      <Input {...inputProps} placeholder="CEP da diocese ..." />
-                    )}
-                  </InputMask>
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

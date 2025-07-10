@@ -35,10 +35,10 @@ type FormPaisProps = {
 
 export default function PaisForm({ urlBase, pais }: FormPaisProps) {
   const { toast } = useToast();
+  const router = useRouter();
+
   const [disabled, setDisabled] = useState(false);
   const [input, setInput] = useState("");
-  const [paisSelecionado, setPaisSelecionado] = useState("");
-  const router = useRouter();
   const [paises, setPaises] = useState<string[]>([]);
   const [paisesFiltrados, setPaisesFiltrados] = useState<string[]>([]);
 
@@ -69,19 +69,16 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
   const formSchema = z.object({
     nome: z
-      .string()
+      .string({ message: "O nome do país é obrigatório." })
       .min(2, { message: "O nome deve ter no minimo 2 caracteres." })
-      .max(50),
+      .max(100, { message: "O nome deve ter no máximo 100 caracteres." }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome: paisSelecionado,
-    },
   });
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async () => {
     setDisabled(true);
 
     let url = `${urlBase}/api/ambrosio/configuracoes/pais`;
@@ -97,14 +94,16 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify({
+        nome: input,
+      }),
     });
 
     const data = await res.json();
 
     if (res.status === 201 && method === "POST") {
       toast({
-        title: `${values.nome}`,
+        title: `${input}`,
         variant: "default",
         description: `Pais cadastrado(a) com sucesso!`,
       });
@@ -112,7 +111,7 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
       router.push(`/dashboard/pais`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
-        title: `${values.nome}`,
+        title: `${input}`,
         variant: "default",
         description: `Pais editado com sucesso!`,
       });
@@ -122,13 +121,13 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
       if (res.status === 400 || res.status === 404) {
         toast({
-          title: `${values.nome} não foi cadastrado!`,
+          title: `${input} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
         });
       } else {
         toast({
-          title: `${values.nome} não foi cadastrado!`,
+          title: `${input} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${res.text}`,
         });
@@ -154,6 +153,7 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
                   onSelect={() => {
                     form.setValue("nome", p); // Define o valor do formulário
                     setInput(p); // Atualiza o input de busca
+                    setPaisesFiltrados([]);
                   }}
                 >
                   {p}
@@ -187,6 +187,7 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
             Salvar
           </Button>
         </form>
+        <h2>Cantinho do teste {input}</h2>
       </Form>
     </div>
   );

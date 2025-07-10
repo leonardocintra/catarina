@@ -30,6 +30,7 @@ export default function HomeLogin() {
     const parsed = schema.safeParse({ email, password });
     if (!parsed.success) {
       setErrorMsg(parsed.error.errors[0].message);
+      setAutenticando(false);
       return;
     }
 
@@ -50,6 +51,9 @@ export default function HomeLogin() {
       setErrorMsg("Erro ao tentar logar");
       console.error(error);
       setAutenticando(false);
+    } finally {
+      setEmail("");
+      setPassword("");
     }
   };
 
@@ -73,7 +77,7 @@ export default function HomeLogin() {
                 type="text"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="m@example.com"
+                placeholder="seuemail@example.com"
                 required
               />
             </div>
@@ -92,6 +96,7 @@ export default function HomeLogin() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Sua senha secreta ..."
                 required
               />
             </div>

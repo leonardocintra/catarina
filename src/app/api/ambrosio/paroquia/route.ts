@@ -4,7 +4,8 @@ import { cookies } from "next/headers";
 const baseUrl = `${AmbrosioBaseUrl}/paroquia`;
 
 export async function GET(request: Request) {
-  const token = cookies().get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   // Captura os parâmetros da URL (ex: ?dioceseId=123)
   const { searchParams } = new URL(request.url);
@@ -27,7 +28,8 @@ export async function GET(request: Request) {
 }
 
 export async function POST(req: Request) {
-  const token = cookies().get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
   const data = await req.json();
 
   const paroquia = {

@@ -6,10 +6,13 @@ const url = `${AmbrosioBaseUrl}/diocese`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const token = cookies().get("token")?.value;
-  const res = await fetch(`${url}/${params.id}`, {
+  const { id } = await params;
+  const cookieStore = await cookies();
+
+  const token = cookieStore.get("token")?.value;
+  const res = await fetch(`${url}/${id}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -44,10 +47,11 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: { id: number } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const data = await req.json();
-  const token = cookies().get("token")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   const diocese = {
     descricao: data.descricao,
@@ -67,7 +71,8 @@ export async function PATCH(
     },
   };
 
-  const res = await fetch(`${url}/${params.id}`, {
+  const { id } = await params;
+  const res = await fetch(`${url}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

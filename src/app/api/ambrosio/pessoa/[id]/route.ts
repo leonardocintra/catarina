@@ -1,16 +1,19 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { Pessoa } from "neocatecumenal";
 import { cookies } from "next/headers";
-import { NextRequest } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { id: number } }
+  req: Request,
+  ctx: { params: Promise<{ id: string }> }
 ) {
-  const token = cookies().get("token")?.value;
-  const res = await fetch(`${url}/${params.id}`, {
+  const { id } = await ctx.params;
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  const res = await fetch(`${url}/${id}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -32,9 +35,10 @@ export async function GET(
 }
 
 export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { id: number } }
+  req: Request,
+  ctx: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await ctx.params;
   const data = await req.json();
 
   const pessoa: Partial<Pessoa> = {
@@ -57,8 +61,10 @@ export async function PATCH(
     nacionalidade: data.nacionalidade,
   };
 
-  const token = cookies().get("token")?.value;
-  const res = await fetch(`${url}/${params.id}`, {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  const res = await fetch(`${url}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

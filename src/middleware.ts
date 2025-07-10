@@ -21,11 +21,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    // Aplica o middleware em tudo, exceto:
-    // - rotas de API
-    // - arquivos estáticos do Next (_next)
-    // - favicon/logo/imagens
-    "/((?!api|_next/static|_next/image|favicon.ico|logo.webp|logo.png|images).*)",
-  ],
+  matcher: ["/((?!api|_next|favicon.ico|logo.webp|logo.png|images).*)"],
 };

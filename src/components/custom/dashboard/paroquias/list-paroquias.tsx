@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { removerAcento } from "@/lib/utils";
-import { FolderSearch } from "lucide-react";
+import { ChurchIcon, FolderSearch } from "lucide-react";
 import { Paroquia } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
@@ -61,15 +61,21 @@ export default function ListParoquias({ paroquias }: ListParoquiasProps) {
           {diocesesFiltradas.slice(0, 40).map((paroquia) => (
             <TableRow key={paroquia.id}>
               <TableCell>#{paroquia.id}</TableCell>
-              <TableCell className="">{paroquia.descricao}</TableCell>
-              <TableCell className="">{paroquia.diocese.descricao}</TableCell>
+              <TableCell>{paroquia.descricao}</TableCell>
+              <TableCell>
+                <Link href={`/dashboard/dioceses/${paroquia.diocese.id}`}>
+                  <Button variant={"ghost"} size={"sm"}  >
+                    <ChurchIcon /> {paroquia.diocese.descricao}
+                  </Button>
+                </Link>
+              </TableCell>
               <TableCell className="flex space-x-2">
                 {paroquia.endereco.cidade.nome} {" / "}
                 {paroquia.endereco.cidade.estado.sigla}
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/paroquias/${paroquia.id}`}>
-                  <Button variant={"link"} size={"sm"}>
+                  <Button variant={"link"}>
                     Ver detalhes
                   </Button>
                 </Link>

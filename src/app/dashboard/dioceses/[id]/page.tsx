@@ -3,6 +3,7 @@
 import DioceseForm from "@/components/custom/dashboard/diocese/form-diocese";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -106,11 +107,7 @@ export default function EditarDiocesePage() {
   }
 
   if (!diocese) {
-    return (
-      <div>
-        <h2>Carregando ...</h2>
-      </div>
-    );
+    return <SkeletonLoading mensagem="Buscando dados da diocese ..." />;
   }
 
   return (
