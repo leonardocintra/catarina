@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import {
+  ChurchIcon,
   GalleryVerticalEnd,
   Map,
-  MapPin,
   MonitorUpIcon,
   NotepadTextDashedIcon,
   PieChart,
@@ -55,7 +55,7 @@ const data = {
     {
       title: "Pontos fisicos",
       url: "#",
-      icon: MapPin,
+      icon: ChurchIcon,
       isActive: true,
       items: [
         {
@@ -101,16 +101,8 @@ const data = {
           url: "/dashboard/cidades",
         },
         {
-          title: "Carisma Primitivo",
-          url: "#",
-        },
-        {
-          title: "Carisma Vinculado",
-          url: "#",
-        },
-        {
-          title: "Carisma Serviço",
-          url: "#",
+          title: "Carismas",
+          url: "/dashboard/carismas",
         },
       ],
     },
