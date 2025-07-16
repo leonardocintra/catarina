@@ -3,7 +3,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "CNC - Relatorios",
-  description: "A task and issue tracker build using Tanstack Table.",
+  description: "Aqui vai os relatorios da CNC",
 }
 
 
