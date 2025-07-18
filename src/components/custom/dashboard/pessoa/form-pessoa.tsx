@@ -26,6 +26,7 @@ import {
   Pessoa,
   SituacaoReligiosa,
 } from "neocatecumenal";
+import { useState } from "react";
 
 type PessoaFormProps = {
   urlBase: string;
@@ -44,15 +45,22 @@ export default function PessoaForm({
 }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = z.object({
     nome: z
       .string()
       .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
-      .max(50),
+      .max(50, { message: "Nome deve ter no máximo 50 caracteres." }),
     conhecidoPor: z.string().optional(),
-    cpf: z.string().min(11).max(11),
-    nacionalidade: z.string().max(50),
+    cpf: z
+      .string()
+      .regex(/^\d{11}$/, { message: "CPF deve conter apenas números." })
+      .min(11, { message: "CPF deve ter 11 caracteres." })
+      .max(11, { message: "CPF deve ter 11 caracteres." }),
+    nacionalidade: z
+      .string()
+      .max(50, { message: "Nacionalidade deve ter no máximo 50 caracteres." }),
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
     escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
     situacaoReligiosa: z.string({ message: "Campo obrigatório" }).min(1),
@@ -74,6 +82,8 @@ export default function PessoaForm({
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+    
     let url = `${urlBase}/api/ambrosio/pessoa`;
     let method = "POST";
 
@@ -82,48 +92,60 @@ export default function PessoaForm({
       method = "PATCH";
     }
 
-    const res = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
-    const data = await res.json();
-    if (res.status === 201 && method === "POST") {
-      toast({
-        title: `${values.nome}`,
-        variant: "default",
-        description: `Cadastrado(a) com sucesso!`,
-      });
-      router.push(`/dashboard/pessoas/${data.id}`);
-    } else if (res.status === 200 && method === "PATCH") {
-      toast({
-        title: `${values.nome}`,
-        variant: "default",
-        description: `Editado(a) com sucesso!`,
-      });
-    } else {
-      if (res.status === 401) {
+      const data = await res.json();
+      if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.nome} não foi cadastrado!`,
-          variant: "destructive",
-          description: `Você não tem permissão para cadastro`,
+          title: `${values.nome}`,
+          variant: "default",
+          description: `Cadastrado(a) com sucesso!`,
         });
-      } else if (res.status === 400) {
+        router.push(`/dashboard/pessoas/${data.id}`);
+      } else if (res.status === 200 && method === "PATCH") {
         toast({
-          title: `${values.nome} não foi cadastrado!`,
-          variant: "destructive",
-          description: `Erro: ${data.message}`,
+          title: `${values.nome}`,
+          variant: "default",
+          description: `Editado(a) com sucesso!`,
         });
+        // Não redirecionamos na edição, apenas reabilitamos o botão
+        setIsLoading(false);
       } else {
-        toast({
-          title: `${values.nome} não foi cadastrado!`,
-          variant: "destructive",
-          description: `Erro: ${res.text}`,
-        });
+        if (res.status === 401) {
+          toast({
+            title: `${values.nome} não foi cadastrado!`,
+            variant: "destructive",
+            description: `Você não tem permissão para cadastro`,
+          });
+        } else if (res.status === 400) {
+          toast({
+            title: `${values.nome} não foi cadastrado!`,
+            variant: "destructive",
+            description: `Erro: ${data.message}`,
+          });
+        } else {
+          toast({
+            title: `${values.nome} não foi cadastrado!`,
+            variant: "destructive",
+            description: `Erro: ${res.text}`,
+          });
+        }
+        setIsLoading(false);
       }
+    } catch (error) {
+      toast({
+        title: `${values.nome} não foi cadastrado!`,
+        variant: "destructive",
+        description: `Erro de conexão. Tente novamente.`,
+      });
+      setIsLoading(false);
     }
   };
 
@@ -305,7 +327,12 @@ export default function PessoaForm({
             )}
           />
 
-          <Button type="submit">Salvar</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading 
+              ? (pessoa ? "Salvando..." : "Cadastrando...") 
+              : "Salvar"
+            }
+          </Button>
         </form>
       </Form>
     </div>
