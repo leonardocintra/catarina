@@ -21,7 +21,7 @@ type DialogProps = {
 
 export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
   const { toast } = useToast();
-  const conjugue = sexo === "MASCULINO" ? "mulher" : "marido";
+  const conjugue = sexo === "MASCULINO" ? "esposa" : "marido";
 
   const [selectedConjugue, setSelectedConjugue] = useState<number>(0);
   const [vinculado, setVinculado] = useState<boolean>(false);
@@ -66,12 +66,12 @@ export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
     <Dialog>
       <DialogTrigger asChild>
         <Button onClick={() => setVinculado(false)} variant="outline">
-          Informar {conjugue}
+          Vincular {conjugue}
         </Button>
       </DialogTrigger>
       <DialogContent className="">
         <DialogHeader>
-          <DialogTitle>Informar {conjugue}</DialogTitle>
+          <DialogTitle>Vincular {conjugue}</DialogTitle>
           <DialogDescription>
             Atenção: a listagem é baseada no sexo e estado civil. Caso o nome
             não aparecer, verifique se o conjugue foi cadastrado corretamente.
