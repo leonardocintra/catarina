@@ -28,10 +28,9 @@ export default function PageSubtitle({
   return (
     <div>
       <div className="flex justify-between">
-        <div className="flex items-center space-x-2">
-          <h2 className="text-3xl pl-3">{title}</h2>
-          <div>{" "}</div>
-          <h4 className="text-slate-700 text-2xl font-extralight">{subTitle}</h4>
+        <div className="flex-col items-center space-y-2">
+          <h2 className="text-3xl">{title}</h2>
+          <h4 className="text-slate-700 text-xl font-extralight pl-2">{subTitle}</h4>
         </div>
         {buttonShow && (
           <Link href={buttonUrl}>

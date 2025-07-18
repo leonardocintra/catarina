@@ -85,7 +85,7 @@ export default function EditarParoquiaPage() {
   return (
     <div>
       <PageSubtitle
-        title={`Editar paróquia ${paroquia.descricao}`}
+        title={paroquia.descricao}
         subTitle={`${paroquia.diocese.tipoDiocese.descricao}: ${paroquia.diocese.descricao}`}
         buttonShow={true}
         buttonText="Voltar"
