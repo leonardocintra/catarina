@@ -103,7 +103,11 @@ export default function EditarPessoaPage({
               />
               <LabelData
                 titulo="Escolaridade"
-                descricao={pessoa.escolaridade.descricao}
+                descricao={
+                  pessoa.escolaridade
+                    ? pessoa.escolaridade.descricao
+                    : "não informado"
+                }
               />
             </CardContent>
             <CardFooter className="mt-auto">
@@ -139,7 +143,7 @@ export default function EditarPessoaPage({
             <CardContent className="flex-1">
               <Alert variant="destructive">
                 <AlertCircleIcon />
-                <AlertTitle>Carismas em ajustes</AlertTitle>
+                <AlertTitle>Carismas em implementação</AlertTitle>
                 <AlertDescription>
                   <p>Novos carismas estão disponíveis.</p>
                   <ul className="list-inside list-disc text-sm">
@@ -149,9 +153,6 @@ export default function EditarPessoaPage({
                   </ul>
                 </AlertDescription>
               </Alert>
-              {pessoa.carismas?.map((carisma) => (
-                <li key={carisma.id}>{carisma.descricao}</li>
-              ))}
             </CardContent>
             <CardFooter className="mt-auto">
               <Button className="w-full" disabled variant={"outline"}>

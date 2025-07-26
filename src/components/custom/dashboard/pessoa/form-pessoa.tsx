@@ -62,7 +62,7 @@ export default function PessoaForm({
       .string()
       .max(50, { message: "Nacionalidade deve ter no máximo 50 caracteres." }),
     estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
-    escolaridade: z.string({ message: "Campo obrigatório" }).min(1),
+    escolaridade: z.string().optional(),
     situacaoReligiosa: z.string({ message: "Campo obrigatório" }).min(1),
     sexo: z.enum(["MASCULINO", "FEMININO"]),
   });
@@ -75,7 +75,7 @@ export default function PessoaForm({
       cpf: pessoa?.cpf || "",
       nacionalidade: pessoa?.nacionalidade || "brasileira",
       sexo: "MASCULINO",
-      escolaridade: pessoa?.escolaridade.id.toString() || "",
+      escolaridade: pessoa?.escolaridade?.id?.toString() || "",
       estadoCivil: pessoa?.estadoCivil.id.toString() || "",
       situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
     },
@@ -83,7 +83,7 @@ export default function PessoaForm({
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
-    
+
     let url = `${urlBase}/api/ambrosio/pessoa`;
     let method = "POST";
 
@@ -293,7 +293,7 @@ export default function PessoaForm({
                 <FormLabel>Escolaridade</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.escolaridade.id.toString()}
+                  defaultValue={pessoa?.escolaridade?.id.toString() || ""}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -301,6 +301,7 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
+                    <SelectItem value="0">Não informado</SelectItem>
                     {escolaridades.map((es) => (
                       <SelectItem key={es.id} value={es.id.toString()}>
                         {es.descricao}
@@ -328,10 +329,7 @@ export default function PessoaForm({
           />
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading 
-              ? (pessoa ? "Salvando..." : "Cadastrando...") 
-              : "Salvar"
-            }
+            {isLoading ? (pessoa ? "Salvando..." : "Cadastrando...") : "Salvar"}
           </Button>
         </form>
       </Form>

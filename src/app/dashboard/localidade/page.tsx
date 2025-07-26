@@ -35,7 +35,13 @@ export default function LocalidadePage() {
     if (localidades) {
       return <ListLocalidades localidades={localidades} />;
     } else {
-      return <h2>Nenhuma localidade cadastrada</h2>;
+      return (
+        <div className="border p-4 text-center">
+          <p className="text-gray-600">
+            Esta página está pendente de implementação.
+          </p>
+        </div>
+      );
     }
   };
 

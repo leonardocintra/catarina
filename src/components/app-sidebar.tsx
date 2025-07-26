@@ -104,15 +104,14 @@ const data = {
           title: "Carismas",
           url: "/dashboard/carismas",
         },
+        {
+          title: "Etapas",
+          url: "/dashboard/etapas",
+        },
       ],
     },
   ],
   projects: [
-    {
-      name: "Vendas",
-      url: "#",
-      icon: PieChart,
-    },
     {
       name: "Passaportes",
       url: "#",
