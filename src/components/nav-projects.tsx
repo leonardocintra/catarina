@@ -38,7 +38,7 @@ export function NavOutros({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projeto CNC</SidebarGroupLabel>
+      <SidebarGroupLabel>Estrangeiros</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
