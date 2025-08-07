@@ -7,7 +7,7 @@ Nova versão para https://cncbrasil.cn.org.br/login
 
 Favor baixar primeiro: https://github.com/leonardocintra/ambrosio
 
-Seguir os passos do [ReadMe](https://github.com/leonardocintra/ambrosio/blob/main/README.md) de ambrosio para manipulação de dados.
+Seguir os passos do [ReadMe](https://github.com/leonardocintra/ambrosio/blob/main/README.md) de Ambrosio-API para manipulação de dados.
 
 
 ```bash
@@ -21,8 +21,6 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 

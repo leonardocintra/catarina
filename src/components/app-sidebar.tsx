@@ -4,10 +4,11 @@ import * as React from "react";
 import {
   ChurchIcon,
   GalleryVerticalEnd,
+  GithubIcon,
   Map,
+  MonitorCogIcon,
   MonitorUpIcon,
   NotepadTextDashedIcon,
-  PieChart,
   Settings2,
 } from "lucide-react";
 
@@ -112,6 +113,11 @@ const data = {
       url: "#",
       icon: Map,
     },
+    {
+      name: "Github",
+      url: "https://github.com/leonardocintra/catarina",
+      icon: GithubIcon,
+    },
   ],
 };
 
@@ -136,9 +142,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
-      </SidebarFooter>
-      <SidebarFooter className="text-xs font-extralight uppercase text-center">
-        Versão: {versao}
+        <div className="flex justify-center items-center text-orange-600 font-semibold space-x-2">
+          <MonitorCogIcon size={"16px"} />
+          <div className="text-xs">v{versao}</div>
+        </div>
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
