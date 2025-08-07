@@ -162,8 +162,8 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
-        Dashboard feito com ❤ por Leonardo Cintra
+      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 uppercase">
+        &copy; {new Date().getFullYear()} - Caminho Neocatecumenal do Brasil
       </div>
     </div>
   );

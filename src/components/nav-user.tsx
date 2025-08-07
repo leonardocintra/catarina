@@ -4,7 +4,6 @@ import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
   Sparkles,
 } from "lucide-react";
@@ -26,16 +25,32 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useLogout } from "@/lib/api/logout";
+import { useEffect, useState } from "react";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
+  const [userName, setUserName] = useState("Usuario CNC");
+  const [userEmail, setUserEmail] = useState("seuemail@email.com.br");
+  const [userAvatar, setUserAvatar] = useState("/user.png");
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await fetch("/api/ambrosio/auth/me");
+        if (res.ok) {
+          const response = await res.json();
+          const data = response.data;
+          setUserName(data.name || "Usuario CNC");
+          setUserEmail(data.email || "seuemail@email.com.br");
+          setUserAvatar(data.avatar || "/user.png");
+        }
+      } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
   const { isMobile } = useSidebar();
 
   const logOut = useLogout();
@@ -50,12 +65,12 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={userAvatar} alt={userName} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-semibold">{userName}</span>
+                <span className="truncate text-xs">{userEmail}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -69,12 +84,12 @@ export function NavUser({
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                  <AvatarImage src={userAvatar} alt={userName} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-semibold">{userName}</span>
+                  <span className="truncate text-xs">{userEmail}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
