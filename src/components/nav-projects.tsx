@@ -31,7 +31,7 @@ export function NavOutros({
                 <item.icon />
                 <span>{item.name}</span>
               </a>
-            </SidebarMenuButton>371
+            </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
