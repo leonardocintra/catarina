@@ -55,6 +55,14 @@ const data = {
       isActive: true,
       items: [
         {
+          title: "Macro Região",
+          url: "/dashboard/macro-regiao",
+        },
+        {
+          title: "Setores",
+          url: "/dashboard/setores",
+        },
+        {
           title: "Dioceses",
           url: "/dashboard/dioceses",
         },
