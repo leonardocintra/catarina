@@ -1,6 +1,6 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 
-const url = `${AmbrosioBaseUrl}/regioes`;
+const url = `${AmbrosioBaseUrl}/setor`;
 
 export async function GET() {
   const res = await fetch(url);
