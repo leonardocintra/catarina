@@ -59,19 +59,19 @@ const data = {
           url: "/dashboard/macro-regiao",
         },
         {
-          title: "Setores",
+          title: "Setor",
           url: "/dashboard/setores",
         },
         {
-          title: "Dioceses",
+          title: "Diocese",
           url: "/dashboard/dioceses",
         },
         {
-          title: "Paroquias",
+          title: "Paroquia",
           url: "/dashboard/paroquias",
         },
         {
-          title: "Localidades",
+          title: "Localidade",
           url: "/dashboard/localidade",
         },
       ],

@@ -1,39 +1,35 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import ListLocalidades from "@/components/custom/dashboard/localidade/list-localidades";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { ILocalidade } from "@/interfaces/ILocalidade";
 import { BASE_URL } from "@/lib/utils";
+import { Setor } from "neocatecumenal";
+import ListSetor from "@/components/custom/dashboard/setores/list-setor";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 
 export default function SetorPage() {
-  const [localidades, setLocalidades] = useState<ILocalidade[]>([]);
+  const [setores, setSetores] = useState<Setor[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getLocalidade = async () => {
+    const getSetores = async () => {
       try {
-        const res = await fetch(
-          `${BASE_URL}/api/ambrosio/configuracoes/localidade`,
-          {
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${BASE_URL}/api/ambrosio/setor`);
         const data = await res.json();
-        setLocalidades(data.data);
+        setSetores(data.data);
       } catch (error) {
-        console.error("Erro ao listar localidades", error);
+        console.error("Erro ao listar setores", error);
       } finally {
         setLoading(false);
       }
     };
 
-    getLocalidade();
+    getSetores();
   }, []);
 
   const listar = () => {
-    if (localidades) {
-      return <ListLocalidades localidades={localidades} />;
+    if (setores) {
+      return <ListSetor setores={setores} />;
     } else {
       return (
         <div className="border p-4 text-center">
@@ -48,14 +44,18 @@ export default function SetorPage() {
   return (
     <div>
       <PageSubtitle
-        title={`Setores - ${localidades ? localidades.length : 0}`}
+        title={`Setores - ${setores ? setores.length : 0}`}
         subTitle="do Brasil"
         buttonShow={false}
         buttonText="Cadastrar"
         buttonUrl="/dashboard/setores/novo"
       />
 
-      {loading ? "Carregando ..." : listar()}
+      {loading ? (
+        <SkeletonLoading mensagem="Carregando setores ..." />
+      ) : (
+        listar()
+      )}
     </div>
   );
 }
