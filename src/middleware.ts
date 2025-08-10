@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const EXACT_PUBLIC_ROUTES = ["/", "/favicon.ico", "/logo.webp"];
+const EXACT_PUBLIC_ROUTES = ["/", "/favicon.ico", "/logo.webp", "/cadastro", "/cadastro/sucesso"];
 const PUBLIC_PREFIX_ROUTES = ["/_next", "/images"]; // se tiver outras pastas públicas, adicione aqui
 
 export function middleware(request: NextRequest) {
