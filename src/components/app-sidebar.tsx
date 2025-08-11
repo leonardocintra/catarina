@@ -3,7 +3,6 @@
 import * as React from "react";
 import {
   ChurchIcon,
-  GalleryVerticalEnd,
   GithubIcon,
   Map,
   MonitorCogIcon,
@@ -28,7 +27,7 @@ import {
 const data = {
   cnc: {
     name: "CNC - Gestão",
-    logo: GalleryVerticalEnd,
+    logo: ChurchIcon,
     subTitle: "Caminho Neocatecumenal",
   },
   navMain: [

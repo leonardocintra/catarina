@@ -118,7 +118,7 @@ export default function PessoaForm({
         // Não redirecionamos na edição, apenas reabilitamos o botão
         setIsLoading(false);
       } else {
-        if (res.status === 401) {
+        if (res.status === 403) {
           toast({
             title: `${values.nome} não foi cadastrado!`,
             variant: "destructive",

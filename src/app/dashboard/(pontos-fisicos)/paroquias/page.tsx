@@ -2,6 +2,7 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListParoquias from "@/components/custom/dashboard/paroquias/list-paroquias";
+import AlertSemCadastroOuPermissao from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Paroquia } from "neocatecumenal";
 import { useEffect, useState } from "react";
@@ -32,14 +33,14 @@ export default function ParoquiasPage() {
     if (paroquias) {
       return <ListParoquias paroquias={paroquias} />;
     } else {
-      return <h2>Nenhuma diocese cadastrada</h2>;
+      return <AlertSemCadastroOuPermissao title="Paróquias da diocese" />;
     }
   };
 
   return (
     <div>
       <PageSubtitle
-        title={`Paroquias - ${paroquias?.length}`}
+        title={`Paroquias - ${paroquias?.length || 0}`}
         subTitle="do Brasil"
         buttonShow={true}
         buttonText="Cadastrar"

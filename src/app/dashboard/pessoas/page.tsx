@@ -2,6 +2,7 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
+import AlertSemCadastroOuPermissao from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { Pessoa } from "neocatecumenal";
@@ -33,20 +34,24 @@ export default function PessoaPage() {
     if (pessoas) {
       return <ListPessoa pessoas={pessoas} />;
     } else {
-      return <h2>Nenhuma pessoa cadastrada</h2>;
+      return <AlertSemCadastroOuPermissao title="Pessoas" />;
     }
   };
 
   return (
     <div className="">
       <PageSubtitle
-        title={`Pessoas - ${pessoas?.length}`}
+        title={`Pessoas - ${pessoas?.length || 0}`}
         buttonShow={true}
         buttonText="Cadastrar"
         buttonUrl="/dashboard/pessoas/novo"
       />
 
-      {loading ? <SkeletonLoading mensagem="Carregando pessoas ..." /> : listar()}
+      {loading ? (
+        <SkeletonLoading mensagem="Carregando pessoas ..." />
+      ) : (
+        listar()
+      )}
     </div>
   );
 }
