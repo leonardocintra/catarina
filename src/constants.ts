@@ -1,1 +1,2 @@
 export const ROLE_NAO_IDENTIFICADO = "NAO_IDENTIFICADO";
+export const ROLE_ADMIN = "ADMIN";

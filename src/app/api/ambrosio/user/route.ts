@@ -1,7 +1,22 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/users`;
+
+export async function GET() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const res = await fetch(`${url}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  const data = await res.json();
+  return Response.json(data);
+}
 
 export async function POST(request: NextRequest) {
   try {

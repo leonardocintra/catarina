@@ -2,7 +2,7 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListParoquias from "@/components/custom/dashboard/paroquias/list-paroquias";
-import AlertSemCadastroOuPermissao from "@/components/custom/ui/AlertSemCadastroOuPermissao";
+import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Paroquia } from "neocatecumenal";
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ export default function ParoquiasPage() {
     if (paroquias) {
       return <ListParoquias paroquias={paroquias} />;
     } else {
-      return <AlertSemCadastroOuPermissao title="Paróquias da diocese" />;
+      return <UnauthorizedAccessAlert title="Paróquias da diocese" />;
     }
   };
 

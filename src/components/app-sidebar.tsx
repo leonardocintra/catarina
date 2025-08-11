@@ -111,6 +111,10 @@ const data = {
           title: "Etapas",
           url: "/dashboard/etapas",
         },
+        {
+          title: "Usuários",
+          url: "/dashboard/usuarios",
+        },
       ],
     },
   ],
@@ -121,7 +125,7 @@ const data = {
       icon: Map,
     },
     {
-      name: "Github",
+      name: "Github / Codigo",
       url: "https://github.com/leonardocintra/catarina",
       icon: GithubIcon,
     },

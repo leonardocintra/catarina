@@ -187,7 +187,6 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
             Salvar
           </Button>
         </form>
-        <h2>Cantinho do teste {input}</h2>
       </Form>
     </div>
   );

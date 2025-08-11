@@ -2,7 +2,7 @@
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ListPessoa from "@/components/custom/dashboard/pessoa/list-pessoa";
-import AlertSemCadastroOuPermissao from "@/components/custom/ui/AlertSemCadastroOuPermissao";
+import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { Pessoa } from "neocatecumenal";
@@ -34,7 +34,7 @@ export default function PessoaPage() {
     if (pessoas) {
       return <ListPessoa pessoas={pessoas} />;
     } else {
-      return <AlertSemCadastroOuPermissao title="Pessoas" />;
+      return <UnauthorizedAccessAlert title="Pessoas" />;
     }
   };
 

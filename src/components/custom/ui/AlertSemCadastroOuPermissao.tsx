@@ -1,21 +1,22 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal } from "lucide-react";
+import { AlertCircleIcon, FileWarningIcon, Terminal } from "lucide-react";
 
-type AlertSemCadastroOuPermissaoProps = {
+type AlertSemPermissaoProps = {
   title: string;
 };
 
-export default function AlertSemCadastroOuPermissao({
+export default function UnauthorizedAccessAlert({
   title,
-}: AlertSemCadastroOuPermissaoProps) {
+}: AlertSemPermissaoProps) {
   return (
-    <Alert variant={"destructive"}>
-      <Terminal />
-      <AlertTitle>{title}</AlertTitle>
-      <AlertDescription>
-        Não possui cadastro ou você não tem permissão para visualizar esses
-        dados
-      </AlertDescription>
-    </Alert>
+    <div className="mx-auto max-w-lg mt-8">
+      <Alert variant={"destructive"}>
+        <FileWarningIcon />
+        <AlertTitle>Pagina de {title}</AlertTitle>
+        <AlertDescription>
+          Você não possui permissão para acessar/visualizar esta página
+        </AlertDescription>
+      </Alert>
+    </div>
   );
 }
