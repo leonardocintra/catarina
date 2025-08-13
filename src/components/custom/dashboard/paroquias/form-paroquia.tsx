@@ -35,6 +35,7 @@ export default function ParoquiaForm({
 }: FormParoquiaProps) {
   const { toast } = useToast();
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [bairroDisabled, setBairroDisabled] = useState(true);
   const [cidadeDisabled, setCidadeDisabled] = useState(true);
@@ -76,6 +77,8 @@ export default function ParoquiaForm({
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    setIsLoading(true);
+
     let url = `${urlBase}/api/ambrosio/paroquia`;
     let method = "POST";
 
@@ -86,55 +89,67 @@ export default function ParoquiaForm({
 
     console.log(values);
 
-    const res = await fetch(url, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
-    });
-
-    const data = await res.json();
-    if (res.status === 201 && method === "POST") {
-      toast({
-        title: `Paróquia ${values.descricao}`,
-        variant: "default",
-        description: `Cadastrado(a) com sucesso!`,
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
       });
-      router.push(`/dashboard/paroquias/`);
-    } else if (res.status === 200 && method === "PATCH") {
-      toast({
-        title: `${values.descricao}`,
-        variant: "default",
-        description: `Editada com sucesso!`,
-      });
-    } else {
-      let acao = "cadastrado";
-      if (method === "PATCH") {
-        acao = "editado";
-      }
 
-      if (res.status === 400 || res.status === 404) {
+      const data = await res.json();
+
+      if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.descricao} não foi ${acao}!`,
-          variant: "destructive",
-          description: `Erro: ${data.message}`,
-        });
-      } else if (res.status === 401 || res.status === 403) {
-        toast({
-          title: `Sem permissão - ${res.status}`,
+          title: `Paróquia ${values.descricao}`,
           variant: "default",
-          description: `Você não tem permissão para ${
-            method === "POST" ? "cadastrar" : "editar"
-          } paróquia`,
+          description: `Cadastrado(a) com sucesso!`,
+        });
+        router.push(`/dashboard/paroquias/`);
+        return; // Não reabilita o botão pois vai redirecionar
+      } else if (res.status === 200 && method === "PATCH") {
+        toast({
+          title: `${values.descricao}`,
+          variant: "default",
+          description: `Editada com sucesso!`,
         });
       } else {
-        toast({
-          title: `${values.descricao} não foi ${acao}!`,
-          variant: "destructive",
-          description: `Erro: ${res.text}`,
-        });
+        let acao = "cadastrado";
+        if (method === "PATCH") {
+          acao = "editado";
+        }
+
+        if (res.status === 400 || res.status === 404) {
+          toast({
+            title: `${values.descricao} não foi ${acao}!`,
+            variant: "destructive",
+            description: `Erro: ${data.message}`,
+          });
+        } else if (res.status === 401 || res.status === 403) {
+          toast({
+            title: `Sem permissão - ${res.status}`,
+            variant: "default",
+            description: `Você não tem permissão para ${
+              method === "POST" ? "cadastrar" : "editar"
+            } paróquia`,
+          });
+        } else {
+          toast({
+            title: `${values.descricao} não foi ${acao}!`,
+            variant: "destructive",
+            description: `Erro: ${res.text}`,
+          });
+        }
       }
+    } catch (error) {
+      toast({
+        title: "Erro de conexão",
+        variant: "destructive",
+        description: "Não foi possível conectar ao servidor. Tente novamente.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -288,7 +303,9 @@ export default function ParoquiaForm({
             )}
           />
 
-          <Button type="submit">Salvar</Button>
+          <Button type="submit" disabled={isLoading}>
+            {isLoading ? "Salvando..." : "Salvar"}
+          </Button>
         </form>
       </Form>
     </div>
