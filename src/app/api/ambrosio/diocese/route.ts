@@ -31,6 +31,10 @@ export async function POST(req: Request) {
       id: parseInt(data.tipoDiocese),
       descricao: "TipoDiocese",
     },
+    setor: {
+      id: parseInt(data.setorId),
+      descricao: "Setor",
+    },
     observacao: data.observacao,
     endereco: {
       logradouro: data.logradouro,
