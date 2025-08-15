@@ -59,6 +59,10 @@ export async function PATCH(
       id: parseInt(data.tipoDiocese),
       descricao: "TipoDiocese",
     },
+    setor: {
+      id: parseInt(data.setorId),
+      descricao: "Setor",
+    },
     observacao: data.observacao,
     endereco: {
       id: parseInt(data.enderecoId),
