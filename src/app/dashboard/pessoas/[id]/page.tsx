@@ -218,7 +218,7 @@ export default function EditarPessoaPage({
                     className="text-2xl font-semibold underline decoration-sky-500"
                     href={`/dashboard/pessoas/${pessoa.conjugue.id}`}
                   >
-                    {pessoa.conjugue.esposa.nome}
+                    {pessoa.conjugue.nome}
                   </Link>
                 ) : (
                   <LabelData
