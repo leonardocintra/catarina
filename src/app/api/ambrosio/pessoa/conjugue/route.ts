@@ -1,4 +1,5 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/pessoa`;
@@ -6,7 +7,13 @@ const url = `${AmbrosioBaseUrl}/pessoa`;
 export async function GET(req: NextRequest) {
   const sexo = req.nextUrl.searchParams.get("sexo");
 
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
   const res = await fetch(`${url}/conjugue?sexo=${sexo}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
     cache: "no-cache",
   });
 
@@ -16,11 +23,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: Request) {
   const data = await req.json();
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
 
   const res = await fetch(`${url}/casal`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
