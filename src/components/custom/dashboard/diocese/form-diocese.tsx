@@ -1,7 +1,6 @@
 "use client";
 
 import * as z from "zod";
-import { IMaskInput } from "react-imask";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -44,6 +43,7 @@ import { useCepHandler } from "@/hooks/useCepHandler";
 import { addressSchema } from "@/schemas/addressSchema";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CepField } from "@/components/custom/form-fields/CepField";
 
 type FormDioceseProps = {
   urlBase: string;
@@ -164,7 +164,7 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
           description: `Cadastrado(a) com sucesso!`,
         });
         router.push(`/dashboard/dioceses/`);
-        return; // Não reabilita o botão pois vai redirecionar
+        return;
       } else if (res.status === 200 && method === "PATCH") {
         toast({
           title: `${values.descricao}`,
@@ -330,30 +330,12 @@ export default function DioceseForm({ urlBase, diocese }: FormDioceseProps) {
           <Separator />
           <h2>Endereço</h2>
 
-          <FormField
+          <CepField
             control={form.control}
             name="cep"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>CEP</FormLabel>
-                <FormControl>
-                  <IMaskInput
-                    mask="00000-000"
-                    placeholder="CEP da diocese ..."
-                    value={field.value}
-                    onAccept={(value, mask) => {
-                      const numericCep = value.replace(/\D/g, ""); // remove hífen e tudo que não for número
-                      field.onChange(numericCep); // salva o valor limpo no react-hook-form
-                      if (numericCep.length === 8) {
-                        handleCep(numericCep);
-                      }
-                    }}
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="CEP"
+            placeholder="CEP da diocese ..."
+            onCepChange={handleCep}
           />
 
           <FormField

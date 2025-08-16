@@ -16,6 +16,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { IEndereco } from "@/interfaces/IEndereco";
 import { useRouter } from "next/navigation";
 import { Pessoa } from "neocatecumenal";
+import { CepField } from "../../form-fields/CepField";
+import { useCepHandler } from "@/hooks/useCepHandler";
 
 type EnderecoFormProps = {
   pessoa: Pessoa;
@@ -30,10 +32,6 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
   const [cidadeDisabled, setCidadeDisabled] = useState(false);
   const [logradouroDisabled, setLogradouroDisabled] = useState(false);
 
-  const onChangeCaptureHandler = (e: any) => {
-    handleCep(e.target.value);
-  };
-
   function limpaCampos() {
     form.setValue("bairro", "");
     form.setValue("cidade", "");
@@ -42,34 +40,6 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
     form.setValue("uf", "");
     form.setValue("cep", "");
     form.setFocus("cep");
-  }
-
-  async function handleCep(cepInput: string) {
-    if (cepInput.length !== 8) {
-      //TODO: CEP tem 8 digitos mas so funciona com 7
-      return;
-    }
-
-    const res = await fetch(`https://viacep.com.br/ws/${cepInput}/json/`)
-      .then((res) => res.json())
-      .then((res) => {
-        return res;
-      });
-
-    form.setValue("bairro", res.bairro);
-    form.setValue("cidade", res.localidade);
-    form.setValue("uf", res.uf);
-    form.setValue("logradouro", res.logradouro);
-    if (res.logradouro === "") {
-      form.setFocus("logradouro");
-      setBairroDisabled(false);
-      setLogradouroDisabled(false);
-    } else {
-      form.setFocus("numero");
-      setBairroDisabled(true);
-      setLogradouroDisabled(true);
-    }
-    setCidadeDisabled(true);
   }
 
   const formSchema = z.object({
@@ -94,6 +64,13 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
       numero: "",
       bairro: "",
     },
+  });
+
+  const handleCep = useCepHandler({
+    form,
+    setBairroDisabled,
+    setLogradouroDisabled,
+    setCidadeDisabled,
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -142,23 +119,12 @@ export default function EnderecoForm({ pessoa, urlBase }: EnderecoFormProps) {
           onSubmit={form.handleSubmit(handleSubmit)}
           className="flex flex-col gap-2"
         >
-          <FormField
+          <CepField
             control={form.control}
             name="cep"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>CEP</FormLabel>
-                <FormControl onChangeCapture={onChangeCaptureHandler}>
-                  <Input
-                    maxLength={8}
-                    minLength={8}
-                    placeholder="CEP ..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            label="CEP"
+            placeholder="CEP da pessoa ..."
+            onCepChange={handleCep}
           />
 
           <FormField

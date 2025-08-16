@@ -27,7 +27,7 @@ import {
 } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, Trash2Icon } from "lucide-react";
 
 export default function EditarPessoaPage({
   params,
@@ -172,8 +172,11 @@ export default function EditarPessoaPage({
               {pessoa.enderecos?.map((end) => (
                 <div
                   key={end.id}
-                  className="mb-2 text-sm flex gap-2 items-center"
+                  className="mb-2 text-sm flex gap-3 items-center"
                 >
+                  <Button variant={"destructive"} size={"sm"} disabled>
+                    <Trash2Icon className="w-4 h-4" />
+                  </Button>
                   <div>
                     <LabelData titulo="CEP" descricao={end.cep} />
                     <div className="flex space-x-2">
@@ -190,12 +193,11 @@ export default function EditarPessoaPage({
                     </div>
                     <Separator />
                   </div>
-                  <Button variant={"link"}>Editar</Button>
                 </div>
               ))}
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button className="w-full" variant={"outline"}>
+              <Button className="w-full" variant={"outline"} asChild>
                 <Link href={`/dashboard/pessoas/${pessoa.id}/enderecos`}>
                   Cadastrar endereços
                 </Link>
