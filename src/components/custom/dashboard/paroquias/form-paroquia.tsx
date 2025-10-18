@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,25 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { Paroquia } from "neocatecumenal";
+import { Paroquia, Setor } from "neocatecumenal";
 import { addressSchema } from "@/schemas/addressSchema";
 import { useCepHandler } from "@/hooks/useCepHandler";
 import { IMaskInput } from "react-imask";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { Check, ChevronsUpDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type FormParoquiaProps = {
   urlBase: string;
@@ -40,6 +55,25 @@ export default function ParoquiaForm({
   const [bairroDisabled, setBairroDisabled] = useState(true);
   const [cidadeDisabled, setCidadeDisabled] = useState(true);
   const [logradouroDisabled, setLogradouroDisabled] = useState(true);
+  const [openSetor, setOpenSetor] = useState(false);
+  const [setores, setSetores] = useState<Setor[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      async function getSetores() {
+        const res = await fetch(`${urlBase}/api/ambrosio/setor`);
+        return res.json();
+      }
+      try {
+        const dataSetores = await getSetores();
+        setSetores(dataSetores.data);
+      } catch (error: any) {
+        console.error(error);
+      }
+    };
+
+    fetchData();
+  }, [urlBase]);
 
   const formSchema = z
     .object({
@@ -48,6 +82,7 @@ export default function ParoquiaForm({
         .min(2, { message: "Nome da diocese deve ter no minimo 2 caracteres." })
         .max(50, { message: "Tamanho máximo é 50 caracteres." }),
       enderecoId: z.string().optional(),
+      setorId: z.string().optional(),
       dioceseId: z.number(),
       diocese: z.string(),
     })
@@ -58,6 +93,7 @@ export default function ParoquiaForm({
     defaultValues: {
       descricao: paroquia?.descricao || "",
       enderecoId: paroquia?.endereco.id.toString() || "",
+      setorId: paroquia?.setor.id.toString() || "",
       diocese: dioceseNome,
       dioceseId,
       cep: paroquia?.endereco.cep || "",
@@ -183,6 +219,73 @@ export default function ParoquiaForm({
                 <FormControl>
                   <Input disabled {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="setorId"
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Setor</FormLabel>
+                <Popover open={openSetor} onOpenChange={setOpenSetor}>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openSetor}
+                        className={cn(
+                          "w-full justify-between",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value
+                          ? setores.find(
+                              (setor) => setor.id.toString() === field.value
+                            )?.descricao +
+                            " - " +
+                            setores.find(
+                              (setor) => setor.id.toString() === field.value
+                            )?.regiao.descricao
+                          : "Selecione um setor..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandInput placeholder="Buscar setor..." />
+                      <CommandList>
+                        <CommandEmpty>Nenhum setor encontrado.</CommandEmpty>
+                        <CommandGroup>
+                          {setores.map((setor) => (
+                            <CommandItem
+                              value={`${setor.descricao} ${setor.regiao.descricao}`}
+                              key={setor.id}
+                              onSelect={() => {
+                                form.setValue("setorId", setor.id.toString());
+                                setOpenSetor(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  setor.id.toString() === field.value
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                              Região {setor.regiao.descricao} -{" "}
+                              {setor.descricao}
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
                 <FormMessage />
               </FormItem>
             )}

@@ -50,7 +50,7 @@ export default function ListSetor({ setores }: ListSetorProps) {
           <TableRow>
             <TableHead>ID</TableHead>
             <TableHead>Nome</TableHead>
-            <TableHead>Macro Região</TableHead>
+            <TableHead>Região</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -62,7 +62,7 @@ export default function ListSetor({ setores }: ListSetorProps) {
                 <div className="font-semibold">{setor.descricao}</div>
               </TableCell>
               <TableCell className="text-slate-600 uppercase font-light">
-                {setor.macroRegiao.descricao}
+                {setor.regiao.descricao}
               </TableCell>
               <TableCell>
                 Nenhuma ação

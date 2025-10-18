@@ -58,6 +58,10 @@ const data = {
           url: "/dashboard/macro-regiao",
         },
         {
+          title: "Região",
+          url: "/dashboard/regioes",
+        },
+        {
           title: "Setor",
           url: "/dashboard/setores",
         },
