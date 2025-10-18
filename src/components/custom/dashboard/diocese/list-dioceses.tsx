@@ -53,8 +53,6 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
             <TableHead>ID</TableHead>
             <TableHead>Tipo</TableHead>
             <TableHead>Nome | Cidade</TableHead>
-            <TableHead>Macro Região</TableHead>
-            <TableHead>Setor</TableHead>
             <TableHead>Ações</TableHead>
           </TableRow>
         </TableHeader>
@@ -72,8 +70,6 @@ export default function ListDioceses({ dioceses }: ListDiocesesProps) {
                   {diocese.endereco.cidade.estado.sigla}
                 </div>
               </TableCell>
-              <TableCell>{diocese.setor.macroRegiao.descricao}</TableCell>
-              <TableCell>{diocese.setor.descricao}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/dioceses/${diocese.id}`}>
                   <Button variant={"link"} size={"sm"}>
