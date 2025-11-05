@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   Users,
   Phone,
@@ -134,20 +134,12 @@ export default function ListUsuarios() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
-                      <AvatarImage src="/user.png" alt={user.name} />
-                      <AvatarFallback>
-                        {user.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")
-                          .substring(0, 2)
-                          .toUpperCase()}
-                      </AvatarFallback>
+                      <AvatarImage src="/user.png" alt={user.email} />
                     </Avatar>
 
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-lg">{user.name}</h3>
+                        <h3 className="font-semibold text-lg">{user.email}</h3>
                         <Badge variant={roleBadge.variant}>
                           <Shield className="h-3 w-3 mr-1" />
                           {roleBadge.label}
@@ -177,14 +169,6 @@ export default function ListUsuarios() {
                           {/* <span>Criado em {formatDate(user.createdAt)}</span> */}
                           <span>Criado em 11/08/2025 </span>
                         </div>
-
-                        {user.cpf && (
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-mono bg-muted px-2 py-1 rounded">
-                              CPF: {user.cpf}
-                            </span>
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>

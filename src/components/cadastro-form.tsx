@@ -145,7 +145,10 @@ export function CadastroForm({
                     maxLength={11}
                     value={formData.cpf}
                     onChange={(e) =>
-                      handleInputChange("cpf", e.target.value.replace(/\D/g, ""))
+                      handleInputChange(
+                        "cpf",
+                        e.target.value.replace(/\D/g, "")
+                      )
                     }
                     required
                   />
@@ -159,7 +162,10 @@ export function CadastroForm({
                     maxLength={11}
                     value={formData.whatsapp}
                     onChange={(e) =>
-                      handleInputChange("whatsapp", e.target.value.replace(/\D/g, ""))
+                      handleInputChange(
+                        "whatsapp",
+                        e.target.value.replace(/\D/g, "")
+                      )
                     }
                     required
                   />
@@ -194,7 +200,7 @@ export function CadastroForm({
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={cadastrando}>
+              <Button type="submit" className="w-full" disabled={true}>
                 {cadastrando ? "Cadastrando..." : "Criar conta"}
               </Button>
 
@@ -208,8 +214,8 @@ export function CadastroForm({
                 </Link>
               </div>
 
-              <div className="text-red-800 text-center font-light text-xs">
-                Novas contas são sujeitas a aprovação dos responsáveis.
+              <div className="text-red-700 text-center font-semibold text-xs">
+                Atenção! Cadastros manuais foram desativados temporariamente.
               </div>
             </div>
           </form>
