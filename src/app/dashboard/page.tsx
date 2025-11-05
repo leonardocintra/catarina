@@ -15,9 +15,8 @@ export default function DashboardPage() {
       <div className="flex justify-center items-center min-h-[200px]">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold mb-2">
-              Bem-vindo, {user?.name}!
-            </h2>
+            <h2 className="text-2xl font-bold mb-2">Bem-vindo!</h2>
+            <h3>{user?.email}</h3>
             <p className="text-muted-foreground mb-4">
               Estamos felizes em ter você aqui.
             </p>

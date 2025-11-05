@@ -20,27 +20,19 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import {
-  Escolaridade,
-  EstadoCivil,
-  Pessoa,
-  SituacaoReligiosa,
-} from "neocatecumenal";
+import { EscolaridadeEnum, Pessoa, SituacaoReligiosa } from "neocatecumenal";
 import { useState } from "react";
+import { escolaridadesOptions, estadosCivilOptions } from "@/lib/utils";
 
 type PessoaFormProps = {
   urlBase: string;
   pessoa?: Pessoa;
-  estadosCivil: EstadoCivil[];
-  escolaridades: Escolaridade[];
   situacoesReligiosa: SituacaoReligiosa[];
 };
 
 export default function PessoaForm({
   urlBase,
   pessoa,
-  estadosCivil,
-  escolaridades,
   situacoesReligiosa,
 }: PessoaFormProps) {
   const { toast } = useToast();
@@ -75,8 +67,8 @@ export default function PessoaForm({
       cpf: pessoa?.cpf || "",
       nacionalidade: pessoa?.nacionalidade || "brasileira",
       sexo: "MASCULINO",
-      escolaridade: pessoa?.escolaridade?.id?.toString() || "",
-      estadoCivil: pessoa?.estadoCivil.id.toString() || "",
+      escolaridade: pessoa?.escolaridade || EscolaridadeEnum.NAO_INFORMADO,
+      estadoCivil: pessoa?.estadoCivil || "",
       situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
     },
   });
@@ -265,7 +257,7 @@ export default function PessoaForm({
                 <FormLabel>Estado Civil</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.estadoCivil.id.toString()}
+                  defaultValue={pessoa?.estadoCivil}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -273,9 +265,9 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {estadosCivil.map((es) => (
-                      <SelectItem key={es.id} value={es.id.toString()}>
-                        {es.descricao}
+                    {estadosCivilOptions.map((es) => (
+                      <SelectItem key={es.value} value={es.value}>
+                        {es.label}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -293,7 +285,7 @@ export default function PessoaForm({
                 <FormLabel>Escolaridade</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.escolaridade?.id.toString() || ""}
+                  defaultValue={pessoa?.escolaridade || ""}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -301,10 +293,9 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="0">Não informado</SelectItem>
-                    {escolaridades.map((es) => (
-                      <SelectItem key={es.id} value={es.id.toString()}>
-                        {es.descricao}
+                    {escolaridadesOptions.map((es) => (
+                      <SelectItem key={es.value} value={es.value}>
+                        {es.label}
                       </SelectItem>
                     ))}
                   </SelectContent>

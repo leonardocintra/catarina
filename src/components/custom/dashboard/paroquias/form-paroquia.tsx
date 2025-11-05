@@ -123,8 +123,6 @@ export default function ParoquiaForm({
       method = "PATCH";
     }
 
-    console.log(values);
-
     try {
       const res = await fetch(url, {
         method,

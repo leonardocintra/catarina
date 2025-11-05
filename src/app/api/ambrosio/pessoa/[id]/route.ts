@@ -45,10 +45,7 @@ export async function PATCH(
     nome: data.nome,
     conhecidoPor: data.conhecidoPor,
     cpf: data.cpf,
-    estadoCivil: {
-      id: parseInt(data.estadoCivil),
-      descricao: "EstadoCivil",
-    },
+    estadoCivil: data.estadoCivil,
     situacaoReligiosa: {
       id: parseInt(data.situacaoReligiosa),
       descricao: "situacaoReligiosa",
@@ -59,10 +56,7 @@ export async function PATCH(
 
   // Só inclui escolaridade se os dados estiverem presentes
   if (data.escolaridade !== "0") {
-    pessoa.escolaridade = {
-      id: parseInt(data.escolaridade),
-      descricao: "Escolaridade",
-    };
+    pessoa.escolaridade = data.escolaridade;
   }
 
   const cookieStore = await cookies();
