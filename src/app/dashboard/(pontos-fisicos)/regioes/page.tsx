@@ -16,7 +16,6 @@ export default function RegiaoPage() {
       try {
         const res = await fetch(`${BASE_URL}/api/ambrosio/regiao`);
         const data = await res.json();
-        console.log("Regiões:", data);
         setRegioes(data.data);
       } catch (error) {
         console.error("Erro ao listar regiões", error);

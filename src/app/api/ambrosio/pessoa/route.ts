@@ -27,14 +27,8 @@ export async function POST(req: Request) {
     nome: data.nome,
     conhecidoPor: data.conhecidoPor,
     cpf: data.cpf,
-    estadoCivil: {
-      id: parseInt(data.estadoCivil),
-      descricao: "EstadoCivil",
-    },
-    escolaridade: {
-      id: parseInt(data.escolaridade),
-      descricao: "Escolaridade",
-    },
+    estadoCivil: data.estadoCivil,
+    escolaridade: data.escolaridade,
     situacaoReligiosa: {
       id: parseInt(data.situacaoReligiosa),
       descricao: "SituacaoReligiosa",

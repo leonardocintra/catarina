@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
     const { email, password, cpf, name, whatsapp } = body;
 
     if (!email || !password || !cpf || !name || !whatsapp) {
-      console.log(email, password, cpf, name, whatsapp);
       return NextResponse.json(
         { message: "Todos os campos são obrigatórios" },
         { status: 400 }

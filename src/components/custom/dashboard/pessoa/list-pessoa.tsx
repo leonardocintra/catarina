@@ -50,9 +50,8 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Situação Religiosa</TableHead>
             <TableHead>Nome</TableHead>
+            <TableHead>Situação Religiosa</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
@@ -60,13 +59,14 @@ export default function ListPessoa({ pessoas }: ListPessoaProps) {
         <TableBody>
           {pessoasFiltradas.slice(0, 10).map((pessoa) => (
             <TableRow key={pessoa.id}>
-              <TableCell>#{pessoa.id}</TableCell>
-              <TableCell className="text-slate-600 uppercase font-light">
-                {pessoa.situacaoReligiosa.descricao}
-              </TableCell>
               <TableCell>
                 <div className="font-semibold">{pessoa.nome}</div>
-                <div className="font-extralight italic">{pessoa.conhecidoPor}</div>
+                <div className="font-extralight italic">
+                  {pessoa.conhecidoPor}
+                </div>
+              </TableCell>
+              <TableCell className="text-slate-600 uppercase font-light">
+                {pessoa.situacaoReligiosa.descricao}
               </TableCell>
               <TableCell>
                 <CheckIcon />

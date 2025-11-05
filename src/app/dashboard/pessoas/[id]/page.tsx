@@ -19,12 +19,7 @@ import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import {
-  Escolaridade,
-  EstadoCivil,
-  Pessoa,
-  SituacaoReligiosa,
-} from "neocatecumenal";
+import { Pessoa, SituacaoReligiosa } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon, Trash2Icon } from "lucide-react";
@@ -36,8 +31,6 @@ export default function EditarPessoaPage({
 }) {
   const [editar, setEditar] = useState<boolean>(false);
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
-  const [estadosCivil, setEstadosCivil] = useState<EstadoCivil[]>([]);
-  const [escolaridades, setEscolaridades] = useState<Escolaridade[]>([]);
   const [situacoesReligiosa, setSituacoesReligiosa] = useState<
     SituacaoReligiosa[]
   >([]);
@@ -49,12 +42,9 @@ export default function EditarPessoaPage({
       setLoading(true);
 
       const pessoaData = await getPessoa(parseInt(id));
-      const { estadosCivilData, escolaridadesData, situacoesReligiosaData } =
-        await getDadosDaPessoa();
+      const { situacoesReligiosaData } = await getDadosDaPessoa();
 
       setPessoa(pessoaData);
-      setEstadosCivil(estadosCivilData);
-      setEscolaridades(escolaridadesData);
       setSituacoesReligiosa(situacoesReligiosaData);
       setLoading(false);
     };
@@ -69,7 +59,7 @@ export default function EditarPessoaPage({
     <div>
       <PageSubtitle
         title={`${pessoa.nome}`}
-        subTitle={`Situação: ${pessoa.situacaoReligiosa.descricao}`}
+        subTitle={`Situação: ${pessoa.situacaoReligiosa.descricao} - ID: ${pessoa.externalId}`}
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/pessoas"
@@ -97,16 +87,11 @@ export default function EditarPessoaPage({
                 />
                 <LabelData titulo="Sexo" descricao={pessoa.sexo} />
               </div>
-              <LabelData
-                titulo="Estado Civil"
-                descricao={pessoa.estadoCivil.descricao}
-              />
+              <LabelData titulo="Estado Civil" descricao={pessoa.estadoCivil} />
               <LabelData
                 titulo="Escolaridade"
                 descricao={
-                  pessoa.escolaridade
-                    ? pessoa.escolaridade.descricao
-                    : "não informado"
+                  pessoa.escolaridade ? pessoa.escolaridade : "não informado"
                 }
               />
             </CardContent>
@@ -205,7 +190,7 @@ export default function EditarPessoaPage({
             </CardFooter>
           </Card>
 
-          {pessoa.estadoCivil.descricao === "CASADO(A)" && (
+          {pessoa.estadoCivil === "CASADO" && (
             <Card className="flex flex-col h-full">
               <CardHeader>
                 <CardTitle>Conjugue</CardTitle>
@@ -245,8 +230,6 @@ export default function EditarPessoaPage({
         <PessoaForm
           urlBase={BASE_URL}
           pessoa={pessoa}
-          escolaridades={escolaridades}
-          estadosCivil={estadosCivil}
           situacoesReligiosa={situacoesReligiosa}
         />
       )}
