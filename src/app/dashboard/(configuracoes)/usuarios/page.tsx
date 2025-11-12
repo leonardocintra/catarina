@@ -20,7 +20,7 @@ export default function UsuariosPage() {
         subTitle="Gerenciar usuários do sistema"
         buttonShow={true}
         buttonText="Novo Usuário"
-        buttonUrl="/cadastro"
+        buttonUrl="/dashboard/usuarios/novo"
         buttonVariant="default"
       />
 
