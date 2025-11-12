@@ -110,18 +110,6 @@ export function LoginForm({
               <Button type="submit" className="w-full" disabled={autenticando}>
                 {autenticando ? "Autenticando..." : "Entrar"}
               </Button>
-              <div className="text-center text-sm mt-8">
-                Não tem uma conta?{" "}
-                <Link
-                  href="/cadastro"
-                  className="underline underline-offset-4 hover:text-primary"
-                >
-                  Faça seu cadastro!
-                </Link>
-                <div className="text-red-800 mt-3 font-light text-xs">
-                  Novas contas são sujeitas a aprovação dos responsáveis.
-                </div>
-              </div>
             </div>
           </form>
           <div className="bg-muted relative hidden md:block">

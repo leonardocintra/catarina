@@ -5,33 +5,39 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Image from "next/image";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { IMaskInput } from "react-imask";
+import { CheckCircle, Search, User } from "lucide-react";
+import { Pessoa } from "neocatecumenal";
 
 export function CadastroForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
+  const [step, setStep] = useState<"cpf" | "dados">("cpf");
+  const [cpf, setCpf] = useState("");
+  const [userPessoaData, setUserPessoaData] = useState<Pessoa | null>(null);
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
-    cpf: "",
     whatsapp: "",
     password: "",
     confirmPassword: "",
   });
   const [errorMsg, setErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const [cadastrando, setCadastrando] = useState(false);
 
-  const schema = z
+  const cpfSchema = z.object({
+    cpf: z.string().regex(/^\d{11}$/, "CPF deve conter 11 dígitos"),
+  });
+
+  const dadosSchema = z
     .object({
-      name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres"),
       email: z.email("E-mail inválido"),
-      cpf: z.string().regex(/^\d{11}$/, "CPF deve conter 11 dígitos"),
       whatsapp: z
         .string()
         .min(10, "WhatsApp deve ter no mínimo 10 dígitos")
@@ -44,11 +50,40 @@ export function CadastroForm({
       path: ["confirmPassword"],
     });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+  const handleBuscarCpf = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg("");
+
+    const parsed = cpfSchema.safeParse({ cpf });
+    if (!parsed.success) {
+      setErrorMsg(parsed.error.issues[0].message);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/ambrosio/pessoa/cpf/${cpf}`);
+
+      if (!res.ok) {
+        if (res.status === 404) {
+          setErrorMsg("CPF não encontrado no sistema");
+        } else {
+          setErrorMsg("Erro ao buscar CPF");
+        }
+        setLoading(false);
+        return;
+      }
+
+      const data = await res.json();
+      setUserPessoaData(data);
+      setStep("dados");
+    } catch (error) {
+      setErrorMsg("Erro ao tentar buscar CPF");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCadastro = async (e: React.FormEvent) => {
@@ -56,7 +91,7 @@ export function CadastroForm({
     setCadastrando(true);
     setErrorMsg("");
 
-    const parsed = schema.safeParse(formData);
+    const parsed = dadosSchema.safeParse(formData);
     if (!parsed.success) {
       setErrorMsg(parsed.error.issues[0].message);
       setCadastrando(false);
@@ -68,9 +103,9 @@ export function CadastroForm({
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: formData.name,
+          name: userPessoaData?.nome,
           email: formData.email,
-          cpf: formData.cpf,
+          cpf: cpf,
           whatsapp: formData.whatsapp,
           password: formData.password,
         }),
@@ -83,7 +118,6 @@ export function CadastroForm({
         return;
       }
 
-      // Redireciona para página de sucesso ou login
       router.push("/cadastro/sucesso");
     } catch (error) {
       setErrorMsg("Erro ao tentar criar conta");
@@ -92,147 +126,180 @@ export function CadastroForm({
     }
   };
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleVoltarCpf = () => {
+    setStep("cpf");
+    setUserPessoaData(null);
+    setErrorMsg("");
+    setFormData({
+      email: "",
+      whatsapp: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          <form className="p-6 md:p-8" onSubmit={handleCadastro}>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Criar nova conta</h1>
-                <p className="text-muted-foreground text-balance">
-                  Preencha os dados para se cadastrar
-                </p>
-              </div>
-
-              {errorMsg && (
-                <div className="text-sm text-red-500 text-center">
-                  {errorMsg}
+      <Card className="overflow-hidden p-0 max-w-xl mx-auto">
+        <CardContent className="">
+          {step === "cpf" ? (
+            <form className="p-6 md:p-8" onSubmit={handleBuscarCpf}>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4 p-3 bg-primary/10 rounded-full">
+                    <Search className="h-8 w-8 text-primary" />
+                  </div>
+                  <h1 className="text-2xl font-bold">Buscar por CPF</h1>
+                  <p className="text-muted-foreground text-balance">
+                    Digite seu CPF da pessoa cadastrada no sistema. Caso não
+                    encontre, entre em contato com o administrador. Ou verifique
+                    se foi cadastrado corretamente.
+                  </p>
                 </div>
-              )}
 
-              <div className="grid gap-3">
-                <Label htmlFor="name">Nome completo</Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Seu nome completo"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  required
-                />
-              </div>
+                {errorMsg && (
+                  <div className="text-sm text-red-500 text-center bg-red-50 p-3 rounded-md">
+                    {errorMsg}
+                  </div>
+                )}
 
-              <div className="grid gap-3">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seuemail@example.com"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
+                <div className="grid gap-3">
                   <Label htmlFor="cpf">CPF</Label>
+                  <IMaskInput
+                    mask="000.000.000-00"
+                    placeholder="000.000.000-00"
+                    value={cpf}
+                    onAccept={(value) => {
+                      const numericCpf = value.replace(/\D/g, "");
+                      setCpf(numericCpf);
+                    }}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Buscando..." : "Buscar CPF"}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form className="p-6 md:p-8" onSubmit={handleCadastro}>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col items-center text-center">
+                  <div className="mb-4 p-3 bg-green-100 rounded-full">
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  </div>
+                  <h1 className="text-2xl font-bold">CPF Encontrado!</h1>
+                  <p className="text-muted-foreground text-balance">
+                    Complete os dados para criar sua conta
+                  </p>
+                </div>
+
+                <div className="bg-muted/50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-muted-foreground" />
+                    <div>
+                      <p className="font-medium">
+                        {userPessoaData?.nome} ({userPessoaData?.conhecidoPor})
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        CPF:{" "}
+                        {cpf.replace(
+                          /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                          "$1.$2.$3-$4"
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleVoltarCpf}
+                    className="mt-2 w-full"
+                  >
+                    Alterar CPF
+                  </Button>
+                </div>
+
+                {errorMsg && (
+                  <div className="text-sm text-red-500 text-center bg-red-50 p-3 rounded-md">
+                    {errorMsg}
+                  </div>
+                )}
+
+                <div className="grid gap-3">
+                  <Label htmlFor="email">E-mail</Label>
                   <Input
-                    id="cpf"
-                    type="text"
-                    placeholder="12345678901"
-                    maxLength={11}
-                    value={formData.cpf}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "cpf",
-                        e.target.value.replace(/\D/g, "")
-                      )
-                    }
+                    id="email"
+                    type="email"
+                    placeholder="seuemail@example.com"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
                     required
                   />
                 </div>
-                <div>
+
+                <div className="grid gap-3">
                   <Label htmlFor="whatsapp">WhatsApp</Label>
-                  <Input
-                    id="whatsapp"
-                    type="text"
-                    placeholder="com DDD Ex: 11999999999"
-                    maxLength={11}
+                  <IMaskInput
+                    mask="(00) 00000-0000"
+                    placeholder="(00) 00000-0000"
                     value={formData.whatsapp}
+                    onAccept={(value) => {
+                      const numericWhatsapp = value.replace(/\D/g, "");
+                      handleInputChange("whatsapp", numericWhatsapp);
+                    }}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+
+                <div className="grid gap-3">
+                  <Label htmlFor="password">Senha</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Mínimo 6 caracteres"
+                    value={formData.password}
                     onChange={(e) =>
-                      handleInputChange(
-                        "whatsapp",
-                        e.target.value.replace(/\D/g, "")
-                      )
+                      handleInputChange("password", e.target.value)
                     }
                     required
                   />
                 </div>
-              </div>
 
-              <div className="grid gap-3">
-                <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Mínimo 6 caracteres"
-                  value={formData.password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
-                  required
-                />
-              </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="confirmPassword">Confirmar senha</Label>
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Confirme sua senha"
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      handleInputChange("confirmPassword", e.target.value)
+                    }
+                    required
+                  />
+                </div>
 
-              <div className="grid gap-3">
-                <Label htmlFor="confirmPassword">Confirmar senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  placeholder="Confirme sua senha"
-                  value={formData.confirmPassword}
-                  onChange={(e) =>
-                    handleInputChange("confirmPassword", e.target.value)
-                  }
-                  required
-                />
+                <Button type="submit" className="w-full" disabled={true}>
+                  {cadastrando ? "Cadastrando..." : "Cadatrar usuario"}
+                </Button>
+                <div className="text-center text-red-700 font-semibold text-sm">
+                  Desativado temporiamente. Entre em contato com o administrador.
+                </div>
               </div>
-
-              <Button type="submit" className="w-full" disabled={true}>
-                {cadastrando ? "Cadastrando..." : "Criar conta"}
-              </Button>
-
-              <div className="text-center text-sm">
-                Já tem uma conta?{" "}
-                <Link
-                  href="/"
-                  className="underline underline-offset-4 hover:text-primary"
-                >
-                  Fazer login
-                </Link>
-              </div>
-
-              <div className="text-red-700 text-center font-semibold text-xs">
-                Atenção! Cadastros manuais foram desativados temporariamente.
-              </div>
-            </div>
-          </form>
-          <div className="bg-muted relative hidden md:block">
-            <Image
-              src="/logo.webp"
-              width={500}
-              height={500}
-              alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-            />
-          </div>
+            </form>
+          )}
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 uppercase">
-        &copy; {new Date().getFullYear()} - Caminho Neocatecumenal do Brasil
-      </div>
     </div>
   );
 }
