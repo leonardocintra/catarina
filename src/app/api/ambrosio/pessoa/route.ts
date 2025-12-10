@@ -7,7 +7,7 @@ const url = `${AmbrosioBaseUrl}/pessoa`;
 export async function GET() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  const res = await fetch(`${url}?page=1&limit=3000`, {
+  const res = await fetch(`${url}?page=1&limit=5000`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
