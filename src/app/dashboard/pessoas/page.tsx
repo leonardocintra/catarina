@@ -43,7 +43,7 @@ export default function PessoaPage() {
       <PageSubtitle
         title={`Pessoas - ${pessoas?.length || 0}`}
         buttonShow={true}
-        buttonText="Cadastrar"
+        buttonText="Nova pessoa"
         buttonUrl="/dashboard/pessoas/novo"
       />
 

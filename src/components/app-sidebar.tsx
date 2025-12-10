@@ -125,18 +125,13 @@ const data = {
   projects: [
     {
       name: "Passaportes",
-      url: "#",
+      url: "/dashboard/passaportes",
       icon: Map,
     },
     {
       name: "Github / Codigo",
       url: "https://github.com/leonardocintra/catarina",
       icon: GithubIcon,
-    },
-    {
-      name: "Status",
-      url: "https://kuma.ypg4r9.easypanel.host/status/cnc",
-      icon: MonitorCogIcon,
     },
   ],
 };

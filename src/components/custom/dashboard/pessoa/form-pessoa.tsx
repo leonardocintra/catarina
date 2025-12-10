@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 import { EscolaridadeEnum, Pessoa, SituacaoReligiosa } from "neocatecumenal";
 import { useState } from "react";
 import { escolaridadesOptions, estadosCivilOptions } from "@/lib/utils";
+import { Spinner } from "@/components/ui/spinner";
 
 type PessoaFormProps = {
   urlBase: string;
@@ -320,7 +321,21 @@ export default function PessoaForm({
           />
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? (pessoa ? "Salvando..." : "Cadastrando...") : "Salvar"}
+            {isLoading ? (
+              pessoa ? (
+                <>
+                  <Spinner />
+                  "Salvando..."
+                </>
+              ) : (
+                <>
+                  <Spinner />
+                  "Cadastrando..."
+                </>
+              )
+            ) : (
+              "Salvar"
+            )}
           </Button>
         </form>
       </Form>

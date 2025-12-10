@@ -28,7 +28,7 @@ export function NavOutros({
         {projects.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link href={item.url} target="_blank">
+              <Link href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
               </Link>
