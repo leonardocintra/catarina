@@ -67,7 +67,7 @@ export default function PessoaForm({
       conhecidoPor: pessoa?.conhecidoPor || "",
       cpf: pessoa?.cpf || "",
       nacionalidade: pessoa?.nacionalidade || "brasileira",
-      sexo: "MASCULINO",
+      sexo: (pessoa?.sexo || "MASCULINO") as "MASCULINO" | "FEMININO",
       escolaridade: pessoa?.escolaridade || EscolaridadeEnum.NAO_INFORMADO,
       estadoCivil: pessoa?.estadoCivil || "",
       situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
