@@ -1,8 +1,56 @@
+"use client";
+
+import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
+import { BASE_URL } from "@/lib/utils";
+import { Comunidade } from "neocatecumenal";
+import { useEffect, useState } from "react";
+
 export default function ComunidadePage() {
+  const [comunidades, setComunidades] = useState<Comunidade[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const getComunidades = async () => {
+      try {
+        const res = await fetch(`${BASE_URL}/api/ambrosio/comunidade`, {
+          credentials: "include",
+        });
+
+        const data = await res.json();
+        setComunidades(data.data);
+      } catch (error) {
+        console.error("Erro ao buscar comunidades", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getComunidades();
+  }, []);
+
+  const listar = () => {
+    if (comunidades) {
+      return <>Em desenvolvimento ...</>; //<ListComunidade comunidades={comunidades} />;
+    } else {
+      return <UnauthorizedAccessAlert title="Comunidades" />;
+    }
+  };
+
   return (
-    <div className="border p-4 text-center">
-      <h2 className="text-lg font-semibold mb-2">Comunidades</h2>
-      <p className="text-gray-600">Esta página está pendente de implementação.</p>
+    <div className="">
+      <PageSubtitle
+        title={`Comunidades - ${comunidades?.length || 0}`}
+        buttonShow={true}
+        buttonText="Nova comunidade"
+        buttonUrl="/dashboard/comunidades/novo"
+      />
+
+      {loading ? (
+        <SkeletonLoading mensagem="Carregando comunidades ..." />
+      ) : (
+        listar()
+      )}
     </div>
   );
 }

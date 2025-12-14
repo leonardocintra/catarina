@@ -71,7 +71,7 @@ export default function EtapasPage() {
                 <div className="flex items-center gap-4">
                   <Badge
                     variant="outline"
-                    className="min-w-[2rem] justify-center"
+                    className="min-w-8 justify-center"
                   >
                     {index + 1}
                   </Badge>
