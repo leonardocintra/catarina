@@ -30,8 +30,48 @@ export async function GET(
     );
   }
 
-  const data = await res.json();
-  return Response.json(data.data);
+  if (res.status === 401) {
+    return Response.json(
+      {
+        message: "Não autorizado",
+      },
+      {
+        status: 401,
+      }
+    );
+  }
+
+  const response = await res.json();
+  const data = response.data;
+
+  // Retornar apenas os dados serializáveis
+  return Response.json({
+    id: data.id,
+    externalId: data.externalId,
+    nome: data.nome,
+    conhecidoPor: data.conhecidoPor,
+    cpf: data.cpf,
+    sexo: data.sexo,
+    nacionalidade: data.nacionalidade,
+    estadoCivil: data.estadoCivil,
+    dataNascimento: data.dataNascimento
+      ? new Date(data.dataNascimento).toISOString()
+      : null,
+    foto: data.foto,
+    ativo: data.ativo,
+    escolaridade: data.escolaridade,
+    situacaoReligiosa: {
+      id: data.situacaoReligiosa?.id,
+      descricao: data.situacaoReligiosa?.descricao,
+      sexoUnico: data.situacaoReligiosa?.sexoUnico,
+    },
+    carismas: {
+      primitivos: data.carismas?.primitivos || [],
+      servicos: data.carismas?.servicos || [],
+      vinculados: data.carismas?.vinculados || [],
+    },
+    enderecos: data.enderecos || [],
+  });
 }
 
 export async function PATCH(

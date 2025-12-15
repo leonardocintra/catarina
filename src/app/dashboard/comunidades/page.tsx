@@ -1,5 +1,6 @@
 "use client";
 
+import ListComunidade from "@/components/custom/dashboard/comunidade/list-comunidade";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
@@ -31,7 +32,7 @@ export default function ComunidadePage() {
 
   const listar = () => {
     if (comunidades) {
-      return <>Em desenvolvimento ...</>; //<ListComunidade comunidades={comunidades} />;
+      return <ListComunidade comunidades={comunidades} />;
     } else {
       return <UnauthorizedAccessAlert title="Comunidades" />;
     }
