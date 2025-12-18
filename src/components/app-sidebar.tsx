@@ -45,6 +45,10 @@ const data = {
           title: "Comunidades",
           url: "/dashboard/comunidades",
         },
+        {
+          title: "Equipes",
+          url: "/dashboard/equipes",
+        },
       ],
     },
     {
