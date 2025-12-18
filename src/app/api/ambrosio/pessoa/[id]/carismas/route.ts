@@ -1,7 +1,7 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-const url = `${AmbrosioBaseUrl}/pessoa`;
+const url = `${AmbrosioBaseUrl}/carismas`;
 
 export async function POST(
   req: Request,
@@ -13,8 +13,10 @@ export async function POST(
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
+  console.log(data);
+
   try {
-    const res = await fetch(`${url}/${pessoaId}/carismas`, {
+    const res = await fetch(`${url}/pessoa/${pessoaId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,8 +26,9 @@ export async function POST(
     });
 
     const resData = await res.json();
+    console.log("Resposta da API ao salvar carismas:", resData.message);
 
-    if (res.status === 201 || res.status === 200) {
+    if (res.status === 201) {
       return Response.json(resData, {
         status: res.status,
       });

@@ -19,7 +19,7 @@ import { BASE_URL } from "@/lib/utils";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { use, useEffect, useState } from "react";
-import { Pessoa, SituacaoReligiosa } from "neocatecumenal";
+import { Pessoa, SituacaoReligiosa, TipoCarismaEnum } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon, Trash2Icon } from "lucide-react";
@@ -122,22 +122,10 @@ export default function EditarPessoaPage({
 
           <Card className="flex flex-col h-full">
             <CardHeader>
-              <CardTitle>Carismas</CardTitle>
-              <CardDescription>Carismas de {pessoa.nome}</CardDescription>
+              <CardTitle>Carismas de {pessoa.nome}</CardTitle>
             </CardHeader>
             <CardContent className="flex-1">
-              <Alert variant="destructive">
-                <AlertCircleIcon />
-                <AlertTitle>Carismas em implementação</AlertTitle>
-                <AlertDescription>
-                  <p>Novos carismas estão disponíveis.</p>
-                  <ul className="list-inside list-disc text-sm">
-                    <li>Carismas primitivos</li>
-                    <li>Carismas serviço</li>
-                    <li>Carismas vinculado</li>
-                  </ul>
-                </AlertDescription>
-              </Alert>
+              {handleCarismas(pessoa)}
             </CardContent>
             <CardFooter className="mt-auto">
               <Button className="w-full" variant={"outline"}>
@@ -208,12 +196,17 @@ export default function EditarPessoaPage({
                     {pessoa.conjugue.nome}
                   </Link>
                 ) : (
-                  <LabelData
-                    titulo={
-                      pessoa.sexo === "MASCULINO" ? "Casado com" : "Casada com"
-                    }
-                    descricao={"Não informado"}
-                  />
+                  <div className="space-y-1.5">
+                    <Alert variant="destructive">
+                      <AlertTitle>Informe o cônjuge</AlertTitle>
+                      <AlertDescription>
+                        <p className="italic">
+                          Informar o cônjuge logo no início do cadastro. Isso
+                          ajuda a manter os dados da comunidade organizados.
+                        </p>
+                      </AlertDescription>
+                    </Alert>
+                  </div>
                 )}
               </CardContent>
               <CardFooter className="mt-auto">
@@ -232,6 +225,71 @@ export default function EditarPessoaPage({
           pessoa={pessoa}
           situacoesReligiosa={situacoesReligiosa}
         />
+      )}
+    </div>
+  );
+}
+
+function handleCarismas(pessoa: Pessoa) {
+  const carismas = pessoa.carismas || [];
+
+  // Separar por tipo
+  const primitivos = carismas.filter(
+    (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO
+  );
+  const vinculados = carismas.filter(
+    (c: any) => c.tipo === TipoCarismaEnum.VINCULADO
+  );
+  const servicos = carismas.filter(
+    (c: any) => c.tipo === TipoCarismaEnum.SERVICO
+  );
+
+  // Se não houver nenhum carisma cadastrado
+  if (carismas.length === 0) {
+    return (
+      <p className="text-muted-foreground text-sm">Nenhum carisma cadastrado</p>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {primitivos.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-sm mb-2">Primitivos</h4>
+          <ul className="space-y-1">
+            {primitivos.map((c: any) => (
+              <li key={c.id} className="text-sm text-muted-foreground">
+                • {c.descricao}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {vinculados.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-sm mb-2">Vinculados</h4>
+          <ul className="space-y-1">
+            {vinculados.map((c: any) => (
+              <li key={c.id} className="text-sm text-muted-foreground">
+                • {c.descricao}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {servicos.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-sm mb-2">Serviços</h4>
+          <ul className="space-y-1">
+            {servicos.map((c: any) => (
+              <li key={c.id} className="text-sm text-muted-foreground">
+                • {c.descricao}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );

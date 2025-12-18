@@ -3,12 +3,7 @@
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { Button } from "@/components/ui/button";
 import { CheckIcon } from "lucide-react";
-import {
-  CarismaPrimitivo,
-  CarismaServico,
-  CarismaVinculado,
-  Pessoa,
-} from "neocatecumenal";
+import { Carisma, Pessoa, TipoCarismaEnum } from "neocatecumenal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,9 +12,9 @@ import { BASE_URL } from "@/lib/utils";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 
 interface CarismaData {
-  primitivo: CarismaPrimitivo[];
-  vinculado: CarismaVinculado[];
-  servico: CarismaServico[];
+  primitivo: Carisma[];
+  vinculado: Carisma[];
+  servico: Carisma[];
 }
 
 export default function PessoaCarismaPage() {
@@ -36,10 +31,7 @@ export default function PessoaCarismaPage() {
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
   const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
-  const [selectedPrimitivos, setSelectedPrimitivos] = useState<number[]>([]);
-  const [selectedVinculados, setSelectedVinculados] = useState<number[]>([]);
-  const [selectedServicos, setSelectedServicos] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   // Carregar dados
   useEffect(() => {
@@ -47,24 +39,27 @@ export default function PessoaCarismaPage() {
       try {
         setIsLoading(true);
 
-        // Buscar carismas
+        // Buscar carismas disponíveis (agora em uma única rota)
         const urlBase = BASE_URL + "/api/ambrosio/configuracoes/carismas";
-        const [resPrimitivo, resVinculado, resServico] = await Promise.all([
-          fetch(`${urlBase}/primitivo`),
-          fetch(`${urlBase}/vinculado`),
-          fetch(`${urlBase}/servico`),
-        ]);
+        const resCarismas = await fetch(urlBase);
+        const dataCarismas = await resCarismas.json();
 
-        const [dataPrimitivo, dataVinculado, dataServico] = await Promise.all([
-          resPrimitivo.json(),
-          resVinculado.json(),
-          resServico.json(),
-        ]);
+        // Separar por tipo
+        const todosCarismas = dataCarismas.data || [];
+        const primitivos = todosCarismas.filter(
+          (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO
+        );
+        const vinculados = todosCarismas.filter(
+          (c: any) => c.tipo === TipoCarismaEnum.VINCULADO
+        );
+        const servicos = todosCarismas.filter(
+          (c: any) => c.tipo === TipoCarismaEnum.SERVICO
+        );
 
         setCarismaData({
-          primitivo: dataPrimitivo.data || dataPrimitivo || [],
-          vinculado: dataVinculado.data || dataVinculado.dataVinculado || [],
-          servico: dataServico.data || dataServico.dataServico || [],
+          primitivo: primitivos,
+          vinculado: vinculados,
+          servico: servicos,
         });
 
         // Buscar pessoa
@@ -75,15 +70,11 @@ export default function PessoaCarismaPage() {
         const pessoaData = await resPessoa.json();
 
         setPessoa(pessoaData);
-        setSelectedPrimitivos(
-          pessoaData.carismas?.primitivos?.map((c: any) => c.id) || []
+        // Carismas já vêm em um único array com tipo
+        const selectedCarismas = (pessoaData.carismas || []).map(
+          (c: any) => c.id
         );
-        setSelectedVinculados(
-          pessoaData.carismas?.vinculados?.map((c: any) => c.id) || []
-        );
-        setSelectedServicos(
-          pessoaData.carismas?.servicos?.map((c: any) => c.id) || []
-        );
+        setSelectedIds(selectedCarismas);
       } catch (error) {
         toast({
           title: "Erro",
@@ -98,35 +89,16 @@ export default function PessoaCarismaPage() {
     loadData();
   }, [pessoaId, toast]);
 
-  const toggle = (id: number, type: "primitivo" | "vinculado" | "servico") => {
-    const setters = {
-      primitivo: setSelectedPrimitivos,
-      vinculado: setSelectedVinculados,
-      servico: setSelectedServicos,
-    };
-    setters[type]((prev) =>
+  const toggle = (id: number) => {
+    setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
-  const isSelected = (
-    id: number,
-    type: "primitivo" | "vinculado" | "servico"
-  ) => {
-    const states = {
-      primitivo: selectedPrimitivos,
-      vinculado: selectedVinculados,
-      servico: selectedServicos,
-    };
-    return states[type].includes(id);
-  };
+  const isSelected = (id: number) => selectedIds.includes(id);
 
   const salvar = async () => {
-    if (
-      !selectedPrimitivos.length &&
-      !selectedVinculados.length &&
-      !selectedServicos.length
-    ) {
+    if (selectedIds.length === 0) {
       toast({
         title: "Atenção",
         variant: "destructive",
@@ -137,25 +109,9 @@ export default function PessoaCarismaPage() {
 
     setLoading(true);
 
-    const payload: any = { carismas: {} };
-
-    if (selectedPrimitivos.length > 0) {
-      payload.carismas.primitivos = carismaData.primitivo
-        .filter((c) => selectedPrimitivos.includes(c.id))
-        .map((c) => ({ id: c.id, descricao: c.descricao }));
-    }
-
-    if (selectedVinculados.length > 0) {
-      payload.carismas.vinculados = carismaData.vinculado
-        .filter((c) => selectedVinculados.includes(c.id))
-        .map((c) => ({ id: c.id, descricao: c.descricao }));
-    }
-
-    if (selectedServicos.length > 0) {
-      payload.carismas.servicos = carismaData.servico
-        .filter((c) => selectedServicos.includes(c.id))
-        .map((c) => ({ id: c.id, descricao: c.descricao }));
-    }
+    const payload = {
+      carismaIds: selectedIds,
+    };
 
     try {
       const res = await fetch(
@@ -174,10 +130,11 @@ export default function PessoaCarismaPage() {
         });
         router.push(`/dashboard/pessoas/${pessoa?.id}`);
       } else {
+        const resData = await res.json();
         toast({
           title: "Erro",
           variant: "destructive",
-          description: "Erro ao atualizar carismas",
+          description: `Erro ao atualizar carismas. ${resData.message || ""}`,
         });
       }
     } catch {
@@ -194,11 +151,9 @@ export default function PessoaCarismaPage() {
   const Grid = ({
     title,
     carismas,
-    type,
   }: {
     title: string;
-    carismas: any[];
-    type: "primitivo" | "vinculado" | "servico";
+    carismas: Carisma[];
   }) => (
     <div className="mb-8">
       <h2 className="text-xl font-semibold mb-4">
@@ -213,16 +168,23 @@ export default function PessoaCarismaPage() {
           {carismas.map((c) => (
             <div
               key={c.id}
-              onClick={() => toggle(c.id, type)}
+              onClick={() => toggle(c.id)}
               className={`border rounded-lg p-4 cursor-pointer flex items-center justify-between transition-colors ${
-                isSelected(c.id, type)
+                isSelected(c.id)
                   ? "bg-blue-100 border-blue-500 dark:bg-blue-950"
                   : "bg-white hover:bg-gray-50 dark:bg-slate-950"
               }`}
             >
-              <span className="font-medium text-sm">{c.descricao}</span>
-              {isSelected(c.id, type) && (
-                <CheckIcon className="text-blue-500" size={18} />
+              <div className="flex-1">
+                <span className="font-medium text-sm block">{c.descricao}</span>
+                {c.casalAndaJunto && (
+                  <span className="text-xs text-muted-foreground">
+                    Casal anda junto
+                  </span>
+                )}
+              </div>
+              {isSelected(c.id) && (
+                <CheckIcon className="text-blue-500 shrink-0 ml-2" size={18} />
               )}
             </div>
           ))}
@@ -253,23 +215,11 @@ export default function PessoaCarismaPage() {
       />
 
       <div className="p-4 max-w-4xl mx-auto">
-        <Grid
-          title="Carismas Primitivos"
-          carismas={carismaData.primitivo}
-          type="primitivo"
-        />
+        <Grid title="Carismas Primitivos" carismas={carismaData.primitivo} />
         <Separator className="my-6" />
-        <Grid
-          title="Carismas Vinculados"
-          carismas={carismaData.vinculado}
-          type="vinculado"
-        />
+        <Grid title="Carismas Vinculados" carismas={carismaData.vinculado} />
         <Separator className="my-6" />
-        <Grid
-          title="Carismas de Serviço"
-          carismas={carismaData.servico}
-          type="servico"
-        />
+        <Grid title="Carismas de Serviço" carismas={carismaData.servico} />
         <Separator className="my-6" />
 
         <div className="flex gap-2">
@@ -286,28 +236,12 @@ export default function PessoaCarismaPage() {
           </Button>
         </div>
 
-        {(selectedPrimitivos.length > 0 ||
-          selectedVinculados.length > 0 ||
-          selectedServicos.length > 0) && (
+        {selectedIds.length > 0 && (
           <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
             <h3 className="font-semibold mb-2">Resumo:</h3>
-            <ul className="text-sm space-y-1">
-              {selectedPrimitivos.length > 0 && (
-                <li>
-                  • <strong>Primitivos:</strong> {selectedPrimitivos.length}
-                </li>
-              )}
-              {selectedVinculados.length > 0 && (
-                <li>
-                  • <strong>Vinculados:</strong> {selectedVinculados.length}
-                </li>
-              )}
-              {selectedServicos.length > 0 && (
-                <li>
-                  • <strong>Serviços:</strong> {selectedServicos.length}
-                </li>
-              )}
-            </ul>
+            <p className="text-sm">
+              <strong>{selectedIds.length}</strong> carisma(s) selecionado(s)
+            </p>
           </div>
         )}
       </div>

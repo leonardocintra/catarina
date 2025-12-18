@@ -45,7 +45,7 @@ export async function GET(
   const data = response.data;
 
   // Retornar apenas os dados serializáveis
-  return Response.json({
+  const payload: any = {
     id: data.id,
     externalId: data.externalId,
     nome: data.nome,
@@ -65,13 +65,20 @@ export async function GET(
       descricao: data.situacaoReligiosa?.descricao,
       sexoUnico: data.situacaoReligiosa?.sexoUnico,
     },
-    carismas: {
-      primitivos: data.carismas?.primitivos || [],
-      servicos: data.carismas?.servicos || [],
-      vinculados: data.carismas?.vinculados || [],
-    },
+    carismas: data.carismas || [],
     enderecos: data.enderecos || [],
-  });
+  };
+
+  // Adicionar cônjuge se existir
+  if (data.conjugue) {
+    payload.conjugue = {
+      id: data.conjugue.id,
+      nome: data.conjugue.nome,
+      externalId: data.conjugue.externalId,
+    };
+  }
+
+  return Response.json(payload);
 }
 
 export async function PATCH(
@@ -97,6 +104,15 @@ export async function PATCH(
   // Só inclui escolaridade se os dados estiverem presentes
   if (data.escolaridade !== "0") {
     pessoa.escolaridade = data.escolaridade;
+  }
+
+  // Adicionar cônjuge se existir
+  if (data.conjugue) {
+    pessoa.conjugue = {
+      id: data.conjugue.id,
+      nome: data.conjugue.nome,
+      externalId: data.conjugue.externalId,
+    };
   }
 
   const cookieStore = await cookies();
