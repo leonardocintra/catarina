@@ -1,5 +1,6 @@
 "use client";
 
+import ListEquipe from "@/components/custom/dashboard/equipe/list-equipe";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
@@ -31,7 +32,7 @@ export default function EquipePage() {
 
   const listar = () => {
     if (equipes) {
-      return  <>Carma ai jovem ...</> // <ListComunidade comunidades={equipes} />;
+      return <ListEquipe equipes={equipes} />;
     } else {
       return <UnauthorizedAccessAlert title="Equipes" />;
     }

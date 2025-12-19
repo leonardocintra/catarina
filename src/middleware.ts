@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
     PUBLIC_PREFIX_ROUTES.some((route) => pathname.startsWith(route));
 
   if (!token && !isPublic) {
-    console.log("Bloqueando rota privada:", pathname);
+    // console.log("Bloqueando rota privada:", pathname);
     return NextResponse.redirect(new URL("/", request.url));
   }
 

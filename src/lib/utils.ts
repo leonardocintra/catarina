@@ -39,3 +39,13 @@ export const escolaridadesOptions = Object.entries(EscolaridadeEnum).map(
       .replace(/\b\w/g, (l) => l.toUpperCase()),
   })
 );
+
+export const tiposEquipeOptions = Object.entries(EscolaridadeEnum).map(
+  ([key, value]) => ({
+    value: value,
+    label: key
+      .replace(/_/g, " ")
+      .toLowerCase()
+      .replace(/\b\w/g, (l) => l.toUpperCase()),
+  })
+);

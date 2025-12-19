@@ -21,7 +21,6 @@ export default function NovaComunidadePage() {
           }
         );
         const data = await res.json();
-        console.log(data);
         setTipoEquipe(data.data);
       } catch (error) {
         console.error("Erro ao buscar tipos de equipe", error);

@@ -13,8 +13,6 @@ export async function POST(
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  console.log(data);
-
   try {
     const res = await fetch(`${url}/pessoa/${pessoaId}`, {
       method: "POST",
@@ -26,7 +24,6 @@ export async function POST(
     });
 
     const resData = await res.json();
-    console.log("Resposta da API ao salvar carismas:", resData.message);
 
     if (res.status === 201) {
       return Response.json(resData, {
@@ -43,7 +40,6 @@ export async function POST(
       );
     }
   } catch (error) {
-    console.error("Erro ao salvar carismas:", error);
     return Response.json(
       {
         message: "Erro ao processar solicitação",
