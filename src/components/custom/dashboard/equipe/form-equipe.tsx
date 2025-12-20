@@ -18,70 +18,107 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { EscolaridadeEnum, Pessoa, SituacaoReligiosa } from "neocatecumenal";
+import { Catequista, Equipe, TipoEquipe } from "neocatecumenal";
 import { useState } from "react";
-import { escolaridadesOptions, estadosCivilOptions } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { X, Plus } from "lucide-react";
 
-type PessoaFormProps = {
+type EquipeFormProps = {
   urlBase: string;
-  pessoa?: Pessoa;
-  situacoesReligiosa: SituacaoReligiosa[];
+  equipe?: Equipe;
+  tiposDeEquipe: TipoEquipe[];
+  catequistas: Catequista[];
 };
 
 export default function EquipeForm({
   urlBase,
-  pessoa,
-  situacoesReligiosa,
-}: PessoaFormProps) {
+  equipe,
+  tiposDeEquipe,
+  catequistas,
+}: EquipeFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedCatequistas, setSelectedCatequistas] = useState<Catequista[]>(
+    []
+  );
+  const [searchCatequista, setSearchCatequista] = useState("");
+
+  const catequistasOrdenados = [...catequistas].sort((a, b) =>
+    a.nome.localeCompare(b.nome)
+  );
+
+  const catequistasFiltrados = searchCatequista.trim()
+    ? catequistasOrdenados.filter((c) =>
+        c.nome.toLowerCase().includes(searchCatequista.toLowerCase())
+      )
+    : [];
+
+  const catequistasMostrados = catequistasFiltrados.slice(0, 10);
+
+  const adicionarCatequista = (catequista: Catequista) => {
+    const jaAdicionado = selectedCatequistas.some(
+      (c) => c.id === catequista.id
+    );
+    if (!jaAdicionado) {
+      setSelectedCatequistas([...selectedCatequistas, catequista]);
+    }
+  };
+
+  const removerCatequista = (id: number) => {
+    setSelectedCatequistas(selectedCatequistas.filter((c) => c.id !== id));
+  };
 
   const formSchema = z.object({
-    nome: z
+    descricao: z
       .string()
-      .min(2, { message: "Nome deve ter no minimo 2 caracteres." })
-      .max(50, { message: "Nome deve ter no máximo 50 caracteres." }),
-    conhecidoPor: z.string().optional(),
-    cpf: z
+      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
+      .max(80, { message: "Descrição deve ter no máximo 80 caracteres." }),
+    tipoEquipe: z.string().min(1, { message: "Tipo de equipe é obrigatório." }),
+    observacao: z
       .string()
-      .regex(/^\d{11}$/, { message: "CPF deve conter apenas números." })
-      .min(11, { message: "CPF deve ter 11 caracteres." })
-      .max(11, { message: "CPF deve ter 11 caracteres." }),
-    nacionalidade: z
-      .string()
-      .max(50, { message: "Nacionalidade deve ter no máximo 50 caracteres." }),
-    estadoCivil: z.string({ message: "Campo obrigatório" }).min(1),
-    escolaridade: z.string().optional(),
-    situacaoReligiosa: z.string({ message: "Campo obrigatório" }).min(1),
-    sexo: z.enum(["MASCULINO", "FEMININO"]),
+      .max(255, { message: "Observação deve ter no máximo 255 caracteres." })
+      .optional(),
+    catequistasIds: z.array(z.number()),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nome: pessoa?.nome || "",
-      conhecidoPor: pessoa?.conhecidoPor || "",
-      cpf: pessoa?.cpf || "",
-      nacionalidade: pessoa?.nacionalidade || "brasileira",
-      sexo: (pessoa?.sexo || "MASCULINO") as "MASCULINO" | "FEMININO",
-      escolaridade: pessoa?.escolaridade || EscolaridadeEnum.NAO_INFORMADO,
-      estadoCivil: pessoa?.estadoCivil || "",
-      situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
+      descricao: equipe?.descricao || "",
+      tipoEquipe: equipe?.tipoEquipe.id.toString() || "",
+      observacao: equipe?.observacao || "",
+      catequistasIds: [],
     },
   });
+
+  const handleFormSubmit = (baseValues: z.infer<typeof formSchema>) => {
+    const values = {
+      ...baseValues,
+      catequistasIds: selectedCatequistas.map((c) => c.id),
+    };
+    return handleSubmit(values);
+  };
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
-    let url = `${urlBase}/api/ambrosio/pessoa`;
+    let url = `${urlBase}/api/ambrosio/equipe`;
     let method = "POST";
 
-    if (pessoa) {
-      url = `${url}/${pessoa.id}`;
+    if (equipe) {
+      url = `${url}/${equipe.id}`;
       method = "PATCH";
     }
 
@@ -97,14 +134,14 @@ export default function EquipeForm({
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.nome}`,
+          title: `${values.descricao}`,
           variant: "default",
           description: `Cadastrado(a) com sucesso!`,
         });
-        router.push(`/dashboard/pessoas/${data.id}`);
+        router.push(`/dashboard/equipes/${data.data.id}`);
       } else if (res.status === 200 && method === "PATCH") {
         toast({
-          title: `${values.nome}`,
+          title: `${values.descricao}`,
           variant: "default",
           description: `Editado(a) com sucesso!`,
         });
@@ -113,19 +150,19 @@ export default function EquipeForm({
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({
-            title: `${values.nome} não foi cadastrado!`,
+            title: `${values.descricao} não foi cadastrado!`,
             variant: "destructive",
-            description: `Você não tem permissão para cadastro`,
+            description: `Você não tem permissão para cadastro / edição`,
           });
         } else if (res.status === 400) {
           toast({
-            title: `${values.nome} não foi cadastrado!`,
+            title: `${values.descricao} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${data.message}`,
           });
         } else {
           toast({
-            title: `${values.nome} não foi cadastrado!`,
+            title: `${values.descricao} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${res.text}`,
           });
@@ -134,7 +171,7 @@ export default function EquipeForm({
       }
     } catch (error) {
       toast({
-        title: `${values.nome} não foi cadastrado!`,
+        title: `${values.descricao} não foi cadastrado!`,
         variant: "destructive",
         description: `Erro de conexão. Tente novamente.`,
       });
@@ -146,17 +183,17 @@ export default function EquipeForm({
     <div className="max-w-md mx-auto sm:mt-8">
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(handleSubmit)}
+          onSubmit={form.handleSubmit(handleFormSubmit)}
           className="flex flex-col gap-3"
         >
           <FormField
             control={form.control}
-            name="nome"
+            name="descricao"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nome</FormLabel>
+                <FormLabel>Descrição</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nome completo ..." {...field} />
+                  <Input placeholder="Descrição ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -165,44 +202,13 @@ export default function EquipeForm({
 
           <FormField
             control={form.control}
-            name="conhecidoPor"
+            name="tipoEquipe"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Conhecido por</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Apelido ou como é conhecido ..."
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="cpf"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>CPF</FormLabel>
-                <FormControl>
-                  <Input placeholder="CPF ..." {...field} maxLength={11} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="sexo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sexo</FormLabel>
+                <FormLabel>Tipo de Equipe</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.sexo}
+                  defaultValue={equipe?.tipoEquipe.id.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -210,37 +216,12 @@ export default function EquipeForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value={"MASCULINO"}>Masculino</SelectItem>
-                    <SelectItem value={"FEMININO"}>Feminino</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="situacaoReligiosa"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Situação Religiosa</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={pessoa?.situacaoReligiosa.id.toString()}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {situacoesReligiosa.map((situacao) => (
+                    {tiposDeEquipe.map((tipoEquipe) => (
                       <SelectItem
-                        key={situacao.id}
-                        value={situacao.id.toString()}
+                        key={tipoEquipe.descricao}
+                        value={tipoEquipe.id.toString()}
                       >
-                        {situacao.descricao}
+                        {tipoEquipe.descricao}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -252,77 +233,120 @@ export default function EquipeForm({
 
           <FormField
             control={form.control}
-            name="estadoCivil"
+            name="observacao"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Estado Civil</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={pessoa?.estadoCivil}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {estadosCivilOptions.map((es) => (
-                      <SelectItem key={es.value} value={es.value}>
-                        {es.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="escolaridade"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Escolaridade</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={pessoa?.escolaridade || ""}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {escolaridadesOptions.map((es) => (
-                      <SelectItem key={es.value} value={es.value}>
-                        {es.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="nacionalidade"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Nacionalidade</FormLabel>
+                <FormLabel>Observação</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nacionalidade ..." {...field} />
+                  <Input placeholder="Observação ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+
+          {/* Campo de Catequistas Selecionados */}
+          <div className="mt-6">
+            <FormLabel>Catequistas Selecionados</FormLabel>
+            <div className="flex flex-wrap gap-2 mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md min-h-10">
+              {selectedCatequistas.length > 0 ? (
+                selectedCatequistas.map((catequista) => (
+                  <Badge key={catequista.id} variant="secondary">
+                    {catequista.nome}
+                    <button
+                      type="button"
+                      onClick={() => removerCatequista(catequista.id)}
+                      className="ml-1 hover:text-red-500"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))
+              ) : (
+                <span className="text-gray-500 dark:text-gray-400 text-sm">
+                  Nenhum catequista selecionado
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Tabela de Catequistas Disponíveis */}
+          <div className="mt-6">
+            <FormLabel>Catequistas Disponíveis</FormLabel>
+            <Input
+              placeholder="Buscar catequista..."
+              value={searchCatequista}
+              onChange={(e) => setSearchCatequista(e.target.value)}
+              className="mt-2 mb-2"
+            />
+            <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              {searchCatequista.trim()
+                ? `${catequistasFiltrados.length} resultado${
+                    catequistasFiltrados.length !== 1 ? "s" : ""
+                  } encontrado${
+                    catequistasFiltrados.length !== 1 ? "s" : ""
+                  } - Mostrando ${catequistasMostrados.length} de ${
+                    catequistasFiltrados.length
+                  }`
+                : "Digite para buscar catequistas"}
+            </div>
+            <div className="border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead className="w-20 text-center">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {searchCatequista.trim() &&
+                  catequistasMostrados.length > 0 ? (
+                    catequistasMostrados.map((catequista) => (
+                      <TableRow key={catequista.id}>
+                        <TableCell>{catequista.nome}</TableCell>
+                        <TableCell className="text-center">
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => adicionarCatequista(catequista)}
+                            disabled={selectedCatequistas.some(
+                              (c) => c.id === catequista.id
+                            )}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : searchCatequista.trim() &&
+                    catequistasFiltrados.length === 0 ? (
+                    <TableRow>
+                      <TableCell
+                        colSpan={2}
+                        className="text-center text-gray-500"
+                      >
+                        Nenhum catequista encontrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    <TableRow>
+                      <TableCell
+                        colSpan={2}
+                        className="text-center text-gray-500"
+                      >
+                        Digite no campo acima para buscar catequistas
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
 
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
-              pessoa ? (
+              equipe ? (
                 <>
                   <Spinner />
                   &quot;Salvando...&quot;

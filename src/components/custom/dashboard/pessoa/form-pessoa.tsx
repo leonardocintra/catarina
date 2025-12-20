@@ -22,7 +22,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { EscolaridadeEnum, Pessoa, SituacaoReligiosa } from "neocatecumenal";
 import { useState } from "react";
-import { escolaridadesOptions, estadosCivilOptions } from "@/lib/utils";
+import { tiposEquipeOptions, estadosCivilOptions } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
 type PessoaFormProps = {
@@ -115,7 +115,7 @@ export default function PessoaForm({
           toast({
             title: `${values.nome} não foi cadastrado!`,
             variant: "destructive",
-            description: `Você não tem permissão para cadastro`,
+            description: `Você não tem permissão para cadastrar / editar pessoas.`,
           });
         } else if (res.status === 400) {
           toast({
@@ -294,7 +294,7 @@ export default function PessoaForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {escolaridadesOptions.map((es) => (
+                    {tiposEquipeOptions.map((es) => (
                       <SelectItem key={es.value} value={es.value}>
                         {es.label}
                       </SelectItem>

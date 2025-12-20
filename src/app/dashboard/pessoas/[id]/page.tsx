@@ -128,7 +128,7 @@ export default function EditarPessoaPage({
               {handleCarismas(pessoa)}
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button className="w-full" variant={"outline"}>
+              <Button className="w-full" variant={"outline"} asChild>
                 <Link href={`/dashboard/pessoas/${pessoa.id}/carismas`}>
                   Ajustar carismas
                 </Link>

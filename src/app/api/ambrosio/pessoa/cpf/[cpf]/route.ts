@@ -33,7 +33,6 @@ export async function GET(
     const data = await res.json();
     return Response.json(data.data);
   } catch (error) {
-    console.error("Erro ao buscar pessoa por CPF:", error);
     return Response.json(
       { message: "Erro interno do servidor" },
       { status: 500 }
