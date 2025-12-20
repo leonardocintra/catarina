@@ -25,9 +25,12 @@ export async function POST(request: Request) {
   const token = cookieStore.get("token")?.value;
   const reqBody = await request.json();
 
+  console.log("Request Body:", reqBody);
+
   const equipe = {
     descricao: reqBody.descricao,
     tipoEquipeId: parseInt(reqBody.tipoEquipe),
+    pessoas: reqBody.catequistasIds.map((id: number) => ({ id })),
   };
 
   const res = await fetch(url, {
@@ -48,5 +51,5 @@ export async function POST(request: Request) {
   }
 
   const data = await res.json();
-  return Response.json(data);
+  return Response.json(data, { status: res.status });
 }

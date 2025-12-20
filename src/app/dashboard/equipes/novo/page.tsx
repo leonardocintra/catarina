@@ -4,12 +4,13 @@ import EquipeForm from "@/components/custom/dashboard/equipe/form-equipe";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
-import { TipoEquipe } from "neocatecumenal";
+import { Catequista, TipoEquipe } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
 export default function NovaEquipePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [tiposDeEquipe, setTiposDeEquipe] = useState<TipoEquipe[]>([]);
+  const [catequistas, setCatequistas] = useState<Catequista[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -20,7 +21,18 @@ export default function NovaEquipePage() {
       const data = await response.json();
       const tiposDeEquipeData = data.data;
 
+      const catequistaResponse = await fetch(
+        `/api/ambrosio/configuracoes/carismas/catequistas`,
+        {
+          credentials: "include",
+          cache: "force-cache",
+        }
+      );
+      const catequistaDataJson = await catequistaResponse.json();
+      const catequistasData = catequistaDataJson.data;
+      setCatequistas(catequistasData);
       setTiposDeEquipe(tiposDeEquipeData);
+
       setIsLoading(false);
     };
 
@@ -38,9 +50,13 @@ export default function NovaEquipePage() {
       />
 
       {isLoading ? (
-        <SkeletonLoading mensagem="Carregando tipos de equipe ..." />
+        <SkeletonLoading mensagem="Carregando catequistas e tipos de equipe ..." />
       ) : (
-        <EquipeForm tiposDeEquipe={tiposDeEquipe} urlBase={BASE_URL} />
+        <EquipeForm
+          tiposDeEquipe={tiposDeEquipe}
+          urlBase={BASE_URL}
+          catequistas={catequistas}
+        />
       )}
     </div>
   );

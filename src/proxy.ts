@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const EXACT_PUBLIC_ROUTES = ["/", "/favicon.ico", "/logo.webp", "/cadastro", "/cadastro/sucesso"];
 const PUBLIC_PREFIX_ROUTES = ["/_next", "/images"]; // se tiver outras pastas públicas, adicione aqui
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   const token = request.cookies.get("token")?.value;
