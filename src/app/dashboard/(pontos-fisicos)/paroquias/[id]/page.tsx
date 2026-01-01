@@ -13,9 +13,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/utils";
 import { Paroquia } from "neocatecumenal";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -85,7 +95,7 @@ export default function EditarParoquiaPage() {
   return (
     <div>
       <PageSubtitle
-        title={paroquia.descricao}
+        title={`Paróquia: ${paroquia.descricao}`}
         subTitle={`${paroquia.diocese.tipoDiocese.descricao}: ${paroquia.diocese.descricao}`}
         buttonShow={true}
         buttonText="Voltar"
@@ -94,22 +104,69 @@ export default function EditarParoquiaPage() {
       />
 
       {!editar && (
-        <div className="max-w-lg mx-auto">
-          <Card>
-            <CardHeader>
-              <CardTitle>Paróquia {paroquia.descricao}</CardTitle>
-              <CardDescription>
-                {paroquia.diocese.tipoDiocese.descricao} {" de "}
-                {paroquia.diocese.descricao}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <LabelData
-                titulo="Cidade"
-                descricao={`${paroquia.endereco.cidade.nome} - ${paroquia.endereco.cidade.estado.sigla}`}
-              />
-            </CardContent>
-          </Card>
+        <div>
+          <div className="max-w-lg mx-auto">
+            <Card>
+              <CardHeader>
+                <CardTitle>Paróquia {paroquia.descricao}</CardTitle>
+                <CardDescription>
+                  {paroquia.diocese.tipoDiocese.descricao} {" de "}
+                  {paroquia.diocese.descricao}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <LabelData
+                  titulo="Setor"
+                  descricao={`${paroquia.setor?.descricao || "Não informado"}`}
+                />
+                <LabelData
+                  titulo="Cidade"
+                  descricao={`${paroquia.endereco.cidade.nome} - ${paroquia.endereco.cidade.estado.sigla}`}
+                />
+              </CardContent>
+              <CardFooter className="flex justify-end space-x-2">
+                <Button variant="default">
+                  <Link href={`/dashboard/comunidades/novo/${paroquia.id}`}>
+                    Cadastrar comunidade
+                  </Link>
+                </Button>
+                <Button variant="outline" onClick={() => setEditar(true)}>
+                  Editar paróquia
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+          <div className="mt-7">
+            <Table>
+              <TableCaption>
+                Lista de comunidades da paroquia {paroquia.descricao}.
+              </TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Comunidade</TableHead>
+                  <TableHead>Irmãos</TableHead>
+                  <TableHead>Etapa</TableHead>
+                  <TableHead>Ação</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {paroquia.comunidades?.map((comunidade) => (
+                  <TableRow key={comunidade.id}>
+                    <TableCell className="font-medium text-right">
+                      {comunidade.numeroDaComunidade}
+                    </TableCell>
+                    <TableCell>{comunidade.quantidadeMembros}</TableCell>
+                    <TableCell>Colocar etapa aqui</TableCell>
+                    <TableCell>
+                      <Link href={`/dashboard/comunidades/${comunidade.id}`}>
+                        <Button variant="link">Mais detalhes</Button>
+                      </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
 

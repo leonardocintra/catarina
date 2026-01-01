@@ -25,7 +25,6 @@ export default function NovaEquipePage() {
         `/api/ambrosio/configuracoes/carismas/catequistas`,
         {
           credentials: "include",
-          cache: "force-cache",
         }
       );
       const catequistaDataJson = await catequistaResponse.json();

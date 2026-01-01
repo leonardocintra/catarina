@@ -5,6 +5,8 @@ import ListagemDeCarismas from "@/components/custom/dashboard/carismas/ListagemD
 import { useEffect, useState } from "react";
 import { Carisma, TipoCarismaEnum } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Terminal } from "lucide-react";
 
 interface SituacaoReligiosa {
   id: number;
@@ -64,6 +66,16 @@ export default function CarismasPage() {
         buttonText="Cadastrar"
         buttonUrl="/dashboard/carismas/novo"
       />
+
+      <div>
+        <Alert>
+          <Terminal />
+          <AlertTitle>Observação</AlertTitle>
+          <AlertDescription>
+            Há carismas que o casal são automaticamente vinculados. Esses estão marcados com 'Casal anda junto'.
+          </AlertDescription>
+        </Alert>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {Object.entries(carismasPorTipo).map(([tipo, carismasDoTipo]) => (

@@ -29,12 +29,14 @@ type PessoaFormProps = {
   urlBase: string;
   pessoa?: Pessoa;
   situacoesReligiosa: SituacaoReligiosa[];
+  onEditSuccess?: () => void;
 };
 
 export default function PessoaForm({
   urlBase,
   pessoa,
   situacoesReligiosa,
+  onEditSuccess,
 }: PessoaFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -110,6 +112,8 @@ export default function PessoaForm({
         });
         // Não redirecionamos na edição, apenas reabilitamos o botão
         setIsLoading(false);
+        // Fechar o formulário após editar
+        onEditSuccess?.();
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({

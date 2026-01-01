@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
 
   if (!response.ok) {
     return NextResponse.json(
-      { error: "Credenciais inválidas" },
+      { error: `Credenciais inválidas. Erro ${await response.text()}` },
       { status: 401 }
     );
   }

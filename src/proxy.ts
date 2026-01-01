@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const EXACT_PUBLIC_ROUTES = ["/", "/favicon.ico", "/logo.webp", "/cadastro", "/cadastro/sucesso"];
+const EXACT_PUBLIC_ROUTES = [
+  "/",
+  "/favicon.ico",
+  "/logo.webp",
+  "/cadastro",
+  "/cadastro/sucesso",
+  "/dashboard/usuarios/esqueci-senha",
+];
 const PUBLIC_PREFIX_ROUTES = ["/_next", "/images"]; // se tiver outras pastas públicas, adicione aqui
 
 export function proxy(request: NextRequest) {
@@ -13,7 +20,7 @@ export function proxy(request: NextRequest) {
     PUBLIC_PREFIX_ROUTES.some((route) => pathname.startsWith(route));
 
   if (!token && !isPublic) {
-    // console.log("Bloqueando rota privada:", pathname);
+    console.log("Bloqueando rota privada:", pathname);
     return NextResponse.redirect(new URL("/", request.url));
   }
 

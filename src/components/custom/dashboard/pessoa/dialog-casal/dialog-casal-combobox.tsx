@@ -57,7 +57,7 @@ export function ComboboxCasal({ conjugue, onSelect }: ComboboxCasalProps) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[295px]"
+          className="w-73.75"
         >
           {value
             ? conjugues.find((con) => con.nome === value)?.nome
@@ -65,7 +65,7 @@ export function ComboboxCasal({ conjugue, onSelect }: ComboboxCasalProps) {
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[295px] p-0">
+      <PopoverContent className="w-73.75 p-0">
         <Command>
           <CommandInput placeholder={`Carregando ${conjugue} ...`} />
           <CommandList>
