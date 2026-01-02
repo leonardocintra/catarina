@@ -1,5 +1,10 @@
 # CNC - Gestão
-Nova versão para https://cncbrasil.cn.org.br/login
+
+<div align="center">
+  <img src="./catarina.jpg" alt="Catarina" width="300" />
+</div>
+
+Nova versão [CNC Gestão](https://cncbrasil.cn.org.br/login)
 
 ## Getting Started
 

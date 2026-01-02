@@ -92,12 +92,12 @@ export function LoginForm({
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
-                  <a
-                    href="#"
+                  <Link
+                    href="/dashboard/usuarios/esqueci-senha"
                     className="ml-auto text-sm underline-offset-2 hover:underline"
                   >
                     Esqueceu sua senha ?
-                  </a>
+                  </Link>
                 </div>
                 <Input
                   id="password"
@@ -123,8 +123,16 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 uppercase">
-        &copy; {new Date().getFullYear()} - Caminho Neocatecumenal do Brasil
+      <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4 space-y-2">
+        <div className="uppercase text-sm font-semibold text-shadow-2xs">
+          &copy; {new Date().getFullYear()} - Caminho Neocatecumenal do Brasil
+        </div>
+        <div>
+          Associacao Virgem do Terceiro Milenio para a Evangelizacao Itinerante
+        </div>
+        <div>
+          CNPJ:<strong> 06.108.869/0001-30</strong>
+        </div>
       </div>
     </div>
   );

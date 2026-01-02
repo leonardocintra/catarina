@@ -61,15 +61,14 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
             <TableRow key={comunidade.id}>
               <TableCell>
                 <div className="font-semibold">{comunidade.descricao}</div>
-                <div className="font-extralight italic">
-                  {comunidade.numeroDaComunidade}
-                </div>
               </TableCell>
               <TableCell className="text-muted-foreground uppercase font-light">
-                {comunidade.paroquia.descricao}
+                {comunidade.numeroDaComunidade}
               </TableCell>
               <TableCell>
-                <CheckIcon />
+                {comunidade.paroquia?.descricao || (<span className="text-red-500 flex items-center gap-1">
+                  <CheckIcon className="w-4 h-4" /> Sem paróquia
+                </span>)}
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/comunidades/${comunidade.id}`}>

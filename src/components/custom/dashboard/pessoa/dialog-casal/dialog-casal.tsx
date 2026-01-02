@@ -50,7 +50,7 @@ export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
       toast({
         title: `Casal foi vinculado!`,
         variant: "default",
-        description: `${conjugue} vinculado com sucesso`,
+        description: `${conjugue} vinculado com sucesso. Atualize a página para ver as mudanças.`,
       });
     } else {
       setVinculado(false);
@@ -72,9 +72,10 @@ export function DialogPessoaCasada({ sexo, pessoaId }: DialogProps) {
       <DialogContent className="">
         <DialogHeader>
           <DialogTitle>Vincular {conjugue}</DialogTitle>
-          <DialogDescription>
-            Atenção: a listagem é baseada no sexo e estado civil. Caso o nome
-            não aparecer, verifique se o conjugue foi cadastrado corretamente.
+          <DialogDescription className="">
+            <span className="font-semibold text-amber-600">Atenção:</span> a
+            listagem é baseada no sexo e estado civil. Caso o nome não aparecer,
+            verifique se o conjugue foi cadastrado corretamente.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">

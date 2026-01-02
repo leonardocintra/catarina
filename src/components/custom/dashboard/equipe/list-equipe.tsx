@@ -11,8 +11,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { removerAcento } from "@/lib/utils";
-import { CheckIcon, FolderSearch } from "lucide-react";
-import { Comunidade, Equipe } from "neocatecumenal";
+import { FolderSearch } from "lucide-react";
+import { Equipe } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -59,13 +59,9 @@ export default function ListEquipe({ equipes }: ListEquipeProps) {
             <TableRow key={equipe.id}>
               <TableCell>
                 <div className="font-semibold">{equipe.descricao}</div>
-                <div className="font-extralight italic">
-                  Colocar o tipo
-                </div>
+                <div className="font-extralight italic">{equipe.tipoEquipe.descricao}</div>
               </TableCell>
-              <TableCell>
-                Colocar a paroquia
-              </TableCell>
+              <TableCell>Colocar a paroquia</TableCell>
               <TableCell>
                 <Link href={`/dashboard/equipes/${equipe.id}`}>
                   <Button variant={"link"} size={"sm"}>

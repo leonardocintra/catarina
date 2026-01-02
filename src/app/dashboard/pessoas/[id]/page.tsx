@@ -22,20 +22,27 @@ import { use, useEffect, useState } from "react";
 import { Pessoa, SituacaoReligiosa, TipoCarismaEnum } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon, Trash2Icon } from "lucide-react";
+import { Trash2Icon } from "lucide-react";
 
 export default function EditarPessoaPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const [editar, setEditar] = useState<boolean>(false);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [pessoa, setPessoa] = useState<Pessoa | null>(null);
   const [situacoesReligiosa, setSituacoesReligiosa] = useState<
     SituacaoReligiosa[]
   >([]);
   const [loading, setLoading] = useState(true);
   const { id } = use(params);
+
+  const handleEditSuccess = async () => {
+    setIsEditing(false);
+    // Recarrega os dados após edição
+    const pessoaData = await getPessoa(parseInt(id));
+    setPessoa(pessoaData);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -66,7 +73,7 @@ export default function EditarPessoaPage({
         buttonVariant="outline"
       />
 
-      {!editar && (
+      {!isEditing && (
         <div className="grid gap-2 sm:grid-cols-3 items-start">
           <Card className="flex flex-col h-full">
             <CardHeader>
@@ -96,7 +103,7 @@ export default function EditarPessoaPage({
               />
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button className="w-full" onClick={() => setEditar(!editar)}>
+              <Button className="w-full" onClick={() => setIsEditing(!isEditing)}>
                 Editar dados
               </Button>
             </CardFooter>
@@ -219,11 +226,12 @@ export default function EditarPessoaPage({
         </div>
       )}
 
-      {editar && (
+      {isEditing && (
         <PessoaForm
           urlBase={BASE_URL}
           pessoa={pessoa}
           situacoesReligiosa={situacoesReligiosa}
+          onEditSuccess={handleEditSuccess}
         />
       )}
     </div>

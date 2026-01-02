@@ -13,24 +13,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Comunidade, TipoEquipe } from "neocatecumenal";
-import { useState } from "react";
+import { Comunidade } from "neocatecumenal";
+import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { InfoIcon } from "lucide-react";
 
 type ComunidadeFormProps = {
   urlBase: string;
   comunidade?: Comunidade;
-  tipoEquipe: TipoEquipe[];
+  paroquiaId?: number;
 };
 
 export default function ComunidadeForm({
   urlBase,
   comunidade,
-  tipoEquipe,
+  paroquiaId,
 }: ComunidadeFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [ultimaComunidade, setUltimaComunidade] = useState<Comunidade | null>(
+    null
+  );
+  const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(0);
 
   const formSchema = z.object({
     descricao: z
@@ -50,6 +55,37 @@ export default function ComunidadeForm({
     },
   });
 
+  useEffect(() => {
+    const fetchUltimaComunidade = async () => {
+      try {
+        const res = await fetch(
+          `${urlBase}/api/ambrosio/comunidade?paroquiaId=${paroquiaId}`
+        );
+        const data = await res.json();
+
+        if (Array.isArray(data.data) && data.data.length > 0) {
+          const ultima = data.data.reduce((max: Comunidade, item: Comunidade) =>
+            item.numeroDaComunidade > max.numeroDaComunidade ? item : max
+          );
+          const novoNumero = ultima.numeroDaComunidade + 1;
+          setNumeroDaComunidade(novoNumero);
+          form.setValue("numeroDaComunidade", novoNumero);
+        } else {
+          setNumeroDaComunidade(1);
+          form.setValue("numeroDaComunidade", 1);
+        }
+
+        setUltimaComunidade(data.data || null);
+      } catch (error) {
+        console.error("Erro ao buscar última comunidade:", error);
+      }
+    };
+
+    if (!comunidade) {
+      fetchUltimaComunidade();
+    }
+  }, [urlBase, paroquiaId, comunidade]);
+
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
 
@@ -61,13 +97,18 @@ export default function ComunidadeForm({
       method = "PATCH";
     }
 
+    const payload = {
+      ...values,
+      paroquiaId,
+    };
+
     try {
       const res = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -127,20 +168,6 @@ export default function ComunidadeForm({
         >
           <FormField
             control={form.control}
-            name="descricao"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Descrição</FormLabel>
-                <FormControl>
-                  <Input placeholder="Descrição da comunidade ..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="quantidadeMembros"
             render={({ field }) => (
               <FormItem>
@@ -150,6 +177,9 @@ export default function ComunidadeForm({
                     type="number"
                     placeholder="Quantidade de membros na comunidade ..."
                     {...field}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value) || 0)
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -167,8 +197,24 @@ export default function ComunidadeForm({
                   <Input
                     type="number"
                     placeholder="Número da comunidade ..."
-                    {...field}
+                    value={numeroDaComunidade}
+                    disabled={true}
+                    readOnly
                   />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="descricao"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Descrição</FormLabel>
+                <FormControl>
+                  <Input placeholder="Descrição da comunidade ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -192,6 +238,16 @@ export default function ComunidadeForm({
               "Salvar"
             )}
           </Button>
+
+          {!comunidade && (
+            <div className="flex items-center space-x-2 text-slate-700 text-sm">
+              <InfoIcon size={"52"} />
+              <p>
+                Após o cadastro inicial, você poderá configurar a equipe de
+                catequista, responsáveis, etapas, etc
+              </p>
+            </div>
+          )}
         </form>
       </Form>
     </div>
