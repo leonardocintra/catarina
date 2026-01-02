@@ -97,13 +97,18 @@ export default function ComunidadeForm({
       method = "PATCH";
     }
 
+    const payload = {
+      ...values,
+      paroquiaId,
+    };
+
     try {
       const res = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
 
       const data = await res.json();
@@ -172,7 +177,9 @@ export default function ComunidadeForm({
                     type="number"
                     placeholder="Quantidade de membros na comunidade ..."
                     {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value) || 0)
+                    }
                   />
                 </FormControl>
                 <FormMessage />

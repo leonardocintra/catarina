@@ -56,7 +56,7 @@ export async function PATCH(
   const paroquia = {
     descricao: data.descricao,
     diocese: {
-      id: parseInt(data.tipoDiocese),
+      id: data.dioceseId,
     },
     observacao: data.observacao,
     endereco: {
