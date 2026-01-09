@@ -155,7 +155,7 @@ export default function EditarDiocesePage() {
           <Separator className="my-4" />
           <Card>
             <CardHeader>
-              <CardTitle>Paróquias</CardTitle>
+              <CardTitle>Paróquias {paroquias.length}</CardTitle>
             </CardHeader>
             <CardContent>
               {paroquias.length === 0 ? (
@@ -172,7 +172,7 @@ export default function EditarDiocesePage() {
                           {paroquia.descricao}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          #{paroquia.id} - {paroquia.endereco?.cidade?.nome} -{" "}
+                          ID: {paroquia.id} - Cidade: {paroquia.endereco?.cidade?.nome} -{" "}
                           {paroquia.endereco?.cidade?.estado?.sigla}
                         </div>
                       </li>
