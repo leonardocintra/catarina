@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { removerAcento } from "@/lib/utils";
-import { CheckIcon, FolderSearch } from "lucide-react";
+import { ArrowUpRightIcon, FolderSearch } from "lucide-react";
 import { Comunidade } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
@@ -50,8 +50,8 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Descrição da comunidade</TableHead>
             <TableHead>Numero</TableHead>
+            <TableHead>Descrição da comunidade</TableHead>
             <TableHead>Paroquia</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
@@ -59,16 +59,19 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         <TableBody>
           {comunidadesFiltradas.slice(0, 10).map((comunidade) => (
             <TableRow key={comunidade.id}>
+              <TableCell className="text-muted-foreground font-light">
+                {comunidade.numeroDaComunidade} - {comunidade.quantidadeMembros} irmãos
+              </TableCell>
               <TableCell>
                 <div className="font-semibold">{comunidade.descricao}</div>
               </TableCell>
-              <TableCell className="text-muted-foreground uppercase font-light">
-                {comunidade.numeroDaComunidade}
-              </TableCell>
               <TableCell>
-                {comunidade.paroquia?.descricao || (<span className="text-red-500 flex items-center gap-1">
-                  <CheckIcon className="w-4 h-4" /> Sem paróquia
-                </span>)}
+                <Link href={`/dashboard/paroquias/${comunidade.paroquia.id}`}>
+                  <Button variant={"ghost"} size={"sm"}>
+                    {comunidade.paroquia.descricao}
+                    <ArrowUpRightIcon />
+                  </Button>
+                </Link>
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/comunidades/${comunidade.id}`}>

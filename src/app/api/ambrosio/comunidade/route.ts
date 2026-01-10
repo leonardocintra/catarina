@@ -1,5 +1,4 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
-import { Comunidade } from "neocatecumenal";
 import { cookies } from "next/headers";
 
 const url = `${AmbrosioBaseUrl}/comunidade`;
