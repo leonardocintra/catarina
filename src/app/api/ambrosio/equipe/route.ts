@@ -25,8 +25,6 @@ export async function POST(request: Request) {
   const token = cookieStore.get("token")?.value;
   const reqBody = await request.json();
 
-  console.log("Request Body:", reqBody);
-
   const equipe = {
     descricao: reqBody.descricao,
     tipoEquipeId: parseInt(reqBody.tipoEquipe),

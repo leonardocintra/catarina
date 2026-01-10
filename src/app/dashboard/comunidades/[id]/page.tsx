@@ -14,29 +14,33 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { PassarComunidadeDeEtapa } from "@/components/custom/dashboard/comunidade/dialog-passar-etapa";
 
 export default function EditarComunidadePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const router = useRouter();
   const [comunidade, setComunidade] = useState<Comunidade>();
   const { id } = use(params);
   const { toast } = useToast();
+  const routeRedirect = "/dashboard/comunidades";
 
   useEffect(() => {
     const fetchData = async () => {
-      async function getComunidade() {
+      try {
         const res = await fetch(`${BASE_URL}/api/ambrosio/comunidade/${id}`);
 
         if (res.status === 404) {
-          // TODO: esta dando erro no console log quando usa esse toast
           toast({
             title: `Comunidade não encontrada`,
             variant: "destructive",
             description: `Comunidade não encontrada. Tente novamente`,
           });
-          setRedirectNotFound(true);
+          router.push(routeRedirect);
+          return;
         }
 
         if (res.status === 401) {
@@ -45,15 +49,12 @@ export default function EditarComunidadePage({
             variant: "destructive",
             description: `Você não tem permissão para ver essa comunidade`,
           });
-          setRedirectNotFound(true);
+          router.push(routeRedirect);
+          return;
         }
 
-        return res.json();
-      }
-
-      try {
-        const [resComunidade] = await Promise.all([getComunidade()]);
-        setComunidade(resComunidade);
+        const data = await res.json();
+        setComunidade(data);
       } catch (error: any) {
         toast({
           title: `Erro ao buscar comunidade`,
@@ -64,7 +65,7 @@ export default function EditarComunidadePage({
     };
 
     fetchData();
-  }, [id, toast]);
+  }, [id, toast, router, routeRedirect]);
 
   if (!comunidade)
     return <SkeletonLoading mensagem="Carregando comunidade ..." />;
@@ -80,7 +81,7 @@ export default function EditarComunidadePage({
         buttonVariant="outline"
       />
 
-      <div className="grid gap-2 sm:grid-cols-3 items-start">
+      <div className="grid gap-2 sm:grid-cols-2 items-start">
         <div>
           <Card>
             <CardHeader>
@@ -97,9 +98,7 @@ export default function EditarComunidadePage({
               ))}
             </CardContent>
             <CardFooter>
-              <Button variant="link" size="sm">
-                Incluir etapa
-              </Button>
+              <PassarComunidadeDeEtapa comunidadeId={id} />
             </CardFooter>
           </Card>
         </div>
@@ -115,22 +114,7 @@ export default function EditarComunidadePage({
             </CardContent>
           </Card>
         </div>
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Historico</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="italic text-slate-500">
-                Em breve histórico das atividades da comunidade
-              </div>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
-}
-function setRedirectNotFound(arg0: boolean) {
-  throw new Error("Function not implemented.");
 }
