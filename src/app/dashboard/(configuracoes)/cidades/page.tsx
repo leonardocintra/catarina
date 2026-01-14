@@ -20,7 +20,6 @@ export default function CidadePage() {
         const data = await res.json();
         setCidades(data.data);
       } catch (error) {
-        console.error("Erro ao buscar cidades:", error);
       } finally {
         setLoading(false);
       }

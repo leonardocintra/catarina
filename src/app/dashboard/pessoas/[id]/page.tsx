@@ -115,10 +115,10 @@ export default function EditarPessoaPage({
               <CardDescription>Historico de comunide</CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              <LabelData titulo="Comunidade" descricao="8" />
-              <LabelData titulo="Cidade" descricao="Franca" />
-              <LabelData titulo="Paroquia" descricao="Franca" />
-              <LabelData titulo="Regiao" descricao="Franca" />
+              <LabelData titulo="Comunidade" descricao="NAO-INFORMADO" />
+              <LabelData titulo="Cidade" descricao="NAO-INFORMADO" />
+              <LabelData titulo="Paroquia" descricao="NAO-INFORMADO" />
+              <LabelData titulo="Regiao" descricao="NAO-INFORMADO" />
             </CardContent>
             <CardFooter className="mt-auto">
               <Button className="w-full" disabled>

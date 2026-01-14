@@ -5,7 +5,7 @@ import { use, useEffect, useState } from "react";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-import { Comunidade } from "neocatecumenal";
+import { Comunidade, EtapaEnum } from "neocatecumenal";
 import {
   Card,
   CardContent,
@@ -13,9 +13,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { PassarComunidadeDeEtapa } from "@/components/custom/dashboard/comunidade/dialog-passar-etapa";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { EditIcon } from "lucide-react";
 
 export default function EditarComunidadePage({
   params,
@@ -73,8 +83,8 @@ export default function EditarComunidadePage({
   return (
     <div>
       <PageSubtitle
-        title={`${comunidade.descricao}`}
-        subTitle={`${comunidade.quantidadeMembros} irmãos da paróquia ${comunidade.paroquia.descricao}`}
+        title={`Comunidade ${comunidade.numeroDaComunidade}`}
+        subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos - ${comunidade.descricao}`}
         buttonShow={true}
         buttonText="Voltar"
         buttonUrl="/dashboard/comunidades"
@@ -88,17 +98,45 @@ export default function EditarComunidadePage({
               <CardTitle>Etapas / Catequistas</CardTitle>
             </CardHeader>
             <CardContent>
-              {comunidade.comunidadeEtapas.map((ce) => (
-                <div key={ce.id} className="mb-4">
-                  <div className="flex space-x-1.5">
-                    <div>Etapa:</div>
-                    <div className="font-semibold">{ce.etapa}</div>
-                  </div>
-                </div>
-              ))}
+              <Table>
+                <TableCaption>
+                  Historico das estapas da comunidade.
+                </TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="">Etapa</TableHead>
+                    <TableHead className="text-right">Inicio / Fim</TableHead>
+                    <TableHead>Catequistas</TableHead>
+                    <TableHead className="text-right">Ação</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {comunidade.comunidadeEtapas.map((ce) => (
+                    <TableRow key={ce.id}>
+                      <TableCell className="font-medium">{ce.etapa}</TableCell>
+                      <TableCell className="text-right">
+                        {ce.dataInicio ? ce.dataInicio.getDate() : " - "} /{" "}
+                        {ce.dataFim ? ce.dataFim.getDate() : " - "}
+                      </TableCell>
+                      <TableCell>Não informado</TableCell>
+                      <TableCell className="text-right">
+                        <Button size={"icon-sm"}>
+                          <EditIcon />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
             <CardFooter>
-              <PassarComunidadeDeEtapa comunidadeId={id} />
+              <PassarComunidadeDeEtapa
+                comunidadeId={id}
+                etapaAtual={
+                  comunidade.comunidadeEtapas.at(-1)?.etapa ||
+                  EtapaEnum.PRE_CATECUMENATO
+                }
+              />
             </CardFooter>
           </Card>
         </div>

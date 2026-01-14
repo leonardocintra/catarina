@@ -17,6 +17,8 @@ import { Comunidade } from "neocatecumenal";
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { InfoIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 
 type ComunidadeFormProps = {
   urlBase: string;
@@ -42,16 +44,22 @@ export default function ComunidadeForm({
       .string()
       .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
       .max(80, { message: "Descrição deve ter no máximo 80 caracteres." }),
-    numeroDaComunidade: z.number().min(1, { message: "Número inválido." }),
     quantidadeMembros: z.number().min(1, { message: "Quantidade inválida." }),
+    dataInicio: z.date().optional(),
+    dataFim: z.date().optional(),
+    local: z.string().max(180).optional(),
+    observacao: z.string().max(250).optional(),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       descricao: comunidade?.descricao || "",
-      numeroDaComunidade: comunidade?.numeroDaComunidade || 1,
       quantidadeMembros: comunidade?.quantidadeMembros || 1,
+      dataInicio: undefined,
+      dataFim: undefined,
+      local: "",
+      observacao: "",
     },
   });
 
@@ -69,10 +77,8 @@ export default function ComunidadeForm({
           );
           const novoNumero = ultima.numeroDaComunidade + 1;
           setNumeroDaComunidade(novoNumero);
-          form.setValue("numeroDaComunidade", novoNumero);
         } else {
           setNumeroDaComunidade(1);
-          form.setValue("numeroDaComunidade", 1);
         }
 
         setUltimaComunidade(data.data || null);
@@ -100,6 +106,7 @@ export default function ComunidadeForm({
     const payload = {
       ...values,
       paroquiaId,
+      numeroDaComunidade,
     };
 
     try {
@@ -161,6 +168,11 @@ export default function ComunidadeForm({
 
   return (
     <div className="max-w-md mx-auto sm:mt-8">
+      <div className="text-2xl my-2 flex items-center gap-2">
+        Nova comunidade número:
+        <Badge>{numeroDaComunidade}</Badge>
+      </div>
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -171,7 +183,7 @@ export default function ComunidadeForm({
             name="quantidadeMembros"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quantidade de Membros</FormLabel>
+                <FormLabel>Quantidade de irmãos</FormLabel>
                 <FormControl>
                   <Input
                     type="number"
@@ -189,17 +201,39 @@ export default function ComunidadeForm({
 
           <FormField
             control={form.control}
-            name="numeroDaComunidade"
+            name="descricao"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Número da Comunidade</FormLabel>
+                <FormLabel>Descrição</FormLabel>
+                <FormControl>
+                  <Input placeholder="Descrição da comunidade ..." {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="dataInicio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Data de Início</FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
-                    placeholder="Número da comunidade ..."
-                    value={numeroDaComunidade}
-                    disabled={true}
-                    readOnly
+                    type="date"
+                    placeholder="Data de início da etapa na comunidade ..."
+                    value={
+                      new Date().toISOString().split("T")[0] /* YYYY-MM-DD */
+                    }
+                    onChange={(e) =>
+                      field.onChange(
+                        e.target.value ? new Date(e.target.value) : undefined
+                      )
+                    }
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
                   />
                 </FormControl>
                 <FormMessage />
@@ -209,12 +243,32 @@ export default function ComunidadeForm({
 
           <FormField
             control={form.control}
-            name="descricao"
+            name="local"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Descrição</FormLabel>
+                <FormLabel>Local da convivência</FormLabel>
                 <FormControl>
-                  <Input placeholder="Descrição da comunidade ..." {...field} />
+                  <Input
+                    placeholder="Local que foi feito a convivência ..."
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="observacao"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Alguma observação ?</FormLabel>
+                <FormControl>
+                  <Textarea
+                    placeholder="Alguma observação sobre a etapa da comunidade ..."
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
