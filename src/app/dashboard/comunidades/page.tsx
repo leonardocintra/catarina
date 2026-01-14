@@ -22,7 +22,6 @@ export default function ComunidadePage() {
         const data = await res.json();
         setComunidades(data.data);
       } catch (error) {
-        console.error("Erro ao buscar comunidades", error);
       } finally {
         setLoading(false);
       }

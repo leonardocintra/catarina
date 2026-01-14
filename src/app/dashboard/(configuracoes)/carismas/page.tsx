@@ -25,7 +25,6 @@ export default function CarismasPage() {
         setCarismas(data.data || []);
         setLoading(false);
       } catch (error) {
-        console.error("Erro ao buscar carismas:", error);
         setLoading(false);
       }
     };

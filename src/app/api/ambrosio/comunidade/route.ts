@@ -39,6 +39,8 @@ export async function POST(req: Request) {
     quantidadeMembros: payload.quantidadeMembros,
     paroquiaId: payload.paroquiaId,
     observacao: payload.observacao,
+    local: payload.local,
+    dataInicio: payload.dataInicio,
   };
 
   const response = await fetch(url, {
