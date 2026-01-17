@@ -4,13 +4,13 @@ import EquipeForm from "@/components/custom/dashboard/equipe/form-equipe";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
-import { Catequista, TipoEquipe } from "neocatecumenal";
+import { CarismaEquipe, TipoEquipe } from "neocatecumenal";
 import { useEffect, useState } from "react";
 
 export default function NovaEquipePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [tiposDeEquipe, setTiposDeEquipe] = useState<TipoEquipe[]>([]);
-  const [catequistas, setCatequistas] = useState<Catequista[]>([]);
+  const [carismaEquipe, setCarismaEquipe] = useState<CarismaEquipe[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -22,14 +22,14 @@ export default function NovaEquipePage() {
       const tiposDeEquipeData = data.data;
 
       const catequistaResponse = await fetch(
-        `/api/ambrosio/configuracoes/carismas/catequistas`,
+        `/api/ambrosio/configuracoes/carismas/equipe`,
         {
           credentials: "include",
         }
       );
-      const catequistaDataJson = await catequistaResponse.json();
-      const catequistasData = catequistaDataJson.data;
-      setCatequistas(catequistasData);
+      const carisma = await catequistaResponse.json();
+      const carismaData = carisma.data;
+      setCarismaEquipe(carismaData);
       setTiposDeEquipe(tiposDeEquipeData);
 
       setIsLoading(false);
@@ -54,7 +54,8 @@ export default function NovaEquipePage() {
         <EquipeForm
           tiposDeEquipe={tiposDeEquipe}
           urlBase={BASE_URL}
-          catequistas={catequistas}
+          equipe={undefined}
+          pessoasComCarismaEquipe={carismaEquipe}
         />
       )}
     </div>
