@@ -1,7 +1,7 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-const url = `${AmbrosioBaseUrl}/carismas/catequistas`;
+const url = `${AmbrosioBaseUrl}/carismas/equipe`;
 
 export async function GET() {
   const cookieStore = await cookies();

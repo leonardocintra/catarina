@@ -21,7 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { Catequista, Equipe, TipoEquipe } from "neocatecumenal";
+import { CarismaEquipe, Equipe, TipoEquipe } from "neocatecumenal";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import {
@@ -38,46 +38,42 @@ type EquipeFormProps = {
   urlBase: string;
   equipe?: Equipe;
   tiposDeEquipe: TipoEquipe[];
-  catequistas: Catequista[];
+  pessoasComCarismaEquipe: CarismaEquipe[];
 };
 
 export default function EquipeForm({
   urlBase,
   equipe,
   tiposDeEquipe,
-  catequistas,
+  pessoasComCarismaEquipe,
 }: EquipeFormProps) {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedCatequistas, setSelectedCatequistas] = useState<Catequista[]>(
-    []
-  );
-  const [searchCatequista, setSearchCatequista] = useState("");
+  const [selectedCarismas, setSelectedCarismas] = useState<CarismaEquipe[]>([]);
+  const [searchCarismaEquipe, setSearchCarismaEquipe] = useState("");
 
-  const catequistasOrdenados = [...catequistas].sort((a, b) =>
-    a.nome.localeCompare(b.nome)
+  const equipesCarismaOrdenados = [...pessoasComCarismaEquipe].sort((a, b) =>
+    a.pessoa.nome.localeCompare(b.pessoa.nome)
   );
 
-  const catequistasFiltrados = searchCatequista.trim()
-    ? catequistasOrdenados.filter((c) =>
-        c.nome.toLowerCase().includes(searchCatequista.toLowerCase())
+  const carismasFiltrados = searchCarismaEquipe.trim()
+    ? equipesCarismaOrdenados.filter((c) =>
+        c.pessoa.nome.toLowerCase().includes(searchCarismaEquipe.toLowerCase())
       )
     : [];
 
-  const catequistasMostrados = catequistasFiltrados.slice(0, 10);
+  const carismasMostrados = carismasFiltrados.slice(0, 10);
 
-  const adicionarCatequista = (catequista: Catequista) => {
-    const jaAdicionado = selectedCatequistas.some(
-      (c) => c.id === catequista.id
-    );
+  const adicionarEquipe = (carisma: CarismaEquipe) => {
+    const jaAdicionado = selectedCarismas.some((c) => c.id === carisma.id);
     if (!jaAdicionado) {
-      setSelectedCatequistas([...selectedCatequistas, catequista]);
+      setSelectedCarismas([...selectedCarismas, carisma]);
     }
   };
 
-  const removerCatequista = (id: number) => {
-    setSelectedCatequistas(selectedCatequistas.filter((c) => c.id !== id));
+  const removerPessoaEquipe = (id: number) => {
+    setSelectedCarismas(selectedCarismas.filter((c) => c.id !== id));
   };
 
   const formSchema = z.object({
@@ -90,7 +86,7 @@ export default function EquipeForm({
       .string()
       .max(255, { message: "Observação deve ter no máximo 255 caracteres." })
       .optional(),
-    catequistasIds: z.array(z.number()),
+    pessoasComCarismaEquipeId: z.array(z.number()),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -99,14 +95,14 @@ export default function EquipeForm({
       descricao: equipe?.descricao || "",
       tipoEquipe: equipe?.tipoEquipe.id.toString() || "",
       observacao: equipe?.observacao || "",
-      catequistasIds: [],
+      pessoasComCarismaEquipeId: [],
     },
   });
 
   const handleFormSubmit = (baseValues: z.infer<typeof formSchema>) => {
     const values = {
       ...baseValues,
-      catequistasIds: selectedCatequistas.map((c) => c.id),
+      pessoasComCarismaEquipeId: selectedCarismas.map((c) => c.id),
     };
     return handleSubmit(values);
   };
@@ -249,13 +245,13 @@ export default function EquipeForm({
           <div className="mt-6">
             <FormLabel>Catequistas Selecionados</FormLabel>
             <div className="flex flex-wrap gap-2 mt-2 p-3 bg-gray-100 dark:bg-gray-800 rounded-md min-h-10">
-              {selectedCatequistas.length > 0 ? (
-                selectedCatequistas.map((catequista) => (
+              {selectedCarismas.length > 0 ? (
+                selectedCarismas.map((catequista) => (
                   <Badge key={catequista.id} variant="secondary">
-                    {catequista.nome}
+                    {catequista.pessoa.nome}
                     <button
                       type="button"
-                      onClick={() => removerCatequista(catequista.id)}
+                      onClick={() => removerPessoaEquipe(catequista.id)}
                       className="ml-1 hover:text-red-500"
                     >
                       <X className="h-3 w-3" />
@@ -275,18 +271,18 @@ export default function EquipeForm({
             <FormLabel>Catequistas Disponíveis</FormLabel>
             <Input
               placeholder="Buscar catequista..."
-              value={searchCatequista}
-              onChange={(e) => setSearchCatequista(e.target.value)}
+              value={searchCarismaEquipe}
+              onChange={(e) => setSearchCarismaEquipe(e.target.value)}
               className="mt-2 mb-2"
             />
             <div className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              {searchCatequista.trim()
-                ? `${catequistasFiltrados.length} resultado${
-                    catequistasFiltrados.length !== 1 ? "s" : ""
+              {searchCarismaEquipe.trim()
+                ? `${carismasFiltrados.length} resultado${
+                    carismasFiltrados.length !== 1 ? "s" : ""
                   } encontrado${
-                    catequistasFiltrados.length !== 1 ? "s" : ""
-                  } - Mostrando ${catequistasMostrados.length} de ${
-                    catequistasFiltrados.length
+                    carismasFiltrados.length !== 1 ? "s" : ""
+                  } - Mostrando ${carismasMostrados.length} de ${
+                    carismasFiltrados.length
                   }`
                 : "Digite para buscar catequistas"}
             </div>
@@ -299,19 +295,19 @@ export default function EquipeForm({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {searchCatequista.trim() &&
-                  catequistasMostrados.length > 0 ? (
-                    catequistasMostrados.map((catequista) => (
-                      <TableRow key={catequista.id}>
-                        <TableCell>{catequista.nome}</TableCell>
+                  {searchCarismaEquipe.trim() &&
+                  carismasMostrados.length > 0 ? (
+                    carismasMostrados.map((equipeCarisma) => (
+                      <TableRow key={equipeCarisma.id}>
+                        <TableCell>{equipeCarisma.pessoa.nome}</TableCell>
                         <TableCell className="text-center">
                           <Button
                             type="button"
                             size="sm"
                             variant="outline"
-                            onClick={() => adicionarCatequista(catequista)}
-                            disabled={selectedCatequistas.some(
-                              (c) => c.id === catequista.id
+                            onClick={() => adicionarEquipe(equipeCarisma)}
+                            disabled={selectedCarismas.some(
+                              (c) => c.id === equipeCarisma.id
                             )}
                           >
                             <Plus className="h-4 w-4" />
@@ -319,8 +315,8 @@ export default function EquipeForm({
                         </TableCell>
                       </TableRow>
                     ))
-                  ) : searchCatequista.trim() &&
-                    catequistasFiltrados.length === 0 ? (
+                  ) : searchCarismaEquipe.trim() &&
+                    carismasFiltrados.length === 0 ? (
                     <TableRow>
                       <TableCell
                         colSpan={2}

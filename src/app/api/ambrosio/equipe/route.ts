@@ -28,7 +28,7 @@ export async function POST(request: Request) {
   const equipe = {
     descricao: reqBody.descricao,
     tipoEquipeId: parseInt(reqBody.tipoEquipe),
-    pessoas: reqBody.catequistasIds.map((id: number) => ({ id })),
+    pessoas: reqBody.pessoasComCarismaEquipeId.map((id: number) => ({ id })),
   };
 
   const res = await fetch(url, {

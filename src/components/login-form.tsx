@@ -67,7 +67,7 @@ export function LoginForm({
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8" onSubmit={handleLogin}>
             <div className="flex flex-col gap-6">
-              <div className="flex flex-col items-center text-center">
+              <div className="flex flex-col items-center text-center py-8 pb-20">
                 <h1 className="text-2xl font-bold">Bem vindo de volta!</h1>
                 <p className="text-muted-foreground text-balance">
                   Faça login na sua conta CNC

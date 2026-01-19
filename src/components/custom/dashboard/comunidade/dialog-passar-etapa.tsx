@@ -30,6 +30,7 @@ import z from "zod";
 interface PassarComunidadeDeEtapaProps {
   comunidadeId: string;
   etapaAtual: EtapaEnum;
+  onSuccess?: () => void;
 }
 
 function getProximaEtapa(etapaAtual: EtapaEnum): EtapaEnum | null {
@@ -46,9 +47,10 @@ function getProximaEtapa(etapaAtual: EtapaEnum): EtapaEnum | null {
 export function PassarComunidadeDeEtapa({
   comunidadeId,
   etapaAtual,
+  onSuccess,
 }: PassarComunidadeDeEtapaProps) {
   const proximaEtapa = getProximaEtapa(etapaAtual);
-  const [disableButton, setDisableButton] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const formSchema = z.object({
     local: z
@@ -70,8 +72,6 @@ export function PassarComunidadeDeEtapa({
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    setDisableButton(true);
-
     let url = `/api/ambrosio/comunidade/etapa`;
     let method = "POST";
 
@@ -96,8 +96,9 @@ export function PassarComunidadeDeEtapa({
           variant: "default",
           description: `Cadastrado(a) com sucesso a etapa!`,
         });
+        setOpen(false);
+        onSuccess?.();
       } else {
-        setDisableButton(false);
         if (res.status === 403 || res.status === 401) {
           toast({
             title: `Etapa não foi cadastrado!`,
@@ -128,7 +129,7 @@ export function PassarComunidadeDeEtapa({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
           <Button variant="link" size="sm">
@@ -223,9 +224,7 @@ export function PassarComunidadeDeEtapa({
                 <DialogClose asChild>
                   <Button variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button disabled={disableButton} type="submit">
-                  Salvar
-                </Button>
+                <Button type="submit">Salvar</Button>
               </DialogFooter>
             </form>
           </Form>

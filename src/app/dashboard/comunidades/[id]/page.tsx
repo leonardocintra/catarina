@@ -1,7 +1,7 @@
 "use client";
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { use, useEffect, useState } from "react";
+import { use, useCallback, useEffect, useState } from "react";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
@@ -38,44 +38,44 @@ export default function EditarComunidadePage({
   const { toast } = useToast();
   const routeRedirect = "/dashboard/comunidades";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/ambrosio/comunidade/${id}`);
+  const fetchComunidade = useCallback(async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/api/ambrosio/comunidade/${id}`);
 
-        if (res.status === 404) {
-          toast({
-            title: `Comunidade não encontrada`,
-            variant: "destructive",
-            description: `Comunidade não encontrada. Tente novamente`,
-          });
-          router.push(routeRedirect);
-          return;
-        }
-
-        if (res.status === 401) {
-          toast({
-            title: `Sem permissão`,
-            variant: "destructive",
-            description: `Você não tem permissão para ver essa comunidade`,
-          });
-          router.push(routeRedirect);
-          return;
-        }
-
-        const data = await res.json();
-        setComunidade(data);
-      } catch (error: any) {
+      if (res.status === 404) {
         toast({
-          title: `Erro ao buscar comunidade`,
+          title: `Comunidade não encontrada`,
           variant: "destructive",
-          description: `Erro: ${error}`,
+          description: `Comunidade não encontrada. Tente novamente`,
         });
+        router.push(routeRedirect);
+        return;
       }
-    };
 
-    fetchData();
+      if (res.status === 401) {
+        toast({
+          title: `Sem permissão`,
+          variant: "destructive",
+          description: `Você não tem permissão para ver essa comunidade`,
+        });
+        router.push(routeRedirect);
+        return;
+      }
+
+      const data = await res.json();
+      setComunidade(data);
+    } catch (error: any) {
+      toast({
+        title: `Erro ao buscar comunidade`,
+        variant: "destructive",
+        description: `Erro: ${error}`,
+      });
+    }
   }, [id, toast, router, routeRedirect]);
+
+  useEffect(() => {
+    fetchComunidade();
+  }, [fetchComunidade]);
 
   if (!comunidade)
     return <SkeletonLoading mensagem="Carregando comunidade ..." />;
@@ -136,6 +136,7 @@ export default function EditarComunidadePage({
                   comunidade.comunidadeEtapas.at(-1)?.etapa ||
                   EtapaEnum.PRE_CATECUMENATO
                 }
+                onSuccess={fetchComunidade}
               />
             </CardFooter>
           </Card>

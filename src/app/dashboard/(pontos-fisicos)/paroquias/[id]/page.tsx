@@ -145,7 +145,6 @@ export default function EditarParoquiaPage() {
                 <TableRow>
                   <TableHead>Comunidade</TableHead>
                   <TableHead>Irmãos</TableHead>
-                  <TableHead>Etapa</TableHead>
                   <TableHead>Ação</TableHead>
                 </TableRow>
               </TableHeader>
@@ -156,7 +155,6 @@ export default function EditarParoquiaPage() {
                       {comunidade.numeroDaComunidade}
                     </TableCell>
                     <TableCell>{comunidade.quantidadeMembros}</TableCell>
-                    <TableCell>Colocar etapa aqui</TableCell>
                     <TableCell>
                       <Link href={`/dashboard/comunidades/${comunidade.id}`}>
                         <Button variant="link">Mais detalhes</Button>

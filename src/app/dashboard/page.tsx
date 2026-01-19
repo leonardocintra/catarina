@@ -12,7 +12,7 @@ export default function DashboardPage() {
 
   return (
     <div className="pt-8">
-      <div className="flex justify-center items-center min-h-[200px]">
+      <div className="flex justify-center items-center min-h-50">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <h2 className="text-2xl font-bold mb-2">Bem-vindo!</h2>

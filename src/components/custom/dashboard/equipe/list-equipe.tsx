@@ -50,7 +50,7 @@ export default function ListEquipe({ equipes }: ListEquipeProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Descrição da equipe</TableHead>
-            <TableHead>Paroquia</TableHead>
+            <TableHead>Tipo de equipe</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
         </TableHeader>
@@ -59,9 +59,8 @@ export default function ListEquipe({ equipes }: ListEquipeProps) {
             <TableRow key={equipe.id}>
               <TableCell>
                 <div className="font-semibold">{equipe.descricao}</div>
-                <div className="font-extralight italic">{equipe.tipoEquipe.descricao}</div>
               </TableCell>
-              <TableCell>Colocar a paroquia</TableCell>
+              <TableCell>{equipe.tipoEquipe.descricao}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/equipes/${equipe.id}`}>
                   <Button variant={"link"} size={"sm"}>
