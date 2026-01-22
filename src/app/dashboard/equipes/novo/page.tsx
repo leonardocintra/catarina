@@ -25,7 +25,7 @@ export default function NovaEquipePage() {
         `/api/ambrosio/configuracoes/carismas/equipe`,
         {
           credentials: "include",
-        }
+        },
       );
       const carisma = await catequistaResponse.json();
       const carismaData = carisma.data;
@@ -42,10 +42,14 @@ export default function NovaEquipePage() {
     <div>
       <PageSubtitle
         title="Cadastro de nova equipe"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/equipes"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/equipes",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {isLoading ? (

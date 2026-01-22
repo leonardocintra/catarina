@@ -37,6 +37,10 @@ export default function EditarComunidadePage({
   const { id } = use(params);
   const { toast } = useToast();
   const routeRedirect = "/dashboard/comunidades";
+  const formatDate = (date?: Date) =>
+    date
+      ? new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(date)
+      : " - ";
 
   const fetchComunidade = useCallback(async () => {
     try {
@@ -63,7 +67,15 @@ export default function EditarComunidadePage({
       }
 
       const data = await res.json();
-      setComunidade(data);
+      const comunidadeNormalizada: Comunidade = {
+        ...data,
+        comunidadeEtapas: data.comunidadeEtapas?.map((ce: any) => ({
+          ...ce,
+          dataInicio: ce?.dataInicio ? new Date(ce.dataInicio) : undefined,
+          dataFim: ce?.dataFim ? new Date(ce.dataFim) : undefined,
+        })),
+      };
+      setComunidade(comunidadeNormalizada);
     } catch (error: any) {
       toast({
         title: `Erro ao buscar comunidade`,
@@ -85,10 +97,14 @@ export default function EditarComunidadePage({
       <PageSubtitle
         title={`Comunidade ${comunidade.numeroDaComunidade}`}
         subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos - ${comunidade.descricao}`}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/comunidades"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/comunidades",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       <div className="grid gap-2 sm:grid-cols-2 items-start">
@@ -115,8 +131,7 @@ export default function EditarComunidadePage({
                     <TableRow key={ce.id}>
                       <TableCell className="font-medium">{ce.etapa}</TableCell>
                       <TableCell className="text-right">
-                        {ce.dataInicio ? ce.dataInicio.getDate() : " - "} /{" "}
-                        {ce.dataFim ? ce.dataFim.getDate() : " - "}
+                        {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
                       </TableCell>
                       <TableCell>Não informado</TableCell>
                       <TableCell className="text-right">

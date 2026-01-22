@@ -45,10 +45,15 @@ export default function SetorPage() {
     <div>
       <PageSubtitle
         title={`Setores - ${setores ? setores.length : 0}`}
+        observation="Para cadastro de novos setores entrar em contato com o TI"
         subTitle="do Brasil"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/setores/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/setores/novo",
+            buttonShow: false,
+          },
+        ]}
       />
 
       {loading ? (

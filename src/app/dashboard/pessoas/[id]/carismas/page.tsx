@@ -47,13 +47,13 @@ export default function PessoaCarismaPage() {
         // Separar por tipo
         const todosCarismas = dataCarismas.data || [];
         const primitivos = todosCarismas.filter(
-          (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO
+          (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO,
         );
         const vinculados = todosCarismas.filter(
-          (c: any) => c.tipo === TipoCarismaEnum.VINCULADO
+          (c: any) => c.tipo === TipoCarismaEnum.VINCULADO,
         );
         const servicos = todosCarismas.filter(
-          (c: any) => c.tipo === TipoCarismaEnum.SERVICO
+          (c: any) => c.tipo === TipoCarismaEnum.SERVICO,
         );
 
         setCarismaData({
@@ -64,7 +64,7 @@ export default function PessoaCarismaPage() {
 
         // Buscar pessoa
         const resPessoa = await fetch(
-          `${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`
+          `${BASE_URL}/api/ambrosio/pessoa/${pessoaId}`,
         );
         if (!resPessoa.ok) throw new Error("Erro ao buscar pessoa");
         const pessoaData = await resPessoa.json();
@@ -72,7 +72,7 @@ export default function PessoaCarismaPage() {
         setPessoa(pessoaData);
         // Carismas já vêm em um único array com tipo
         const selectedCarismas = (pessoaData.carismas || []).map(
-          (c: any) => c.id
+          (c: any) => c.id,
         );
         setSelectedIds(selectedCarismas);
       } catch (error) {
@@ -91,7 +91,7 @@ export default function PessoaCarismaPage() {
 
   const toggle = (id: number) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
@@ -120,7 +120,7 @@ export default function PessoaCarismaPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
-        }
+        },
       );
 
       if (res.ok) {
@@ -209,9 +209,13 @@ export default function PessoaCarismaPage() {
     <div>
       <PageSubtitle
         title={`Adicionar carismas de ${pessoa.nome}`}
-        buttonShow={true}
-        buttonUrl={`/dashboard/pessoas/${pessoa.id}`}
-        buttonText="Voltar"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: `/dashboard/pessoas/${pessoa.id}`,
+            buttonShow: true,
+          },
+        ]}
       />
 
       <div className="p-4 max-w-4xl mx-auto">

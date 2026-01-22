@@ -15,7 +15,7 @@ export default function CidadePage() {
     const fetchData = async () => {
       try {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/configuracoes/cidade`
+          `${BASE_URL}/api/ambrosio/configuracoes/cidade`,
         );
         const data = await res.json();
         setCidades(data.data);
@@ -35,9 +35,13 @@ export default function CidadePage() {
       <PageSubtitle
         title={`Cidades - ${cidades.length}`}
         subTitle="do Caminho"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/cidade/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/cidade/novo",
+            buttonShow: true,
+          },
+        ]}
       />
       <ListCidades cidades={cidades} />
     </div>

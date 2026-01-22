@@ -7,10 +7,14 @@ export default function NovoPaisPage() {
     <div>
       <PageSubtitle
         title="Cadastro de novo país"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/pais"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/pais",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       <PaisForm urlBase={BASE_URL} />

@@ -49,9 +49,6 @@ export default function EtapasPage() {
       <PageSubtitle
         title="Etapas do Catecumenato"
         subTitle="Lista completa das etapas do Catecumenato"
-        buttonShow={false}
-        buttonText=""
-        buttonUrl=""
       />
 
       <Card>
@@ -69,10 +66,7 @@ export default function EtapasPage() {
                 className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
               >
                 <div className="flex items-center gap-4">
-                  <Badge
-                    variant="outline"
-                    className="min-w-8 justify-center"
-                  >
+                  <Badge variant="outline" className="min-w-8 justify-center">
                     {index + 1}
                   </Badge>
                   <div>

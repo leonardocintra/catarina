@@ -43,7 +43,7 @@ export default function EditarParoquiaPage() {
     const fetchData = async () => {
       async function getParoquia() {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/paroquia/${paroquiaId}`
+          `${BASE_URL}/api/ambrosio/paroquia/${paroquiaId}`,
         );
 
         if (res.status === 404) {
@@ -97,10 +97,14 @@ export default function EditarParoquiaPage() {
       <PageSubtitle
         title={`Paróquia: ${paroquia.descricao}`}
         subTitle={`${paroquia.diocese.tipoDiocese.descricao}: ${paroquia.diocese.descricao}`}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/paroquias"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/paroquias",
+            buttonVariant: "outline",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {!editar && (

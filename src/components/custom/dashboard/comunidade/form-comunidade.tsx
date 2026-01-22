@@ -19,6 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { InfoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { formatDateInputValue } from "@/lib/utils";
 
 type ComunidadeFormProps = {
   urlBase: string;
@@ -35,7 +36,7 @@ export default function ComunidadeForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [ultimaComunidade, setUltimaComunidade] = useState<Comunidade | null>(
-    null
+    null,
   );
   const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(0);
 
@@ -67,13 +68,14 @@ export default function ComunidadeForm({
     const fetchUltimaComunidade = async () => {
       try {
         const res = await fetch(
-          `${urlBase}/api/ambrosio/comunidade?paroquiaId=${paroquiaId}`
+          `${urlBase}/api/ambrosio/comunidade?paroquiaId=${paroquiaId}`,
         );
         const data = await res.json();
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          const ultima = data.data.reduce((max: Comunidade, item: Comunidade) =>
-            item.numeroDaComunidade > max.numeroDaComunidade ? item : max
+          const ultima = data.data.reduce(
+            (max: Comunidade, item: Comunidade) =>
+              item.numeroDaComunidade > max.numeroDaComunidade ? item : max,
           );
           const novoNumero = ultima.numeroDaComunidade + 1;
           setNumeroDaComunidade(novoNumero);
@@ -223,12 +225,10 @@ export default function ComunidadeForm({
                   <Input
                     type="date"
                     placeholder="Data de início da etapa na comunidade ..."
-                    value={
-                      new Date().toISOString().split("T")[0] /* YYYY-MM-DD */
-                    }
+                    value={formatDateInputValue(field.value)}
                     onChange={(e) =>
                       field.onChange(
-                        e.target.value ? new Date(e.target.value) : undefined
+                        e.target.value ? new Date(e.target.value) : undefined,
                       )
                     }
                     onBlur={field.onBlur}

@@ -27,7 +27,7 @@ export default function NovaParoquiaInner() {
 
       async function getDiocese() {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/diocese/${dioceseId}`
+          `${BASE_URL}/api/ambrosio/diocese/${dioceseId}`,
         );
 
         if (res.status === 404) {
@@ -80,10 +80,14 @@ export default function NovaParoquiaInner() {
           diocese &&
           `da ${diocese.tipoDiocese.descricao} de ${diocese.descricao}`
         }
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl={`/dashboard/dioceses/${dioceseId}`}
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: `/dashboard/dioceses/${dioceseId}`,
+            buttonVariant: "outline",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {dioceseId && diocese ? (

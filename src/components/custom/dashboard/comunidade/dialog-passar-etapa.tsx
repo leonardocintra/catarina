@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { formatDateInputValue } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowsUpFromLine } from "lucide-react";
 import { EtapaEnum } from "neocatecumenal";
@@ -176,21 +177,17 @@ export function PassarComunidadeDeEtapa({
                 name="dataInicio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                    <FormLabel>Data convivência</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
                         placeholder="Data da convivência"
-                        value={
-                          field.value
-                            ? field.value.toISOString().split("T")[0]
-                            : ""
-                        }
+                        value={formatDateInputValue(field.value)}
                         onChange={(e) =>
                           field.onChange(
                             e.target.value
                               ? new Date(e.target.value)
-                              : undefined
+                              : undefined,
                           )
                         }
                         onBlur={field.onBlur}

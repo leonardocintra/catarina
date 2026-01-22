@@ -31,7 +31,7 @@ export default function EditarPaisPage() {
     const fetchData = async () => {
       async function getPais() {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/configuracoes/pais/${paisId}`
+          `${BASE_URL}/api/ambrosio/configuracoes/pais/${paisId}`,
         );
 
         if (res.status === 404) {
@@ -69,10 +69,14 @@ export default function EditarPaisPage() {
       <PageSubtitle
         title={`Editar ${pais.nome}`}
         subTitle={pais.regiao}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl={routeRedirect}
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: routeRedirect,
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {!editar && (
@@ -85,12 +89,17 @@ export default function EditarPaisPage() {
             <CardContent className="space-y-1">
               <LabelData titulo="Região" descricao={`${pais.regiao}`} />
               <LabelData titulo="Subregião" descricao={`${pais.subRegiao}`} />
-              <LabelData titulo="Região Intermediaria" descricao={`${pais.regiaoIntermediaria ? pais.regiaoIntermediaria : ''}`} />
+              <LabelData
+                titulo="Região Intermediaria"
+                descricao={`${pais.regiaoIntermediaria ? pais.regiaoIntermediaria : ""}`}
+              />
               <LabelData titulo="Lingua" descricao={`${pais.lingua}`} />
               <LabelData titulo="Capital" descricao={`${pais.capital}`} />
             </CardContent>
             <CardFooter>
-              <Button disabled onClick={() => setEditar(!editar)}>Editar dados</Button>
+              <Button disabled onClick={() => setEditar(!editar)}>
+                Editar dados
+              </Button>
             </CardFooter>
           </Card>
         </div>

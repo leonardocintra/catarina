@@ -92,10 +92,14 @@ export default function EditarEquipePage() {
       <PageSubtitle
         title={`Equipe: ${equipe.descricao}`}
         subTitle={`${equipe.tipoEquipe.descricao}`}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/equipes"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/equipes",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {!editar && (

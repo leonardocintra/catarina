@@ -61,9 +61,6 @@ export default function CarismasPage() {
       <PageSubtitle
         title="Carismas"
         subTitle="Primitivos, Serviços, Vinculados e Situações Religiosas"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/carismas/novo"
       />
 
       <div>
@@ -71,7 +68,8 @@ export default function CarismasPage() {
           <Terminal />
           <AlertTitle>Observação</AlertTitle>
           <AlertDescription>
-            Há carismas que o casal são automaticamente vinculados. Esses estão marcados com 'Casal anda junto'.
+            Há carismas que o casal são automaticamente vinculados. Esses estão
+            marcados com 'Casal anda junto'.
           </AlertDescription>
         </Alert>
       </div>

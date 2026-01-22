@@ -17,10 +17,14 @@ export default function NovaComunidadePage({
     <div>
       <PageSubtitle
         title="Cadastro de nova comunidade"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/comunidades"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/comunidades",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       <ComunidadeForm urlBase={BASE_URL} paroquiaId={parseInt(paroquiaId)} />

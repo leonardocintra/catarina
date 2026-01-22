@@ -42,9 +42,13 @@ export default function ParoquiasPage() {
       <PageSubtitle
         title={`Paroquias - ${paroquias?.length || 0}`}
         subTitle="do Brasil"
-        buttonShow={true}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/paroquias/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/paroquias/novo",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {loading ? (

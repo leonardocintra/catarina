@@ -29,10 +29,14 @@ export default function NovaPessoaPage() {
     <div>
       <PageSubtitle
         title="Cadastro de nova pessoa"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/pessoas"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/pessoas",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {isLoading ? (
