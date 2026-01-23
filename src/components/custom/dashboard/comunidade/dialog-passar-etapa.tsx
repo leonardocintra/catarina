@@ -133,8 +133,8 @@ export function PassarComunidadeDeEtapa({
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
-          <Button variant="link" size="sm">
-            Passar comunidade de etapa <ArrowsUpFromLine />
+          <Button variant="destructive" size="sm">
+            Nova Etapa <ArrowsUpFromLine className="ml-2" />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-106.25">

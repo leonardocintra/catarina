@@ -46,7 +46,7 @@ export default function EquipePage() {
           {
             buttonText: "Nova equipe",
             buttonUrl: "/dashboard/equipes/novo",
-            buttonShow: false,
+            buttonShow: true,
           },
         ]}
       />

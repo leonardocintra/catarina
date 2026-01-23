@@ -96,7 +96,7 @@ export default function EditarComunidadePage({
     <div>
       <PageSubtitle
         title={`Comunidade ${comunidade.numeroDaComunidade}`}
-        subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos - ${comunidade.descricao}`}
+        subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos`}
         buttons={[
           {
             buttonText: "Voltar",

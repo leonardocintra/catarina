@@ -2,9 +2,8 @@
 
 import ComunidadeForm from "@/components/custom/dashboard/comunidade/form-comunidade";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
-import { use, useState } from "react";
+import { use } from "react";
 
 export default function NovaComunidadePage({
   params,

@@ -41,11 +41,10 @@ export default function ComunidadeForm({
   const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(0);
 
   const formSchema = z.object({
-    descricao: z
-      .string()
-      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
-      .max(80, { message: "Descrição deve ter no máximo 80 caracteres." }),
-    quantidadeMembros: z.number().min(1, { message: "Quantidade inválida." }),
+    quantidadeMembros: z
+      .number()
+      .min(1, { message: "Quantidade inválida." })
+      .max(120, { message: "Quantidade inválida maxima de irmãos são 120" }),
     dataInicio: z.date().optional(),
     dataFim: z.date().optional(),
     local: z.string().max(180).optional(),
@@ -55,7 +54,6 @@ export default function ComunidadeForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      descricao: comunidade?.descricao || "",
       quantidadeMembros: comunidade?.quantidadeMembros || 1,
       dataInicio: undefined,
       dataFim: undefined,
@@ -123,14 +121,14 @@ export default function ComunidadeForm({
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.descricao}`,
+          title: `Comunidade ${numeroDaComunidade}`,
           variant: "default",
           description: `Cadastrado(a) com sucesso!`,
         });
         router.push(`/dashboard/comunidades/${data.id}`);
       } else if (res.status === 200 && method === "PATCH") {
         toast({
-          title: `${values.descricao}`,
+          title: `Comunidade ${numeroDaComunidade}`,
           variant: "default",
           description: `Editado(a) com sucesso!`,
         });
@@ -139,19 +137,19 @@ export default function ComunidadeForm({
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Você não tem permissão para cadastro`,
           });
         } else if (res.status === 400) {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${data.message}`,
           });
         } else {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${res.text}`,
           });
@@ -160,7 +158,7 @@ export default function ComunidadeForm({
       }
     } catch (error) {
       toast({
-        title: `${values.descricao} não foi cadastrado!`,
+        title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
         variant: "destructive",
         description: `Erro de conexão. Tente novamente.`,
       });
@@ -195,20 +193,6 @@ export default function ComunidadeForm({
                       field.onChange(parseInt(e.target.value) || 0)
                     }
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="descricao"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Descrição</FormLabel>
-                <FormControl>
-                  <Input placeholder="Descrição da comunidade ..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
