@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       // Tratamento de erros específicos
       if (response.status === 409) {
         return NextResponse.json(
-          { message: "E-mail ou CPF já cadastrado" },
+          { message: "Ja existe um usuário com esse E-mail ou CPF cadastrado." },
           { status: 409 }
         );
       }

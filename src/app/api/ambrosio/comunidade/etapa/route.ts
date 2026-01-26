@@ -11,6 +11,7 @@ export async function POST(req: Request) {
 
   const etapa = {
     comunidadeId: Number.parseInt(payload.comunidadeId),
+    etapa: payload.etapa,
     observacao: payload.observacao,
     localConvivencia: payload.local,
     dataInicio: payload.dataInicio,
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       },
       {
         status: response.status,
-      }
+      },
     );
   }
 }

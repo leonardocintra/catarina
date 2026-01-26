@@ -99,7 +99,13 @@ export default function EditarComunidadePage({
         subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos`}
         buttons={[
           {
-            buttonText: "Voltar",
+            buttonText: `Voltar para paroquia ${comunidade.paroquia.descricao}`,
+            buttonUrl: `/dashboard/paroquias/${comunidade.paroquia.id}`,
+            buttonShow: true,
+            buttonVariant: "default"
+          },
+          {
+            buttonText: "Voltar para comunidades",
             buttonUrl: "/dashboard/comunidades",
             buttonShow: true,
             buttonVariant: "outline",

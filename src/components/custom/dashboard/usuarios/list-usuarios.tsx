@@ -6,19 +6,36 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
-  Users,
-  Phone,
-  Mail,
-  Shield,
-  CheckCircle,
-  XCircle,
-  Calendar,
-  Loader2,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Users, Shield, Loader2, XCircle } from "lucide-react";
 import { User } from "neocatecumenal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+type DashboardUser = User & {
+  nome?: string;
+  pessoa?: {
+    nome?: string;
+  };
+};
 
 export default function ListUsuarios() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<DashboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,7 +49,7 @@ export default function ListUsuarios() {
       }
 
       const data = await response.json();
-      setUsers(data.data);
+      setUsers(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro desconhecido");
     } finally {
@@ -44,45 +61,24 @@ export default function ListUsuarios() {
     fetchUsers();
   }, []);
 
-  const getRoleBadge = (role: string) => {
-    const roleMap = {
-      ADMIN: { label: "Admin", variant: "default" as const },
-      NAO_IDENTIFICADO: {
-        label: "Não identificado",
-        variant: "destructive" as const,
-      },
-    };
-
-    return (
-      roleMap[role as keyof typeof roleMap] || {
-        label: role,
-        variant: "outline" as const,
-      }
-    );
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
   const formatPhone = (whatsapp: string) => {
     // Formata o número: 16999999999 -> (16) 99999-9999
     if (whatsapp.length === 11) {
       return `(${whatsapp.substring(0, 2)}) ${whatsapp.substring(
         2,
-        7
+        7,
       )}-${whatsapp.substring(7)}`;
     } else if (whatsapp.length === 10) {
       return `(${whatsapp.substring(0, 2)}) ${whatsapp.substring(
         2,
-        6
+        6,
       )}-${whatsapp.substring(6)}`;
     }
     return whatsapp;
+  };
+
+  const getDisplayName = (user: DashboardUser) => {
+    return user.pessoa?.nome || user.nome || user.email;
   };
 
   if (loading) {
@@ -111,103 +107,91 @@ export default function ListUsuarios() {
   }
 
   return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5" />
-            Lista de Usuários
-            <Badge variant="secondary" className="ml-auto">
-              {users.length} usuário{users.length !== 1 ? "s" : ""}
-            </Badge>
-          </CardTitle>
-        </CardHeader>
-      </Card>
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Lista de Usuários
+          <Badge variant="secondary" className="ml-auto">
+            {users.length} usuário{users.length !== 1 ? "s" : ""}
+          </Badge>
+        </CardTitle>
+      </CardHeader>
 
-      <div className="grid gap-4">
-        {users.map((user) => {
-          const roleBadge = getRoleBadge(user.role);
-
-          return (
-            <Card key={user.id}>
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src="/user.png" alt={user.email} />
-                    </Avatar>
-
-                    <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-lg">{user.email}</h3>
-                        <Badge variant={roleBadge.variant}>
-                          <Shield className="h-3 w-3 mr-1" />
-                          {roleBadge.label}
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <Mail className="h-4 w-4" />
-                          <span>{user.email}</span>
-                        </div>
-
-                        {user.whatsapp && (
-                          <div className="flex items-center gap-2">
-                            <Phone className="h-4 w-4" />
-                            <span>{formatPhone(user.whatsapp)}</span>
-                            {user.verifiedWhatsapp ? (
-                              <CheckCircle className="h-4 w-4 text-green-500" />
-                            ) : (
-                              <XCircle className="h-4 w-4 text-red-500" />
-                            )}
-                          </div>
-                        )}
-
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4" />
-                          {/* <span>Criado em {formatDate(user.createdAt)}</span> */}
-                          <span>Criado em 11/08/2025 </span>
+      <CardContent>
+        {users.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Users className="h-12 w-12 text-muted-foreground mb-4" />
+            <p className="text-muted-foreground">Nenhum usuário encontrado</p>
+          </div>
+        ) : (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Telefone</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {users.map((user) => {
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src="/user.png" alt={user.email} />
+                        </Avatar>
+                        <div>
+                          <p className="font-medium">{getDisplayName(user)}</p>
+                          <Badge
+                            variant={user.active ? "default" : "destructive"}
+                          >
+                            {user.active ? "Ativo" : "Inativo"}
+                          </Badge>
                         </div>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge variant={user.active ? "default" : "secondary"}>
-                      {user.active ? "Ativo" : "Inativo"}
-                    </Badge>
-
-                    <div className="flex gap-2">
-                      <Button size="sm" variant="outline" disabled>
-                        Editar
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
+                    </TableCell>
+                    <TableCell className="flex gap-2 justify-end">
+                      <Button size="sm" variant="default">
+                        Ativar
                       </Button>
-                      <Button
-                        size="sm"
-                        disabled
-                        variant={user.active ? "destructive" : "default"}
-                      >
-                        {user.active ? "Desativar" : "Ativar"}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
 
-      {users.length === 0 && (
-        <Card>
-          <CardContent className="flex items-center justify-center py-8">
-            <div className="text-center">
-              <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Nenhum usuário encontrado</p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-    </div>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="outline">Resetar senha</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Você tem certeza?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Tem certeza que deseja gerar uma nova senha para{" "}
+                              {getDisplayName(user)}?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>Continue</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        )}
+      </CardContent>
+    </Card>
   );
 }
