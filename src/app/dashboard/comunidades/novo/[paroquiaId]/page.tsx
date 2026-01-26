@@ -2,9 +2,8 @@
 
 import ComunidadeForm from "@/components/custom/dashboard/comunidade/form-comunidade";
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
-import { use, useState } from "react";
+import { use } from "react";
 
 export default function NovaComunidadePage({
   params,
@@ -17,10 +16,14 @@ export default function NovaComunidadePage({
     <div>
       <PageSubtitle
         title="Cadastro de nova comunidade"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/comunidades"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/comunidades",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       <ComunidadeForm urlBase={BASE_URL} paroquiaId={parseInt(paroquiaId)} />

@@ -41,11 +41,15 @@ export default function ComunidadePage() {
     <div className="">
       <PageSubtitle
         title={`Comunidades - ${comunidades?.length || 0}`}
-        buttonShow={true}
-        buttonVariant="outline"
-        buttonText="Ir para paróquias"
-        buttonUrl="/dashboard/paroquias"
         observation="Para cadastrar nova comunidade, você precisa ir nas paróquias"
+        buttons={[
+          {
+            buttonText: "Ir para paróquias",
+            buttonUrl: "/dashboard/paroquias",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {loading ? (

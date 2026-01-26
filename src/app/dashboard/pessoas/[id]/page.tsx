@@ -67,10 +67,14 @@ export default function EditarPessoaPage({
       <PageSubtitle
         title={`${pessoa.nome}`}
         subTitle={`Situação: ${pessoa.situacaoReligiosa.descricao} - ID: ${pessoa.externalId}`}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/pessoas"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/pessoas",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {!isEditing && (
@@ -103,7 +107,10 @@ export default function EditarPessoaPage({
               />
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button className="w-full" onClick={() => setIsEditing(!isEditing)}>
+              <Button
+                className="w-full"
+                onClick={() => setIsEditing(!isEditing)}
+              >
                 Editar dados
               </Button>
             </CardFooter>
@@ -243,13 +250,13 @@ function handleCarismas(pessoa: Pessoa) {
 
   // Separar por tipo
   const primitivos = carismas.filter(
-    (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO
+    (c: any) => c.tipo === TipoCarismaEnum.PRIMITIVO,
   );
   const vinculados = carismas.filter(
-    (c: any) => c.tipo === TipoCarismaEnum.VINCULADO
+    (c: any) => c.tipo === TipoCarismaEnum.VINCULADO,
   );
   const servicos = carismas.filter(
-    (c: any) => c.tipo === TipoCarismaEnum.SERVICO
+    (c: any) => c.tipo === TipoCarismaEnum.SERVICO,
   );
 
   // Se não houver nenhum carisma cadastrado

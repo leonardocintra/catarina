@@ -34,7 +34,6 @@ export async function POST(req: Request) {
   const payload = await req.json();
 
   const comunidade = {
-    descricao: payload.descricao,
     numeroDaComunidade: payload.numeroDaComunidade,
     quantidadeMembros: payload.quantidadeMembros,
     paroquiaId: payload.paroquiaId,

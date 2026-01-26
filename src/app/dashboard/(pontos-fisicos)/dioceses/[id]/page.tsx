@@ -36,7 +36,7 @@ export default function EditarDiocesePage() {
     const fetchData = async () => {
       async function getDiocese() {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/diocese/${dioceseId}`
+          `${BASE_URL}/api/ambrosio/diocese/${dioceseId}`,
         );
 
         if (res.status === 404) {
@@ -81,7 +81,7 @@ export default function EditarDiocesePage() {
     const fetchParoquias = async () => {
       try {
         const res = await fetch(
-          `${BASE_URL}/api/ambrosio/paroquia?dioceseId=${dioceseId}`
+          `${BASE_URL}/api/ambrosio/paroquia?dioceseId=${dioceseId}`,
         );
         if (!res.ok) {
           throw new Error("Erro ao buscar paróquias");
@@ -115,10 +115,14 @@ export default function EditarDiocesePage() {
       <PageSubtitle
         title={`Editar ${diocese.descricao}`}
         subTitle={diocese.tipoDiocese.descricao}
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/dioceses"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/dioceses",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       {!editar && (
@@ -143,7 +147,7 @@ export default function EditarDiocesePage() {
               <Button
                 onClick={() =>
                   router.push(
-                    `/dashboard/paroquias/novo?dioceseId=${dioceseId}`
+                    `/dashboard/paroquias/novo?dioceseId=${dioceseId}`,
                   )
                 }
                 variant="outline"
@@ -172,7 +176,8 @@ export default function EditarDiocesePage() {
                           {paroquia.descricao}
                         </div>
                         <div className="text-sm text-muted-foreground">
-                          ID: {paroquia.id} - Cidade: {paroquia.endereco?.cidade?.nome} -{" "}
+                          ID: {paroquia.id} - Cidade:{" "}
+                          {paroquia.endereco?.cidade?.nome} -{" "}
                           {paroquia.endereco?.cidade?.estado?.sigla}
                         </div>
                       </li>

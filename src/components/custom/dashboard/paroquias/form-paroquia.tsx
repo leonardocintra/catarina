@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { Paroquia, Setor } from "neocatecumenal";
+import { Diocese, Paroquia, Setor } from "neocatecumenal";
 import { addressSchema } from "@/schemas/addressSchema";
 import { useCepHandler } from "@/hooks/useCepHandler";
 import { IMaskInput } from "react-imask";
@@ -55,25 +55,52 @@ export default function ParoquiaForm({
   const [bairroDisabled, setBairroDisabled] = useState(true);
   const [cidadeDisabled, setCidadeDisabled] = useState(true);
   const [logradouroDisabled, setLogradouroDisabled] = useState(true);
+  const [openDiocese, setOpenDiocese] = useState(false);
   const [openSetor, setOpenSetor] = useState(false);
   const [setores, setSetores] = useState<Setor[]>([]);
+  const [dioceses, setDioceses] = useState<Diocese[]>([]);
+
+  const sanitizeCep = (cep?: string) => cep?.replace(/\D/g, "") || "";
+
+  const getDioceseLabel = (diocese: Diocese) => {
+    const cidadeNome = diocese?.endereco?.cidade?.nome;
+    const estadoSigla = diocese?.endereco?.cidade?.estado?.sigla;
+    const cidadeDescricao = cidadeNome
+      ? `${cidadeNome}${estadoSigla ? `/${estadoSigla}` : ""}`
+      : "";
+    return cidadeDescricao
+      ? `${diocese.descricao} - ${cidadeDescricao}`
+      : diocese.descricao;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
+      async function getDioceses() {
+        const res = await fetch(`${urlBase}/api/ambrosio/diocese`);
+        return res.json();
+      }
+
       async function getSetores() {
         const res = await fetch(`${urlBase}/api/ambrosio/setor`);
         return res.json();
       }
       try {
-        const dataSetores = await getSetores();
+        const [dataSetores, dataDioceses] = await Promise.all([
+          getSetores(),
+          getDioceses(),
+        ]);
+
         setSetores(dataSetores.data);
+        setDioceses(dataDioceses.data);
       } catch (error: any) {
         console.error(error);
       }
     };
 
     fetchData();
-  }, [urlBase]);
+  }, [urlBase, dioceseId]);
+
+  console.log(paroquia);
 
   const formSchema = z
     .object({
@@ -105,12 +132,22 @@ export default function ParoquiaForm({
     },
   });
 
+  const cepHandledRef = useRef(sanitizeCep(form.getValues("cep"))); // Keeps CEP lookups user-driven
+
   const handleCep = useCepHandler({
     form,
     setBairroDisabled,
     setLogradouroDisabled,
     setCidadeDisabled,
   });
+
+  useEffect(() => {
+    if (paroquia?.endereco?.cep) {
+      cepHandledRef.current = sanitizeCep(paroquia.endereco.cep);
+    } else {
+      cepHandledRef.current = "";
+    }
+  }, [paroquia]);
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
@@ -211,15 +248,78 @@ export default function ParoquiaForm({
           <FormField
             control={form.control}
             name="diocese"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Diocese</FormLabel>
-                <FormControl>
-                  <Input disabled {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const selectedDioceseId = form.watch("dioceseId");
+              const selectedDiocese = dioceses.find(
+                (item) => item.id === selectedDioceseId,
+              );
+
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Diocese</FormLabel>
+                  <Popover open={openDiocese} onOpenChange={setOpenDiocese}>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={openDiocese}
+                          className={cn(
+                            "w-full justify-between",
+                            !field.value && "text-muted-foreground",
+                          )}
+                        >
+                          {selectedDiocese
+                            ? getDioceseLabel(selectedDiocese)
+                            : field.value || "Selecione uma diocese..."}
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput placeholder="Buscar diocese..." />
+                        <CommandList>
+                          <CommandEmpty>
+                            Nenhuma diocese encontrada.
+                          </CommandEmpty>
+                          <CommandGroup>
+                            {dioceses.map((diocese) => (
+                              <CommandItem
+                                key={diocese.id}
+                                value={getDioceseLabel(diocese)}
+                                onSelect={() => {
+                                  form.setValue("diocese", diocese.descricao, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
+                                  form.setValue("dioceseId", diocese.id, {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
+                                  setOpenDiocese(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    diocese.id === selectedDioceseId
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                {getDioceseLabel(diocese)}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
           <FormField
             control={form.control}
@@ -236,16 +336,16 @@ export default function ParoquiaForm({
                         aria-expanded={openSetor}
                         className={cn(
                           "w-full justify-between",
-                          !field.value && "text-muted-foreground"
+                          !field.value && "text-muted-foreground",
                         )}
                       >
                         {field.value
                           ? setores.find(
-                              (setor) => setor.id.toString() === field.value
+                              (setor) => setor.id.toString() === field.value,
                             )?.descricao +
                             " - " +
                             setores.find(
-                              (setor) => setor.id.toString() === field.value
+                              (setor) => setor.id.toString() === field.value,
                             )?.regiao.descricao
                           : "Selecione um setor..."}
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -272,7 +372,7 @@ export default function ParoquiaForm({
                                   "mr-2 h-4 w-4",
                                   setor.id.toString() === field.value
                                     ? "opacity-100"
-                                    : "opacity-0"
+                                    : "opacity-0",
                                 )}
                               />
                               Região {setor.regiao.descricao} -{" "}
@@ -303,11 +403,16 @@ export default function ParoquiaForm({
                     mask="00000-000"
                     placeholder="CEP da paroquia ..."
                     value={field.value}
-                    onAccept={(value, mask) => {
+                    onAccept={(value) => {
                       const numericCep = value.replace(/\D/g, ""); // remove hífen e tudo que não for número
                       field.onChange(numericCep); // salva o valor limpo no react-hook-form
                       if (numericCep.length === 8) {
-                        handleCep(numericCep);
+                        if (numericCep !== cepHandledRef.current) {
+                          handleCep(numericCep);
+                          cepHandledRef.current = numericCep;
+                        }
+                      } else {
+                        cepHandledRef.current = numericCep;
                       }
                     }}
                     className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"

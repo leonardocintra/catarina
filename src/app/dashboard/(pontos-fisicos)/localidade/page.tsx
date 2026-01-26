@@ -17,7 +17,7 @@ export default function LocalidadePage() {
           `${BASE_URL}/api/ambrosio/configuracoes/localidade`,
           {
             credentials: "include",
-          }
+          },
         );
         const data = await res.json();
         setLocalidades(data.data);
@@ -50,9 +50,13 @@ export default function LocalidadePage() {
       <PageSubtitle
         title={`Localidades - ${localidades ? localidades.length : 0}`}
         subTitle="do Brasil"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/localidade/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/localidade/novo",
+            buttonShow: false,
+          },
+        ]}
       />
 
       {loading ? "Carregando ..." : listar()}

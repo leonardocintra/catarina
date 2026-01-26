@@ -46,9 +46,13 @@ export default function RegiaoPage() {
       <PageSubtitle
         title={`Regiões - ${regioes ? regioes.length : 0}`}
         subTitle="do Brasil"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/regioes/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/regioes/novo",
+            buttonShow: false,
+          },
+        ]}
       />
 
       {loading ? (

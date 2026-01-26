@@ -18,8 +18,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { formatDateInputValue } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowsUpFromLine } from "lucide-react";
 import { EtapaEnum } from "neocatecumenal";
@@ -27,21 +35,14 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+const etapaOptions = Object.values(EtapaEnum).filter(
+  (value): value is EtapaEnum => typeof value === "string",
+);
+
 interface PassarComunidadeDeEtapaProps {
   comunidadeId: string;
   etapaAtual: EtapaEnum;
   onSuccess?: () => void;
-}
-
-function getProximaEtapa(etapaAtual: EtapaEnum): EtapaEnum | null {
-  const etapas = Object.values(EtapaEnum);
-  const indexAtual = etapas.indexOf(etapaAtual);
-
-  if (indexAtual === -1 || indexAtual === etapas.length - 1) {
-    return null; // Não encontrou ou já está na última etapa
-  }
-
-  return etapas[indexAtual + 1];
 }
 
 export function PassarComunidadeDeEtapa({
@@ -49,10 +50,12 @@ export function PassarComunidadeDeEtapa({
   etapaAtual,
   onSuccess,
 }: PassarComunidadeDeEtapaProps) {
-  const proximaEtapa = getProximaEtapa(etapaAtual);
   const [open, setOpen] = useState(false);
 
   const formSchema = z.object({
+    etapa: z.nativeEnum(EtapaEnum, {
+      error: "Selecione a etapa",
+    }),
     local: z
       .string()
       .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
@@ -65,6 +68,7 @@ export function PassarComunidadeDeEtapa({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      etapa: etapaAtual,
       dataInicio: undefined,
       local: "",
       observacao: "",
@@ -92,7 +96,7 @@ export function PassarComunidadeDeEtapa({
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
         toast({
-          title: `${proximaEtapa} cadastrada!`,
+          title: `${values.etapa} cadastrada!`,
           variant: "default",
           description: `Cadastrado(a) com sucesso a etapa!`,
         });
@@ -132,20 +136,21 @@ export function PassarComunidadeDeEtapa({
     <Dialog open={open} onOpenChange={setOpen}>
       <form>
         <DialogTrigger asChild>
-          <Button variant="link" size="sm">
-            Passar comunidade de etapa <ArrowsUpFromLine />
+          <Button variant="destructive" size="sm">
+            Nova Etapa <ArrowsUpFromLine className="ml-2" />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
-            <DialogTitle>
-              Nova Etapa: {proximaEtapa ?? "Última etapa alcançada"}
-            </DialogTitle>
+            <DialogTitle>Passar Comunidade de Etapa</DialogTitle>
             <DialogDescription>
-              Etapa atual: {etapaAtual}
-              <br />
-              Preencha as informações abaixo para confirmar a passagem de etapa
-              da comunidade.
+              <div className="font-bold text-red-600">
+                Etapa atual: {etapaAtual}
+              </div>
+              <div>
+                Preencha as informações abaixo para confirmar a passagem de
+                etapa da comunidade.
+              </div>
             </DialogDescription>
           </DialogHeader>
 
@@ -154,6 +159,35 @@ export function PassarComunidadeDeEtapa({
               onSubmit={form.handleSubmit(handleSubmit)}
               className="flex flex-col gap-3"
             >
+              <FormField
+                control={form.control}
+                name="etapa"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Selecione a nova etapa</FormLabel>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) =>
+                        field.onChange(value as EtapaEnum)
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione a etapa" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {etapaOptions.map((option) => (
+                          <SelectItem key={option} value={option}>
+                            {option.replace(/_/g, " ")}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="local"
@@ -176,21 +210,17 @@ export function PassarComunidadeDeEtapa({
                 name="dataInicio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Descrição</FormLabel>
+                    <FormLabel>Data convivência</FormLabel>
                     <FormControl>
                       <Input
                         type="date"
                         placeholder="Data da convivência"
-                        value={
-                          field.value
-                            ? field.value.toISOString().split("T")[0]
-                            : ""
-                        }
+                        value={formatDateInputValue(field.value)}
                         onChange={(e) =>
                           field.onChange(
                             e.target.value
                               ? new Date(e.target.value)
-                              : undefined
+                              : undefined,
                           )
                         }
                         onBlur={field.onBlur}

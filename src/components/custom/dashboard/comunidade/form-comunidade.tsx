@@ -19,6 +19,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { InfoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { formatDateInputValue } from "@/lib/utils";
 
 type ComunidadeFormProps = {
   urlBase: string;
@@ -35,16 +36,15 @@ export default function ComunidadeForm({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [ultimaComunidade, setUltimaComunidade] = useState<Comunidade | null>(
-    null
+    null,
   );
   const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(0);
 
   const formSchema = z.object({
-    descricao: z
-      .string()
-      .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
-      .max(80, { message: "Descrição deve ter no máximo 80 caracteres." }),
-    quantidadeMembros: z.number().min(1, { message: "Quantidade inválida." }),
+    quantidadeMembros: z
+      .number()
+      .min(1, { message: "Quantidade inválida." })
+      .max(120, { message: "Quantidade inválida maxima de irmãos são 120" }),
     dataInicio: z.date().optional(),
     dataFim: z.date().optional(),
     local: z.string().max(180).optional(),
@@ -54,7 +54,6 @@ export default function ComunidadeForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      descricao: comunidade?.descricao || "",
       quantidadeMembros: comunidade?.quantidadeMembros || 1,
       dataInicio: undefined,
       dataFim: undefined,
@@ -67,13 +66,14 @@ export default function ComunidadeForm({
     const fetchUltimaComunidade = async () => {
       try {
         const res = await fetch(
-          `${urlBase}/api/ambrosio/comunidade?paroquiaId=${paroquiaId}`
+          `${urlBase}/api/ambrosio/comunidade?paroquiaId=${paroquiaId}`,
         );
         const data = await res.json();
 
         if (Array.isArray(data.data) && data.data.length > 0) {
-          const ultima = data.data.reduce((max: Comunidade, item: Comunidade) =>
-            item.numeroDaComunidade > max.numeroDaComunidade ? item : max
+          const ultima = data.data.reduce(
+            (max: Comunidade, item: Comunidade) =>
+              item.numeroDaComunidade > max.numeroDaComunidade ? item : max,
           );
           const novoNumero = ultima.numeroDaComunidade + 1;
           setNumeroDaComunidade(novoNumero);
@@ -121,14 +121,14 @@ export default function ComunidadeForm({
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.descricao}`,
+          title: `Comunidade ${numeroDaComunidade}`,
           variant: "default",
           description: `Cadastrado(a) com sucesso!`,
         });
         router.push(`/dashboard/comunidades/${data.id}`);
       } else if (res.status === 200 && method === "PATCH") {
         toast({
-          title: `${values.descricao}`,
+          title: `Comunidade ${numeroDaComunidade}`,
           variant: "default",
           description: `Editado(a) com sucesso!`,
         });
@@ -137,19 +137,19 @@ export default function ComunidadeForm({
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Você não tem permissão para cadastro`,
           });
         } else if (res.status === 400) {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${data.message}`,
           });
         } else {
           toast({
-            title: `${values.descricao} não foi cadastrado!`,
+            title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
             variant: "destructive",
             description: `Erro: ${res.text}`,
           });
@@ -158,7 +158,7 @@ export default function ComunidadeForm({
       }
     } catch (error) {
       toast({
-        title: `${values.descricao} não foi cadastrado!`,
+        title: `Comunidade ${numeroDaComunidade} não foi cadastrado!`,
         variant: "destructive",
         description: `Erro de conexão. Tente novamente.`,
       });
@@ -201,20 +201,6 @@ export default function ComunidadeForm({
 
           <FormField
             control={form.control}
-            name="descricao"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Descrição</FormLabel>
-                <FormControl>
-                  <Input placeholder="Descrição da comunidade ..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="dataInicio"
             render={({ field }) => (
               <FormItem>
@@ -223,12 +209,10 @@ export default function ComunidadeForm({
                   <Input
                     type="date"
                     placeholder="Data de início da etapa na comunidade ..."
-                    value={
-                      new Date().toISOString().split("T")[0] /* YYYY-MM-DD */
-                    }
+                    value={formatDateInputValue(field.value)}
                     onChange={(e) =>
                       field.onChange(
-                        e.target.value ? new Date(e.target.value) : undefined
+                        e.target.value ? new Date(e.target.value) : undefined,
                       )
                     }
                     onBlur={field.onBlur}

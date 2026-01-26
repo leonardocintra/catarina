@@ -42,9 +42,13 @@ export default function EquipePage() {
     <div className="">
       <PageSubtitle
         title={`Equipes - ${equipes?.length || 0}`}
-        buttonShow={true}
-        buttonText="Nova equipe"
-        buttonUrl="/dashboard/equipes/novo"
+        buttons={[
+          {
+            buttonText: "Nova equipe",
+            buttonUrl: "/dashboard/equipes/novo",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {loading ? (

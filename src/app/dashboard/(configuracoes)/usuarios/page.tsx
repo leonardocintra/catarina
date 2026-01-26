@@ -18,10 +18,14 @@ export default function UsuariosPage() {
       <PageSubtitle
         title="Usuários"
         subTitle="Gerenciar usuários do sistema"
-        buttonShow={true}
-        buttonText="Novo Usuário"
-        buttonUrl="/dashboard/usuarios/novo"
-        buttonVariant="default"
+        buttons={[
+          {
+            buttonText: "Novo usuário",
+            buttonUrl: "/dashboard/usuarios/novo",
+            buttonShow: true,
+            buttonVariant: "default",
+          },
+        ]}
       />
 
       <ListUsuarios />

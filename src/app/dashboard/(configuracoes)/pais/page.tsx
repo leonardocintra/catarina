@@ -34,9 +34,13 @@ export default function PaisPage() {
       <PageSubtitle
         title={`Paises - ${paises.length}`}
         subTitle="do Caminho"
-        buttonShow={true}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/pais/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/pais/novo",
+            buttonShow: true,
+          },
+        ]}
       />
       <ListPaises paises={paises} />
     </div>

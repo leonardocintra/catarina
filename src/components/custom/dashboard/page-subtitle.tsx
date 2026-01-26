@@ -3,11 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { InfoIcon } from "lucide-react";
 import Link from "next/link";
 
-type PageSubtitleProps = {
-  title: string;
-  subTitle?: string;
-  observation?: string;
-  buttonShow: boolean;
+type ButtonConfig = {
   buttonUrl: string;
   buttonText: string;
   buttonVariant?:
@@ -17,17 +13,26 @@ type PageSubtitleProps = {
     | "secondary"
     | "ghost"
     | "link";
+  buttonShow?: boolean;
+};
+
+type PageSubtitleProps = {
+  title: string;
+  subTitle?: string;
+  observation?: string;
+  buttons?: ButtonConfig[];
 };
 
 export default function PageSubtitle({
   title,
   subTitle,
   observation,
-  buttonShow,
-  buttonText,
-  buttonUrl,
-  buttonVariant,
+  buttons = [],
 }: PageSubtitleProps) {
+  const visibleButtons = buttons.filter(
+    (button) => button.buttonShow === undefined || button.buttonShow,
+  );
+
   return (
     <div>
       <div className="flex justify-between">
@@ -43,12 +48,18 @@ export default function PageSubtitle({
             </div>
           )}
         </div>
-        {buttonShow && (
-          <Link href={buttonUrl}>
-            <Button variant={buttonVariant ? buttonVariant : "default"}>
-              {buttonText}
-            </Button>
-          </Link>
+        {visibleButtons.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {visibleButtons.map(
+              ({ buttonUrl, buttonText, buttonVariant }, index) => (
+                <Link key={`${buttonText}-${index}`} href={buttonUrl}>
+                  <Button variant={buttonVariant ? buttonVariant : "default"}>
+                    {buttonText}
+                  </Button>
+                </Link>
+              ),
+            )}
+          </div>
         )}
       </div>
       <Separator className="mb-3 mt-2" />

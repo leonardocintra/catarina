@@ -8,7 +8,6 @@ import { Label } from "@/components/ui/label";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Link from "next/link";
 import { IMaskInput } from "react-imask";
 import { CheckCircle, Search, User } from "lucide-react";
 import { Pessoa } from "neocatecumenal";
@@ -118,10 +117,9 @@ export function CadastroForm({
         return;
       }
 
-      router.push("/cadastro/sucesso");
+      router.push("/dashboard/usuarios");
     } catch (error) {
       setErrorMsg("Erro ao tentar criar conta");
-      console.error(error);
       setCadastrando(false);
     }
   };
@@ -198,7 +196,7 @@ export function CadastroForm({
                   </div>
                   <h1 className="text-2xl font-bold">CPF Encontrado!</h1>
                   <p className="text-muted-foreground text-balance">
-                    Complete os dados para criar sua conta
+                    Complete os dados para criar conta de um usuário
                   </p>
                 </div>
 
@@ -213,7 +211,7 @@ export function CadastroForm({
                         CPF:{" "}
                         {cpf.replace(
                           /(\d{3})(\d{3})(\d{3})(\d{2})/,
-                          "$1.$2.$3-$4"
+                          "$1.$2.$3-$4",
                         )}
                       </p>
                     </div>
@@ -289,12 +287,9 @@ export function CadastroForm({
                   />
                 </div>
 
-                <Button type="submit" className="w-full" disabled={true}>
+                <Button type="submit" className="w-full">
                   {cadastrando ? "Cadastrando..." : "Cadatrar usuario"}
                 </Button>
-                <div className="text-center text-red-700 font-semibold text-sm">
-                  Desativado temporiamente. Entre em contato com o administrador.
-                </div>
               </div>
             </form>
           )}

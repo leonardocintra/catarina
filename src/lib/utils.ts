@@ -27,7 +27,7 @@ export const estadosCivilOptions = Object.entries(EstadoCivilEnum).map(
       .replace(/_/g, " ")
       .toLowerCase()
       .replace(/\b\w/g, (l) => l.toUpperCase()),
-  })
+  }),
 );
 
 export const escolaridadesOptions = Object.entries(EscolaridadeEnum).map(
@@ -37,7 +37,7 @@ export const escolaridadesOptions = Object.entries(EscolaridadeEnum).map(
       .replace(/_/g, " ")
       .toLowerCase()
       .replace(/\b\w/g, (l) => l.toUpperCase()),
-  })
+  }),
 );
 
 export const tiposEquipeOptions = Object.entries(EscolaridadeEnum).map(
@@ -47,5 +47,12 @@ export const tiposEquipeOptions = Object.entries(EscolaridadeEnum).map(
       .replace(/_/g, " ")
       .toLowerCase()
       .replace(/\b\w/g, (l) => l.toUpperCase()),
-  })
+  }),
 );
+
+export const formatDateInputValue = (value?: Date | string | null) => {
+  if (!value) return "";
+  const dateInstance = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(dateInstance.getTime())) return "";
+  return dateInstance.toISOString().split("T")[0];
+};

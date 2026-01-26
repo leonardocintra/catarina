@@ -7,10 +7,14 @@ export default function NovaDiocesePage() {
     <div>
       <PageSubtitle
         title="Cadastro de nova diocese"
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/dioceses"
-        buttonVariant="outline"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/dioceses",
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
       />
 
       <DioceseForm urlBase={BASE_URL} />

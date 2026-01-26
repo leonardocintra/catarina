@@ -42,9 +42,14 @@ export default function PessoaPage() {
     <div className="">
       <PageSubtitle
         title={`Pessoas - ${pessoas?.length || 0}`}
-        buttonShow={true}
-        buttonText="Nova pessoa"
-        buttonUrl="/dashboard/pessoas/novo"
+        observation="Digite alguma coisa para aparecer a listagem de pessoas"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/pessoas/novo",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {loading ? (

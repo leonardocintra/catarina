@@ -46,9 +46,13 @@ export default function MacroRegiaoPage() {
       <PageSubtitle
         title={`Macro Regiões - ${macroRegioes ? macroRegioes.length : 0}`}
         subTitle="do Brasil"
-        buttonShow={false}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/macro-regiao/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/macro-regiao/novo",
+            buttonShow: false,
+          },
+        ]}
       />
 
       {loading ? (

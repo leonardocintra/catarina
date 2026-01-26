@@ -42,9 +42,13 @@ export default function DiocesesPage() {
       <PageSubtitle
         title={`Dioceses - ${dioceses?.length || 0}`}
         subTitle="do Brasil"
-        buttonShow={true}
-        buttonText="Cadastrar"
-        buttonUrl="/dashboard/dioceses/novo"
+        buttons={[
+          {
+            buttonText: "Cadastrar",
+            buttonUrl: "/dashboard/dioceses/novo",
+            buttonShow: true,
+          },
+        ]}
       />
 
       {loading ? (

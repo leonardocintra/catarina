@@ -43,9 +43,13 @@ export default function PessoaEnderecoPage() {
     <div>
       <PageSubtitle
         title={`Adicionar endereço de ${pessoa.nome}`}
-        buttonShow={true}
-        buttonUrl={`/dashboard/pessoas/${pessoa.id}`}
-        buttonText="Voltar"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: `/dashboard/pessoas/${pessoa.id}`,
+            buttonShow: true,
+          },
+        ]}
       />
 
       <EnderecoForm pessoa={pessoa} urlBase={BASE_URL} />

@@ -14,11 +14,15 @@ export default function LocalidadePage() {
   return (
     <div>
       <PageSubtitle
-        buttonShow={true}
-        buttonText="Voltar"
-        buttonUrl="/dashboard/localidade"
         subTitle="Nova localidade"
         title="Cadastro de localidade"
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: "/dashboard/localidade",
+            buttonShow: true,
+          },
+        ]}
       />
       <Card className="max-w-lg mx-auto">
         <CardHeader>
