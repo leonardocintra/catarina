@@ -6,7 +6,7 @@ const EXACT_PUBLIC_ROUTES = [
   "/logo.webp",
   "/cadastro",
   "/cadastro/sucesso",
-  "/dashboard/usuarios/esqueci-senha",
+  "/esqueci-senha",
 ];
 const PUBLIC_PREFIX_ROUTES = ["/_next", "/images"]; // se tiver outras pastas públicas, adicione aqui
 
