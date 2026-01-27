@@ -23,10 +23,10 @@ type ListComunidadeProps = {
 export default function ListComunidade({ comunidades }: ListComunidadeProps) {
   const [search, setSearch] = useState("");
 
-  const comunidadesFiltradas =
+  const comunidadesFiltradasPorParoquia =
     search.length > 0
       ? comunidades.filter((c) => {
-          const nome = removerAcento(c.descricao).toLowerCase();
+          const nome = removerAcento(c.paroquia.descricao).toLowerCase();
           const nomePesquisa = removerAcento(search).toLowerCase();
           return nome.includes(nomePesquisa);
         })
@@ -39,7 +39,7 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
           <FolderSearch /> Pesquisa
         </Label>
         <Input
-          placeholder="Digite a descrição da comunidade ..."
+          placeholder="Digite a descrição da paróquia ..."
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
@@ -51,19 +51,19 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Numero</TableHead>
-            <TableHead>Descrição da comunidade</TableHead>
+            <TableHead>Qtd. Irmãos</TableHead>
             <TableHead>Paroquia</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {comunidadesFiltradas.slice(0, 10).map((comunidade) => (
+          {comunidadesFiltradasPorParoquia.slice(0, 10).map((comunidade) => (
             <TableRow key={comunidade.id}>
               <TableCell className="text-muted-foreground font-light">
-                {comunidade.numeroDaComunidade} - {comunidade.quantidadeMembros} irmãos
+                {comunidade.numeroDaComunidade}
               </TableCell>
-              <TableCell>
-                <div className="font-semibold">{comunidade.descricao}</div>
+              <TableCell className="font-medium">
+                {comunidade.quantidadeMembros}
               </TableCell>
               <TableCell>
                 <Link href={`/dashboard/paroquias/${comunidade.paroquia.id}`}>
