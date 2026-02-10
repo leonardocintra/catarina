@@ -100,8 +100,6 @@ export default function ParoquiaForm({
     fetchData();
   }, [urlBase, dioceseId]);
 
-  console.log(paroquia);
-
   const formSchema = z
     .object({
       descricao: z

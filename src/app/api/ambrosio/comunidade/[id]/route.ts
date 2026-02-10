@@ -60,8 +60,6 @@ export async function PATCH(
     observacao: payload.observacao,
   };
 
-  console.log("Payload recebido:", payload);
-
   const response = await fetch(`${url}/${id}`, {
     method: "PATCH",
     headers: {
