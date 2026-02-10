@@ -6,7 +6,7 @@ const url = `${AmbrosioBaseUrl}/comunidade`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const cookieStore = await cookies();
@@ -26,7 +26,7 @@ export async function GET(
       },
       {
         status: 404,
-      }
+      },
     );
   }
 
@@ -37,10 +37,54 @@ export async function GET(
       },
       {
         status: 401,
-      }
+      },
     );
   }
 
   const data = await res.json();
   return Response.json(data.data);
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  const { id } = await params;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+  const payload = await req.json();
+
+  const comunidade = {
+    numeroDaComunidade: payload.numeroDaComunidade,
+    quantidadeMembros: payload.quantidadeMembros,
+    observacao: payload.observacao,
+  };
+
+  console.log("Payload recebido:", payload);
+
+  const response = await fetch(`${url}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(comunidade),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    return Response.json(data.data, {
+      status: response.status,
+    });
+  }
+
+  return Response.json(
+    {
+      message: data.message,
+    },
+    {
+      status: response.status,
+    },
+  );
 }

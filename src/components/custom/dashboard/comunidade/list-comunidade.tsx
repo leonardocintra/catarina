@@ -51,7 +51,7 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         <TableHeader>
           <TableRow>
             <TableHead>Numero</TableHead>
-            <TableHead>Qtd. Irmãos</TableHead>
+            <TableHead>Irmãos</TableHead>
             <TableHead>Paroquia</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
@@ -62,9 +62,7 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
               <TableCell className="text-muted-foreground font-light">
                 {comunidade.numeroDaComunidade}
               </TableCell>
-              <TableCell className="font-medium">
-                {comunidade.quantidadeMembros}
-              </TableCell>
+              <TableCell>{comunidade.quantidadeMembros} irmãos</TableCell>
               <TableCell>
                 <Link href={`/dashboard/paroquias/${comunidade.paroquia.id}`}>
                   <Button variant={"ghost"} size={"sm"}>
