@@ -25,7 +25,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { EditIcon } from "lucide-react";
+import ComunidadeForm from "@/components/custom/dashboard/comunidade/form-comunidade";
+import { Badge } from "@/components/ui/badge";
 
 export default function EditarComunidadePage({
   params,
@@ -34,6 +35,7 @@ export default function EditarComunidadePage({
 }) {
   const router = useRouter();
   const [comunidade, setComunidade] = useState<Comunidade>();
+  const [isEditing, setIsEditing] = useState(false);
   const { id } = use(params);
   const { toast } = useToast();
   const routeRedirect = "/dashboard/comunidades";
@@ -102,7 +104,7 @@ export default function EditarComunidadePage({
             buttonText: `Voltar para paroquia ${comunidade.paroquia.descricao}`,
             buttonUrl: `/dashboard/paroquias/${comunidade.paroquia.id}`,
             buttonShow: true,
-            buttonVariant: "default"
+            buttonVariant: "default",
           },
           {
             buttonText: "Voltar para comunidades",
@@ -113,55 +115,93 @@ export default function EditarComunidadePage({
         ]}
       />
 
+      <div className="my-3">
+        <Card>
+          <CardHeader>
+            <CardTitle>Comunidade {comunidade.numeroDaComunidade}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            Paróquia <strong>{comunidade.paroquia.descricao}</strong> -
+            Quantidade de irmãos atualmente é:{" "}
+            <Badge>{comunidade.quantidadeMembros}</Badge>
+            <br />
+            <Button onClick={() => setIsEditing(true)}> Editar </Button>
+          </CardContent>
+        </Card>
+      </div>
+
       <div className="grid gap-2 sm:grid-cols-2 items-start">
-        <div>
-          <Card>
-            <CardHeader>
-              <CardTitle>Etapas / Catequistas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableCaption>
-                  Historico das estapas da comunidade.
-                </TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="">Etapa</TableHead>
-                    <TableHead className="text-right">Inicio / Fim</TableHead>
-                    <TableHead>Catequistas</TableHead>
-                    <TableHead className="text-right">Ação</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {comunidade.comunidadeEtapas.map((ce) => (
-                    <TableRow key={ce.id}>
-                      <TableCell className="font-medium">{ce.etapa}</TableCell>
-                      <TableCell className="text-right">
-                        {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
-                      </TableCell>
-                      <TableCell>Não informado</TableCell>
-                      <TableCell className="text-right">
-                        <Button size={"icon-sm"}>
-                          <EditIcon />
-                        </Button>
-                      </TableCell>
+        {isEditing ? (
+          <div>
+            <ComunidadeForm
+              comunidade={comunidade}
+              urlBase={BASE_URL}
+              onSubmitSuccess={() => {
+                setIsEditing(false);
+                fetchComunidade();
+              }}
+            />
+          </div>
+        ) : (
+          <div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Etapas / Catequistas</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableCaption>
+                    Historico das estapas da comunidade.
+                  </TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="">Etapa</TableHead>
+                      <TableHead className="text-right">Inicio / Fim</TableHead>
+                      <TableHead>Catequistas</TableHead>
+                      <TableHead className="text-right">Ação</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-            <CardFooter>
-              <PassarComunidadeDeEtapa
-                comunidadeId={id}
-                etapaAtual={
-                  comunidade.comunidadeEtapas.at(-1)?.etapa ||
-                  EtapaEnum.PRE_CATECUMENATO
-                }
-                onSuccess={fetchComunidade}
-              />
-            </CardFooter>
-          </Card>
-        </div>
+                  </TableHeader>
+                  <TableBody>
+                    {comunidade.comunidadeEtapas.map((ce) => (
+                      <TableRow key={ce.id}>
+                        <TableCell className="font-medium">
+                          {ce.etapa}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
+                        </TableCell>
+                        <TableCell>Não informado</TableCell>
+                        <TableCell className="text-right">
+                          <PassarComunidadeDeEtapa
+                            buttonDescription="Editar"
+                            comunidadeId={id}
+                            etapaAtual={
+                              comunidade.comunidadeEtapas.at(-1)?.etapa ||
+                              EtapaEnum.PRE_CATECUMENATO
+                            }
+                            onSuccess={fetchComunidade}
+                          />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+              <CardFooter>
+                <PassarComunidadeDeEtapa
+                  buttonDescription="Nova etapa"
+                  comunidadeId={id}
+                  etapaAtual={
+                    comunidade.comunidadeEtapas.at(-1)?.etapa ||
+                    EtapaEnum.PRE_CATECUMENATO
+                  }
+                  onSuccess={fetchComunidade}
+                />
+              </CardFooter>
+            </Card>
+          </div>
+        )}
+
         <div>
           <Card>
             <CardHeader>

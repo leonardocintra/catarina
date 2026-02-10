@@ -41,12 +41,14 @@ const etapaOptions = Object.values(EtapaEnum).filter(
 
 interface PassarComunidadeDeEtapaProps {
   comunidadeId: string;
+  buttonDescription: string;
   etapaAtual: EtapaEnum;
   onSuccess?: () => void;
 }
 
 export function PassarComunidadeDeEtapa({
   comunidadeId,
+  buttonDescription,
   etapaAtual,
   onSuccess,
 }: PassarComunidadeDeEtapaProps) {
@@ -137,20 +139,18 @@ export function PassarComunidadeDeEtapa({
       <form>
         <DialogTrigger asChild>
           <Button variant="destructive" size="sm">
-            Nova Etapa <ArrowsUpFromLine className="ml-2" />
+            {buttonDescription} <ArrowsUpFromLine className="ml-2" />
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle>Passar Comunidade de Etapa</DialogTitle>
+            <DialogDescription className="text-red-600 font-semibold">
+              Etapa atual: {etapaAtual}
+            </DialogDescription>
             <DialogDescription>
-              <div className="font-bold text-red-600">
-                Etapa atual: {etapaAtual}
-              </div>
-              <div>
-                Preencha as informações abaixo para confirmar a passagem de
-                etapa da comunidade.
-              </div>
+              Preencha as informações abaixo para confirmar a passagem de etapa
+              da comunidade.
             </DialogDescription>
           </DialogHeader>
 

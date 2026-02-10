@@ -102,7 +102,7 @@ export default function EquipeForm({
   const handleFormSubmit = (baseValues: z.infer<typeof formSchema>) => {
     const values = {
       ...baseValues,
-      pessoasComCarismaEquipeId: selectedCarismas.map((c) => c.id),
+      pessoasComCarismaEquipeId: selectedCarismas.map((c) => c.pessoa.id),
     };
     return handleSubmit(values);
   };

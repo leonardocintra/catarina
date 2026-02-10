@@ -19,18 +19,19 @@ import { Spinner } from "@/components/ui/spinner";
 import { InfoIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDateInputValue } from "@/lib/utils";
 
 type ComunidadeFormProps = {
   urlBase: string;
   comunidade?: Comunidade;
   paroquiaId?: number;
+  onSubmitSuccess?: () => void;
 };
 
 export default function ComunidadeForm({
   urlBase,
   comunidade,
   paroquiaId,
+  onSubmitSuccess,
 }: ComunidadeFormProps) {
   const { toast } = useToast();
   const router = useRouter();
@@ -38,16 +39,15 @@ export default function ComunidadeForm({
   const [ultimaComunidade, setUltimaComunidade] = useState<Comunidade | null>(
     null,
   );
-  const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(0);
+  const [numeroDaComunidade, setNumeroDaComunidade] = useState<number>(
+    comunidade?.numeroDaComunidade || 0,
+  );
 
   const formSchema = z.object({
     quantidadeMembros: z
       .number()
       .min(1, { message: "Quantidade inválida." })
       .max(120, { message: "Quantidade inválida maxima de irmãos são 120" }),
-    dataInicio: z.date().optional(),
-    dataFim: z.date().optional(),
-    local: z.string().max(180).optional(),
     observacao: z.string().max(250).optional(),
   });
 
@@ -55,10 +55,7 @@ export default function ComunidadeForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       quantidadeMembros: comunidade?.quantidadeMembros || 1,
-      dataInicio: undefined,
-      dataFim: undefined,
-      local: "",
-      observacao: "",
+      observacao: comunidade?.observacao || "",
     },
   });
 
@@ -134,6 +131,7 @@ export default function ComunidadeForm({
         });
         // Não redirecionamos na edição, apenas reabilitamos o botão
         setIsLoading(false);
+        onSubmitSuccess?.();
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({
@@ -169,7 +167,10 @@ export default function ComunidadeForm({
   return (
     <div className="max-w-md mx-auto sm:mt-8">
       <div className="text-2xl my-2 flex items-center gap-2">
-        Nova comunidade número:
+        {comunidade
+          ? "Editando comunidade número:"
+          : "Criando comunidade número:"}
+
         <Badge>{numeroDaComunidade}</Badge>
       </div>
 
@@ -192,49 +193,6 @@ export default function ComunidadeForm({
                     onChange={(e) =>
                       field.onChange(parseInt(e.target.value) || 0)
                     }
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="dataInicio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Data de Início</FormLabel>
-                <FormControl>
-                  <Input
-                    type="date"
-                    placeholder="Data de início da etapa na comunidade ..."
-                    value={formatDateInputValue(field.value)}
-                    onChange={(e) =>
-                      field.onChange(
-                        e.target.value ? new Date(e.target.value) : undefined,
-                      )
-                    }
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="local"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Local da convivência</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="Local que foi feito a convivência ..."
-                    {...field}
                   />
                 </FormControl>
                 <FormMessage />

@@ -124,10 +124,17 @@ export default function EditarEquipePage() {
                     {equipe.pessoas.map((pessoa) => (
                       <TableRow key={pessoa.id}>
                         <TableCell>
-                          {pessoa.nome}{" "}
-                          {pessoa.conhecidoPor
-                            ? `(${pessoa.conhecidoPor})`
-                            : ""}
+                          <Button
+                            variant="link"
+                            onClick={() =>
+                              router.push(`/dashboard/pessoas/${pessoa.id}`)
+                            }
+                          >
+                            {pessoa.nome}{" "}
+                            {pessoa.conhecidoPor
+                              ? `(${pessoa.conhecidoPor})`
+                              : ""}
+                          </Button>
                         </TableCell>
                         <TableCell>
                           {pessoa.situacaoReligiosa.descricao}
