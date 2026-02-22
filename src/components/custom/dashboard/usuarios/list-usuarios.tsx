@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -34,10 +35,13 @@ type DashboardUser = User & {
   };
 };
 
+const SELECTED_USER_CACHE_PREFIX = "dashboard:usuarios";
+
 export default function ListUsuarios() {
   const [users, setUsers] = useState<DashboardUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const fetchUsers = async () => {
     try {
@@ -79,6 +83,24 @@ export default function ListUsuarios() {
 
   const getDisplayName = (user: DashboardUser) => {
     return user.pessoa?.nome || user.nome || user.email;
+  };
+
+  const handleEditUser = (user: DashboardUser) => {
+    try {
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(
+          `${SELECTED_USER_CACHE_PREFIX}:${user.id}`,
+          JSON.stringify(user),
+        );
+      }
+    } catch (error) {
+      console.error(
+        "Não foi possível salvar o usuário selecionado no cache",
+        error,
+      );
+    }
+
+    router.push(`/dashboard/usuarios/${user.id}`);
   };
 
   if (loading) {
@@ -160,8 +182,12 @@ export default function ListUsuarios() {
                       {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
                     </TableCell>
                     <TableCell className="flex gap-2 justify-end">
-                      <Button size="sm" variant="default">
-                        Ativar
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => handleEditUser(user)}
+                      >
+                        Editar
                       </Button>
 
                       <AlertDialog>
