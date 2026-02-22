@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import ComunidadeForm from "@/components/custom/dashboard/comunidade/form-comunidade";
 import { Badge } from "@/components/ui/badge";
+import { InfoIcon, UsersIcon } from "lucide-react";
 
 export default function EditarComunidadePage({
   params,
@@ -115,10 +116,13 @@ export default function EditarComunidadePage({
         ]}
       />
 
-      <div className="my-3">
+      <div className="my-3 grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
-            <CardTitle>Comunidade {comunidade.numeroDaComunidade}</CardTitle>
+            <CardTitle className="flex items-center space-x-2">
+              <UsersIcon />
+              <div>Comunidade {comunidade.numeroDaComunidade}</div>
+            </CardTitle>
           </CardHeader>
           <CardContent>
             Paróquia <strong>{comunidade.paroquia.descricao}</strong> -
@@ -128,9 +132,18 @@ export default function EditarComunidadePage({
             <Button onClick={() => setIsEditing(true)}> Editar </Button>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <InfoIcon />
+              <div>Descrição / Observação</div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>{comunidade.observacao || " - "}</CardContent>
+        </Card>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2 items-start">
+      <div className="grid gap-4 sm:grid-cols-2 items-start">
         {isEditing ? (
           <div>
             <ComunidadeForm
@@ -175,6 +188,7 @@ export default function EditarComunidadePage({
                           <PassarComunidadeDeEtapa
                             buttonDescription="Editar"
                             comunidadeId={id}
+                            etapaId={ce.id}
                             etapaAtual={
                               comunidade.comunidadeEtapas.at(-1)?.etapa ||
                               EtapaEnum.PRE_CATECUMENATO
