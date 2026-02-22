@@ -44,6 +44,7 @@ interface PassarComunidadeDeEtapaProps {
   buttonDescription: string;
   etapaAtual: EtapaEnum;
   onSuccess?: () => void;
+  etapaId?: number;
 }
 
 export function PassarComunidadeDeEtapa({
@@ -51,6 +52,7 @@ export function PassarComunidadeDeEtapa({
   buttonDescription,
   etapaAtual,
   onSuccess,
+  etapaId,
 }: PassarComunidadeDeEtapaProps) {
   const [open, setOpen] = useState(false);
 
@@ -150,7 +152,7 @@ export function PassarComunidadeDeEtapa({
             </DialogDescription>
             <DialogDescription>
               Preencha as informações abaixo para confirmar a passagem de etapa
-              da comunidade.
+              da comunidade. {etapaId}
             </DialogDescription>
           </DialogHeader>
 
