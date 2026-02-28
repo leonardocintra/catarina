@@ -39,8 +39,8 @@ export async function PATCH(
 
     // Construir objeto com apenas os campos fornecidos
     const updateData: Record<string, any> = {};
+    updateData.active = active;
     if (email) updateData.email = email;
-    if (active) updateData.active = active;
     if (whatsapp) updateData.whatsapp = whatsapp;
     if (role) updateData.role = role;
 

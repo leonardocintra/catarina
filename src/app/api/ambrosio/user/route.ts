@@ -15,7 +15,7 @@ export async function GET() {
   });
 
   const data = await res.json();
-  return Response.json(data);
+  return NextResponse.json(data);
 }
 
 export async function POST(request: NextRequest) {
@@ -23,12 +23,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Validação básica dos campos obrigatórios
-    const { email, password, cpf, name, whatsapp } = body;
+    const { email, password, cpf, whatsapp } = body;
 
-    if (!email || !password || !cpf || !name || !whatsapp) {
+    if (!email || !password || !cpf || !whatsapp) {
       return NextResponse.json(
         { message: "Todos os campos são obrigatórios" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { message: "Formato de e-mail inválido" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
     if (!/^\d{11}$/.test(cpf)) {
       return NextResponse.json(
         { message: "CPF deve conter 11 dígitos numéricos" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,21 +53,24 @@ export async function POST(request: NextRequest) {
     if (!/^\d{10,11}$/.test(whatsapp)) {
       return NextResponse.json(
         { message: "WhatsApp deve conter 10 ou 11 dígitos numéricos" },
-        { status: 400 }
+        { status: 400 },
       );
     }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
 
     // Chamada para a API externa
     const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         email,
         password,
         cpf,
-        name,
         whatsapp,
       }),
     });
@@ -78,21 +81,23 @@ export async function POST(request: NextRequest) {
       // Tratamento de erros específicos
       if (response.status === 409) {
         return NextResponse.json(
-          { message: "Ja existe um usuário com esse E-mail ou CPF cadastrado." },
-          { status: 409 }
+          {
+            message: "Ja existe um usuário com esse E-mail ou CPF cadastrado.",
+          },
+          { status: 409 },
         );
       }
 
       if (response.status === 400) {
         return NextResponse.json(
           { message: errorData.message || "Dados inválidos" },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
       return NextResponse.json(
         { message: "Erro interno do servidor" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -103,20 +108,19 @@ export async function POST(request: NextRequest) {
         message: "Usuário criado com sucesso",
         user: {
           id: userData.id,
-          name: userData.name,
           email: userData.email,
           cpf: userData.cpf,
           whatsapp: userData.whatsapp,
         },
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
 
     return NextResponse.json(
       { message: "Erro interno do servidor" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

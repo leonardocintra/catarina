@@ -58,7 +58,8 @@ export function UpdateUsuario({ user, onSuccess }: UpdateUsuarioProps) {
       const updateData: Record<string, any> = {};
       if (formData.email) updateData.email = formData.email;
       if (formData.whatsapp) updateData.whatsapp = formData.whatsapp;
-      updateData.active = formData.active;
+      // Sempre envie o campo 'active' como booleano
+      updateData.active = Boolean(formData.active);
 
       const response = await fetch(`/api/ambrosio/user/${user.id}`, {
         method: "PATCH",
