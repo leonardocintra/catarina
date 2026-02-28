@@ -13,7 +13,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Shield, Loader2, XCircle } from "lucide-react";
+import { Users, Loader2, XCircle } from "lucide-react";
+import { UpdateUsuario } from "./update-usuario";
 import { User } from "neocatecumenal";
 import {
   AlertDialog,
@@ -160,9 +161,7 @@ export default function ListUsuarios() {
                       {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
                     </TableCell>
                     <TableCell className="flex gap-2 justify-end">
-                      <Button size="sm" variant="default">
-                        Ativar
-                      </Button>
+                      <UpdateUsuario user={user} onSuccess={fetchUsers} />
 
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
