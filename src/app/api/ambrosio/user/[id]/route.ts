@@ -6,36 +6,69 @@ const url = `${AmbrosioBaseUrl}/users`;
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = await context.params;
-    const body = await request.json();
+    const { id } = await params;
 
-    const { email, password, cpf, whatsapp, active, role } = body;
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID do usuário é obrigatório" },
+        { status: 400 },
+      );
+    }
+
+    const body = await request.json();
+    const { email, active, whatsapp, role } = body;
+
+    // Validação do formato do email (se fornecido)
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { message: "Formato de e-mail inválido" },
+        { status: 400 },
+      );
+    }
+
+    // Validação do WhatsApp (se fornecido - 10 ou 11 dígitos)
+    if (whatsapp && !/^\d{10,11}$/.test(whatsapp)) {
+      return NextResponse.json(
+        { message: "WhatsApp deve conter 10 ou 11 dígitos numéricos" },
+        { status: 400 },
+      );
+    }
+
+    // Construir objeto com apenas os campos fornecidos
+    const updateData: Record<string, any> = {};
+    if (email) updateData.email = email;
+    if (active) updateData.active = active;
+    if (whatsapp) updateData.whatsapp = whatsapp;
+    if (role) updateData.role = role;
+
+    // Validar se pelo menos um campo foi fornecido
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { message: "Pelo menos um campo deve ser fornecido para atualizar" },
+        { status: 400 },
+      );
+    }
 
     const cookieStore = await cookies();
     const token = cookieStore.get("token")?.value;
 
+    // Chamada para a API externa
     const response = await fetch(`${url}/${id}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({
-        email,
-        password,
-        cpf,
-        whatsapp,
-        active,
-        role,
-      }),
+      body: JSON.stringify(updateData),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
 
+      // Tratamento de erros específicos
       if (response.status === 404) {
         return NextResponse.json(
           { message: "Usuário não encontrado" },
@@ -46,7 +79,7 @@ export async function PATCH(
       if (response.status === 409) {
         return NextResponse.json(
           {
-            message: "Ja existe um usuário com esse E-mail ou CPF cadastrado.",
+            message: "Já existe um usuário com esse E-mail ou CPF cadastrado.",
           },
           { status: 409 },
         );
@@ -56,13 +89,6 @@ export async function PATCH(
         return NextResponse.json(
           { message: errorData.message || "Dados inválidos" },
           { status: 400 },
-        );
-      }
-
-      if (response.status === 401) {
-        return NextResponse.json(
-          { message: "Não autorizado" },
-          { status: 401 },
         );
       }
 
@@ -79,10 +105,9 @@ export async function PATCH(
         message: "Usuário atualizado com sucesso",
         user: {
           id: userData.id,
-          name: userData.name,
           email: userData.email,
-          cpf: userData.cpf,
           whatsapp: userData.whatsapp,
+          active: userData.active,
           role: userData.role,
         },
       },
