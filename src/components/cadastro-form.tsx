@@ -288,7 +288,7 @@ export function CadastroForm({
                 </div>
 
                 <Button type="submit" className="w-full">
-                  {cadastrando ? "Cadastrando..." : "Cadatrar usuario"}
+                  {cadastrando ? "Cadastrando..." : "Cadastrar usuario"}
                 </Button>
               </div>
             </form>
