@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { UpdateUsuario } from "./update-usuario";
 
 type DashboardUser = User & {
   nome?: string;
@@ -182,14 +183,7 @@ export default function ListUsuarios() {
                       {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
                     </TableCell>
                     <TableCell className="flex gap-2 justify-end">
-                      <Button
-                        size="sm"
-                        variant="default"
-                        onClick={() => handleEditUser(user)}
-                      >
-                        Editar
-                      </Button>
-
+                      <UpdateUsuario user={user} onSuccess={fetchUsers} />
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="outline">Resetar senha</Button>
