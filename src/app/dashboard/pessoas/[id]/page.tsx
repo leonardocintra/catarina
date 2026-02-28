@@ -22,7 +22,7 @@ import { use, useEffect, useState } from "react";
 import { Pessoa, SituacaoReligiosa, TipoCarismaEnum } from "neocatecumenal";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Trash2Icon } from "lucide-react";
+import { ClipboardIcon, Trash2Icon } from "lucide-react";
 
 export default function EditarPessoaPage({
   params,
@@ -92,10 +92,19 @@ export default function EditarPessoaPage({
                 }`}
               />
               <div className="flex space-x-2">
-                <LabelData
-                  titulo="CPF"
-                  descricao={pessoa.cpf ? pessoa.cpf : "não informado"}
-                />
+                <div className="flex items-center gap-2">
+                  <LabelData titulo="CPF" descricao={pessoa.cpf} />
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    title="Copiar CPF"
+                    onClick={() => {
+                      navigator.clipboard.writeText(pessoa.cpf);
+                    }}
+                  >
+                    <ClipboardIcon />
+                  </Button>
+                </div>
                 <LabelData titulo="Sexo" descricao={pessoa.sexo} />
               </div>
               <LabelData titulo="Estado Civil" descricao={pessoa.estadoCivil} />
