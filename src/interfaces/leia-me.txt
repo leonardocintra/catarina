@@ -1,0 +1,3 @@
+Todas as interfaces devem ser excluidas e movidas para o npm neocatecumenal
+
+https://www.npmjs.com/package/neocatecumenal
