@@ -140,7 +140,7 @@ export default function EditarParoquiaPage() {
               </CardFooter>
             </Card>
           </div>
-          <div className="mt-7">
+          <div className="mt-7 mx-auto max-w-lg">
             <Table>
               <TableCaption>
                 Lista de comunidades da paroquia {paroquia.descricao}.
@@ -153,19 +153,21 @@ export default function EditarParoquiaPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {paroquia.comunidades?.map((comunidade) => (
-                  <TableRow key={comunidade.id}>
-                    <TableCell className="font-medium text-right">
-                      {comunidade.numeroDaComunidade}
-                    </TableCell>
-                    <TableCell>{comunidade.quantidadeMembros}</TableCell>
-                    <TableCell>
-                      <Link href={`/dashboard/comunidades/${comunidade.id}`}>
-                        <Button variant="link">Mais detalhes</Button>
-                      </Link>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {paroquia.comunidades
+                  ?.sort((a, b) => a.numeroDaComunidade - b.numeroDaComunidade)
+                  .map((comunidade) => (
+                    <TableRow key={comunidade.id}>
+                      <TableCell className="font-medium text-right">
+                        {comunidade.numeroDaComunidade}
+                      </TableCell>
+                      <TableCell>{comunidade.quantidadeMembros}</TableCell>
+                      <TableCell>
+                        <Link href={`/dashboard/comunidades/${comunidade.id}`}>
+                          <Button variant="link">Mais detalhes</Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </div>

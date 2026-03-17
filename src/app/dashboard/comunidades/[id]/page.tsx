@@ -5,7 +5,7 @@ import { use, useCallback, useEffect, useState } from "react";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
 import { useToast } from "@/components/ui/use-toast";
-import { Comunidade, EtapaEnum } from "neocatecumenal";
+import { Comunidade, ComunidadeEtapa, EtapaEnum } from "neocatecumenal";
 import {
   Card,
   CardContent,
@@ -168,6 +168,7 @@ export default function EditarComunidadePage({
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
+                      <TableHead className="">ID</TableHead>
                       <TableHead className="">Etapa</TableHead>
                       <TableHead className="text-right">Inicio / Fim</TableHead>
                       <TableHead>Catequistas</TableHead>
@@ -175,8 +176,9 @@ export default function EditarComunidadePage({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {comunidade.comunidadeEtapas.map((ce) => (
+                    {comunidade.comunidadeEtapas.map((ce: ComunidadeEtapa) => (
                       <TableRow key={ce.id}>
+                        <TableCell className="font-light">{ce.id}</TableCell>
                         <TableCell className="font-medium">
                           {ce.etapa}
                         </TableCell>
@@ -193,6 +195,7 @@ export default function EditarComunidadePage({
                               comunidade.comunidadeEtapas.at(-1)?.etapa ||
                               EtapaEnum.PRE_CATECUMENATO
                             }
+                            etapa={ce}
                             onSuccess={fetchComunidade}
                           />
                         </TableCell>
