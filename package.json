@@ -2,6 +2,9 @@
   "name": "catarina",
   "description": "Front administrativo para manipulacao de dados do caminho",
   "version": "0.48.0",
+  "engines": {
+    "node": "22"
+  },
   "author": {
     "name": "Leonardo Nascimento Cintra",
     "email": "leonardo.ncintra@outlook.com",

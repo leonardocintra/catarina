@@ -30,7 +30,7 @@ import { toast } from "@/components/ui/use-toast";
 import { formatDateInputValue } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowsUpFromLine } from "lucide-react";
-import { EtapaEnum } from "neocatecumenal";
+import { ComunidadeEtapa, EtapaEnum } from "neocatecumenal";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -45,6 +45,7 @@ interface PassarComunidadeDeEtapaProps {
   etapaAtual: EtapaEnum;
   onSuccess?: () => void;
   etapaId?: number;
+  etapa?: ComunidadeEtapa;
 }
 
 export function PassarComunidadeDeEtapa({
@@ -53,6 +54,7 @@ export function PassarComunidadeDeEtapa({
   etapaAtual,
   onSuccess,
   etapaId,
+  etapa,
 }: PassarComunidadeDeEtapaProps) {
   const [open, setOpen] = useState(false);
 
@@ -66,6 +68,7 @@ export function PassarComunidadeDeEtapa({
       .max(80, { message: "Descrição deve ter no máximo 80 caracteres." })
       .optional(),
     dataInicio: z.date().optional(),
+    dataFim: z.date().optional(),
     observacao: z.string().max(250).optional(),
   });
 
@@ -73,15 +76,21 @@ export function PassarComunidadeDeEtapa({
     resolver: zodResolver(formSchema),
     defaultValues: {
       etapa: etapaAtual,
-      dataInicio: undefined,
-      local: "",
-      observacao: "",
+      dataInicio: etapa?.dataInicio ? new Date(etapa.dataInicio) : undefined,
+      dataFim: etapa?.dataFim ? new Date(etapa.dataFim) : undefined,
+      local: etapa?.localConvivencia || "",
+      observacao: etapa?.observacao || "",
     },
   });
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     let url = `/api/ambrosio/comunidade/etapa`;
     let method = "POST";
+
+    if (etapaId) {
+      method = "PATCH";
+      url += `/${etapaId}`;
+    }
 
     const payload = {
       ...values,
@@ -104,24 +113,30 @@ export function PassarComunidadeDeEtapa({
           variant: "default",
           description: `Cadastrado(a) com sucesso a etapa!`,
         });
-        setOpen(false);
-        onSuccess?.();
+        closeDialog();
+      } else if (res.status === 200 && method === "PATCH") {
+        toast({
+          title: `${values.etapa} atualizada!`,
+          variant: "default",
+          description: `Atualizado(a) com sucesso a etapa!`,
+        });
+        closeDialog();
       } else {
         if (res.status === 403 || res.status === 401) {
           toast({
-            title: `Etapa não foi cadastrado!`,
+            title: `Etapa não foi cadastrada!`,
             variant: "destructive",
             description: `Você não tem permissão para cadastrar etapas`,
           });
         } else if (res.status === 400) {
           toast({
-            title: `Etapa não foi cadastrado!`,
+            title: `Etapa não foi cadastrada!`,
             variant: "destructive",
             description: `Erro: ${data.message}`,
           });
         } else {
           toast({
-            title: `Etapa não foi cadastrado!`,
+            title: `Etapa não foi cadastrada!`,
             variant: "destructive",
             description: `Erro: ${res.text}`,
           });
@@ -238,6 +253,35 @@ export function PassarComunidadeDeEtapa({
 
               <FormField
                 control={form.control}
+                name="dataFim"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Data final etapa</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        placeholder="Data da convivência"
+                        value={formatDateInputValue(field.value)}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value
+                              ? new Date(e.target.value)
+                              : undefined,
+                          )
+                        }
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        ref={field.ref}
+                        disabled={field.disabled}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="observacao"
                 render={({ field }) => (
                   <FormItem>
@@ -256,7 +300,7 @@ export function PassarComunidadeDeEtapa({
                 <DialogClose asChild>
                   <Button variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button type="submit">Salvar</Button>
+                <Button type="submit">{etapaId ? "Editar" : "Salvar"}</Button>
               </DialogFooter>
             </form>
           </Form>
@@ -264,4 +308,9 @@ export function PassarComunidadeDeEtapa({
       </form>
     </Dialog>
   );
+
+  function closeDialog() {
+    setOpen(false);
+    onSuccess?.();
+  }
 }

@@ -14,19 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Users, Shield, Loader2, XCircle } from "lucide-react";
+import { Users, Loader2, XCircle } from "lucide-react";
 import { User } from "neocatecumenal";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { UpdateUsuario } from "./update-usuario";
 
 type DashboardUser = User & {
@@ -184,26 +173,6 @@ export default function ListUsuarios() {
                     </TableCell>
                     <TableCell className="flex gap-2 justify-end">
                       <UpdateUsuario user={user} onSuccess={fetchUsers} />
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button variant="outline">Resetar senha</Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Você tem certeza?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Tem certeza que deseja gerar uma nova senha para{" "}
-                              {getDisplayName(user)}?
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>Continue</AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
                     </TableCell>
                   </TableRow>
                 );
