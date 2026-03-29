@@ -1,6 +1,7 @@
 "use client";
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import PessoaComunidade from "@/components/custom/dashboard/pessoa/comunidade/pessoaComunidade";
 import { DialogPessoaCasada } from "@/components/custom/dashboard/pessoa/dialog-casal/dialog-casal";
 import PessoaForm from "@/components/custom/dashboard/pessoa/form-pessoa";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
@@ -131,15 +132,42 @@ export default function EditarPessoaPage({
               <CardDescription>Historico de comunide</CardDescription>
             </CardHeader>
             <CardContent className="flex-1">
-              <LabelData titulo="Comunidade" descricao="NAO-INFORMADO" />
-              <LabelData titulo="Cidade" descricao="NAO-INFORMADO" />
-              <LabelData titulo="Paroquia" descricao="NAO-INFORMADO" />
-              <LabelData titulo="Regiao" descricao="NAO-INFORMADO" />
+              {pessoa.comunidade ? (
+                <div>
+                  <LabelData
+                    titulo="Comunidade"
+                    descricao={pessoa.comunidade.numeroDaComunidade.toString()}
+                  />
+                  <LabelData
+                    titulo="Paroquia"
+                    descricao={pessoa.comunidade.paroquia.descricao}
+                  />
+                  <LabelData
+                    titulo="Cidade"
+                    descricao={`${pessoa.comunidade.paroquia.endereco.cidade.nome} / ${pessoa.comunidade.paroquia.endereco.cidade.estado.sigla}`}
+                  />
+                  <LabelData
+                    titulo="Regiao"
+                    descricao={pessoa.comunidade.paroquia.setor?.descricao}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <Alert variant="destructive">
+                    <AlertTitle>Sem comunidade</AlertTitle>
+                    <AlertDescription>
+                      Essa pessoa ainda não foi associada a nenhuma comunidade.
+                      Clique no botão abaixo para associar.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              )}
             </CardContent>
             <CardFooter className="mt-auto">
-              <Button className="w-full" disabled>
-                Editar comunidade
-              </Button>
+              <PessoaComunidade
+                pessoaId={pessoa.id}
+                triggerClassName="w-full"
+              />
             </CardFooter>
           </Card>
 

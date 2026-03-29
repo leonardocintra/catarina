@@ -53,6 +53,7 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
             <TableHead>Numero</TableHead>
             <TableHead>Irmãos</TableHead>
             <TableHead>Paroquia</TableHead>
+            <TableHead>Diocese</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
         </TableHeader>
@@ -66,11 +67,14 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
               <TableCell>
                 <Link href={`/dashboard/paroquias/${comunidade.paroquia.id}`}>
                   <Button variant={"ghost"} size={"sm"}>
-                    {comunidade.paroquia.descricao}
+                    {comunidade.paroquia.descricao} (
+                    {comunidade.paroquia.endereco.cidade.nome} /{" "}
+                    {comunidade.paroquia.endereco.cidade.estado.sigla})
                     <ArrowUpRightIcon />
                   </Button>
                 </Link>
               </TableCell>
+              <TableCell>{comunidade.paroquia.diocese.descricao}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/comunidades/${comunidade.id}`}>
                   <Button variant={"link"} size={"sm"}>

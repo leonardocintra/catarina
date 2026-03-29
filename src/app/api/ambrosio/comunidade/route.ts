@@ -7,12 +7,25 @@ export async function GET(request: Request) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  // Extrai o parâmetro paroquiaId da query string
+  // Extrai os parâmetros da query string
   const { searchParams } = new URL(request.url);
   const paroquiaId = searchParams.get("paroquiaId");
+  const numeroDaComunidade = searchParams.get("numeroDaComunidade");
 
-  // Monta a URL com o parâmetro se existir
-  const finalUrl = paroquiaId ? `${url}?paroquiaId=${paroquiaId}` : url;
+  // Monta a URL com os parâmetros se existirem
+  const apiParams = new URLSearchParams();
+
+  if (paroquiaId) {
+    apiParams.set("paroquiaId", paroquiaId);
+  }
+
+  if (numeroDaComunidade) {
+    apiParams.set("numeroDaComunidade", numeroDaComunidade);
+  }
+
+  const finalUrl = apiParams.toString()
+    ? `${url}?${apiParams.toString()}`
+    : url;
 
   const res = await fetch(finalUrl, {
     cache: "no-cache",

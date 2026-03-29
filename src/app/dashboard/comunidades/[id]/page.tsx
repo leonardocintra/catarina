@@ -95,10 +95,45 @@ export default function EditarComunidadePage({
   if (!comunidade)
     return <SkeletonLoading mensagem="Carregando comunidade ..." />;
 
+  const renderEtapasRows = () => {
+    // Aqui esta ordenando por data de criação, para garantir que as etapas sejam exibidas na ordem correta, mesmo que tenham sido criadas fora de ordem ou editadas
+    // posteriormente. Assim, a linha mais antiga (primeira etapa) aparecerá primeiro, e a mais recente (etapa atual) aparecerá por último.
+    const etapasOrdenadas = [...comunidade.comunidadeEtapas].sort(
+      (a: ComunidadeEtapa, b: ComunidadeEtapa) => {
+        const aCreatedAt = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bCreatedAt = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return aCreatedAt - bCreatedAt;
+      },
+    );
+
+    return etapasOrdenadas.map((ce: ComunidadeEtapa) => (
+      <TableRow key={ce.id}>
+        <TableCell className="font-medium">{ce.etapa}</TableCell>
+        <TableCell className="text-right">
+          {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
+        </TableCell>
+        <TableCell>Não informado</TableCell>
+        <TableCell className="text-right">
+          <PassarComunidadeDeEtapa
+            buttonDescription="Editar"
+            comunidadeId={id}
+            etapaId={ce.id}
+            etapaAtual={
+              comunidade.comunidadeEtapas.at(-1)?.etapa ||
+              EtapaEnum.PRE_CATECUMENATO
+            }
+            etapa={ce}
+            onSuccess={fetchComunidade}
+          />
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
   return (
     <div>
       <PageSubtitle
-        title={`Comunidade ${comunidade.numeroDaComunidade}`}
+        title={`Comunidade ${comunidade.numeroDaComunidade} - ${comunidade.etapaAtual}`}
         subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos`}
         buttons={[
           {
@@ -128,6 +163,8 @@ export default function EditarComunidadePage({
             Paróquia <strong>{comunidade.paroquia.descricao}</strong> -
             Quantidade de irmãos atualmente é:{" "}
             <Badge>{comunidade.quantidadeMembros}</Badge>
+            <br />
+            Etapa atual: <strong>{comunidade.etapaAtual}</strong>
             <br />
             <Button onClick={() => setIsEditing(true)}> Editar </Button>
           </CardContent>
@@ -168,40 +205,13 @@ export default function EditarComunidadePage({
                   </TableCaption>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="">ID</TableHead>
                       <TableHead className="">Etapa</TableHead>
                       <TableHead className="text-right">Inicio / Fim</TableHead>
                       <TableHead>Catequistas</TableHead>
                       <TableHead className="text-right">Ação</TableHead>
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
-                    {comunidade.comunidadeEtapas.map((ce: ComunidadeEtapa) => (
-                      <TableRow key={ce.id}>
-                        <TableCell className="font-light">{ce.id}</TableCell>
-                        <TableCell className="font-medium">
-                          {ce.etapa}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
-                        </TableCell>
-                        <TableCell>Não informado</TableCell>
-                        <TableCell className="text-right">
-                          <PassarComunidadeDeEtapa
-                            buttonDescription="Editar"
-                            comunidadeId={id}
-                            etapaId={ce.id}
-                            etapaAtual={
-                              comunidade.comunidadeEtapas.at(-1)?.etapa ||
-                              EtapaEnum.PRE_CATECUMENATO
-                            }
-                            etapa={ce}
-                            onSuccess={fetchComunidade}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
+                  <TableBody>{renderEtapasRows()}</TableBody>
                 </Table>
               </CardContent>
               <CardFooter>

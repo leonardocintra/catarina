@@ -115,6 +115,7 @@ export function LoginForm({
           <div className="bg-muted relative hidden md:block">
             <Image
               src="/logo.webp"
+              loading="eager"
               width={500}
               height={500}
               alt="Image"

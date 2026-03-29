@@ -6,7 +6,7 @@ const url = `${AmbrosioBaseUrl}/pessoa`;
 
 export async function GET(
   req: Request,
-  ctx: { params: Promise<{ id: string }> }
+  ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
 
@@ -26,7 +26,7 @@ export async function GET(
       },
       {
         status: 404,
-      }
+      },
     );
   }
 
@@ -37,7 +37,7 @@ export async function GET(
       },
       {
         status: 401,
-      }
+      },
     );
   }
 
@@ -67,6 +67,7 @@ export async function GET(
     },
     carismas: data.carismas || [],
     enderecos: data.enderecos || [],
+    comunidade: data.comunidade,
   };
 
   // Adicionar cônjuge se existir
@@ -83,7 +84,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  ctx: { params: Promise<{ id: string }> }
+  ctx: { params: Promise<{ id: string }> },
 ) {
   const { id } = await ctx.params;
   const data = await req.json();
@@ -140,7 +141,7 @@ export async function PATCH(
       },
       {
         status: res.status,
-      }
+      },
     );
   }
 }
