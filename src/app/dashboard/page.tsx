@@ -1,14 +1,42 @@
-"use client";
-
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Terminal } from "lucide-react";
-import { useUser } from "../context/user-provider";
 import { ROLE_NAO_IDENTIFICADO } from "@/constants";
+import { cookies } from "next/headers";
+import { AmbrosioBaseUrl } from "@/lib/utils";
 
-export default function DashboardPage() {
-  const { user } = useUser();
+type DashboardUser = {
+  email?: string;
+  role?: string;
+};
+
+async function getAuthenticatedUser(): Promise<DashboardUser | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("token")?.value;
+
+  if (!token) {
+    return null;
+  }
+
+  const response = await fetch(`${AmbrosioBaseUrl}/users/me`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    return null;
+  }
+
+  const payload = await response.json();
+  return payload?.data ?? null;
+}
+
+export default async function DashboardPage() {
+  const user = await getAuthenticatedUser();
 
   return (
     <div className="pt-8">

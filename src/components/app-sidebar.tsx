@@ -1,6 +1,6 @@
 "use client";
 
-import * as React from "react";
+import type { ComponentProps } from "react";
 import {
   ChurchIcon,
   GithubIcon,
@@ -22,6 +22,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import packageJson from "../../package.json";
 
 // This is sample data.
 const data = {
@@ -140,15 +141,8 @@ const data = {
   ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [versao, setVersao] = React.useState("0.0.1");
-
-  React.useEffect(() => {
-    const res = fetch("/api/catarina/version", {
-      cache: "no-cache",
-    });
-    res.then((res) => res.json()).then((data) => setVersao(data.version));
-  }, []);
+export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
+  const versao = packageJson.version;
 
   return (
     <Sidebar collapsible="icon" {...props}>
