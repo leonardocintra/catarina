@@ -18,6 +18,7 @@ export default function NovaParoquiaInner() {
   const dioceseId = searchParams.get("dioceseId");
   const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
   const [diocese, setDiocese] = useState<Diocese>();
+  const mostraBotaoVoltar = Boolean(dioceseId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +39,7 @@ export default function NovaParoquiaInner() {
             description: `Diocese não encontrada. Tente novamente`,
           });
           setRedirectNotFound(true);
+          return null;
         }
 
         if (res.status === 401) {
@@ -48,6 +50,7 @@ export default function NovaParoquiaInner() {
             description: `Você não tem permissão para ver essa diocese`,
           });
           setRedirectNotFound(true);
+          return null;
         }
 
         return res.json();
@@ -55,12 +58,16 @@ export default function NovaParoquiaInner() {
 
       try {
         const [resDiocese] = await Promise.all([getDiocese()]);
-        setDiocese(resDiocese);
-      } catch (error: any) {
+        if (resDiocese) {
+          setDiocese(resDiocese);
+        }
+      } catch (error: unknown) {
+        const message =
+          error instanceof Error ? error.message : "Erro desconhecido";
         toast({
           title: `Erro ao buscar diocese`,
           variant: "destructive",
-          description: `Erro: ${error}`,
+          description: `Erro: ${message}`,
         });
       }
     };
@@ -68,9 +75,13 @@ export default function NovaParoquiaInner() {
     fetchData();
   }, [dioceseId, toast]);
 
-  if (redirectNotFound) {
+  useEffect(() => {
+    if (!redirectNotFound) {
+      return;
+    }
+
     router.push("/dashboard/paroquias");
-  }
+  }, [redirectNotFound, router]);
 
   return (
     <div>
@@ -85,7 +96,7 @@ export default function NovaParoquiaInner() {
             buttonText: "Voltar",
             buttonUrl: `/dashboard/dioceses/${dioceseId}`,
             buttonVariant: "outline",
-            buttonShow: true,
+            buttonShow: mostraBotaoVoltar,
           },
         ]}
       />
