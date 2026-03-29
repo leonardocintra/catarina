@@ -1,5 +1,3 @@
-import { ChartPessoaPorSexo } from "@/components/charts/pessoa/chart-sexo";
-import { ChartPessoaPorEstadoCivil } from "@/components/charts/pessoa/chart-estadoCivil";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +13,25 @@ import {
 import { removerAcento } from "@/lib/utils";
 import { CheckIcon, FolderSearch } from "lucide-react";
 import { Pessoa } from "neocatecumenal";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useState, useMemo } from "react";
+
+const ChartPessoaPorSexo = dynamic(
+  () =>
+    import("@/components/charts/pessoa/chart-sexo").then(
+      (mod) => mod.ChartPessoaPorSexo
+    ),
+  { ssr: false }
+);
+
+const ChartPessoaPorEstadoCivil = dynamic(
+  () =>
+    import("@/components/charts/pessoa/chart-estadoCivil").then(
+      (mod) => mod.ChartPessoaPorEstadoCivil
+    ),
+  { ssr: false }
+);
 
 type ListPessoaProps = {
   pessoas: Pessoa[];
@@ -25,14 +40,21 @@ type ListPessoaProps = {
 export default function ListPessoa({ pessoas }: ListPessoaProps) {
   const [search, setSearch] = useState("");
 
-  const pessoasFiltradas =
-    search.length > 0
-      ? pessoas.filter((p) => {
-          const nome = removerAcento(p.nome).toLowerCase();
-          const nomePesquisa = removerAcento(search).toLowerCase();
-          return nome.includes(nomePesquisa);
-        })
-      : pessoas;
+  const normalizedSearch = useMemo(
+    () => removerAcento(search).toLowerCase().trim(),
+    [search]
+  );
+
+  const pessoasFiltradas = useMemo(() => {
+    if (!normalizedSearch) {
+      return pessoas;
+    }
+
+    return pessoas.filter((p) => {
+      const nome = removerAcento(p.nome).toLowerCase();
+      return nome.includes(normalizedSearch);
+    });
+  }, [pessoas, normalizedSearch]);
 
   // Calcula a quantidade de pessoas por sexo
   const dadosSexo = useMemo(() => {
