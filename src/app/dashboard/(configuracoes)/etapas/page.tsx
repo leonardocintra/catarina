@@ -4,46 +4,59 @@ import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 
-const etapas = [
-  { id: 1, nome: "Pre-catecumenato", descricao: "Etapa inicial de preparação" },
-  { id: 2, nome: "1º Escrutínio", descricao: "Primeiro exame de consciência" },
-  {
-    id: 3,
-    nome: "Shemá Israel",
-    descricao: "Oração fundamental do povo de Deus",
-  },
-  { id: 4, nome: "2º Escrutínio", descricao: "Segundo exame de consciência" },
-  {
-    id: 5,
-    nome: "Iniciação à Oração",
-    descricao: "Fundamentos da vida de oração",
-  },
-  { id: 6, nome: "Traditio Symboli", descricao: "Entrega do Símbolo da Fé" },
-  { id: 7, nome: "Redditio Symboli", descricao: "Devolução do Símbolo da Fé" },
-  {
-    id: 8,
-    nome: "Pai Nosso I",
-    descricao: "Primeira etapa da oração dominical",
-  },
-  {
-    id: 9,
-    nome: "Pai Nosso II",
-    descricao: "Segunda etapa da oração dominical",
-  },
-  {
-    id: 10,
-    nome: "Pai Nosso III",
-    descricao: "Terceira etapa da oração dominical",
-  },
-  {
-    id: 11,
-    nome: "3º Escrutínio",
-    descricao: "Terceiro e último exame de consciência",
-  },
-];
+type Etapa = {
+  id: number;
+  descricao: string;
+};
 
 export default function EtapasPage() {
+  const [etapas, setEtapas] = useState<Etapa[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    const carregarEtapas = async () => {
+      try {
+        const res = await fetch("/api/ambrosio/configuracoes/etapas", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("Nao foi possivel carregar as etapas.");
+        }
+
+        const payload = await res.json();
+        const lista = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
+
+        const etapasNormalizadas = lista
+          .map((item: Partial<Etapa>) => ({
+            id: Number(item.id),
+            descricao: String(item.descricao ?? ""),
+          }))
+          .filter((item: Etapa) => Number.isFinite(item.id) && item.descricao)
+          .sort((a: Etapa, b: Etapa) => a.id - b.id);
+
+        setEtapas(etapasNormalizadas);
+      } catch (error) {
+        console.error(error);
+        setErro("Nao foi possivel carregar as etapas.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    carregarEtapas();
+  }, []);
+
+  const totalEtapas = useMemo(() => etapas.length, [etapas]);
+
   return (
     <div className="space-y-6">
       <PageSubtitle
@@ -59,32 +72,45 @@ export default function EtapasPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {etapas.map((etapa, index) => (
-              <div
-                key={etapa.id}
-                className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-              >
-                <div className="flex items-center gap-4">
-                  <Badge variant="outline" className="min-w-8 justify-center">
-                    {index + 1}
-                  </Badge>
-                  <div>
-                    <h3 className="font-medium">{etapa.nome}</h3>
-                    <p className="text-sm text-muted-foreground">
+          {loading && (
+            <SkeletonLoading mensagem="Carregando etapas do Caminho ..." />
+          )}
+
+          {!loading && erro && (
+            <div className="text-sm text-destructive">{erro}</div>
+          )}
+
+          {!loading && !erro && (
+            <div className="space-y-3">
+              {etapas.map((etapa) => (
+                <div
+                  key={etapa.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex items-center gap-4">
+                    <Badge variant="outline" className="min-w-8 justify-center">
+                      {etapa.id}
+                    </Badge>
+                    <p className="text-base font-semibold leading-tight md:text-lg">
                       {etapa.descricao}
                     </p>
                   </div>
+                  <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
                 </div>
-                <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-              </div>
-            ))}
-          </div>
+              ))}
+
+              {etapas.length === 0 && (
+                <div className="text-sm text-muted-foreground">
+                  Nenhuma etapa encontrada.
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 
       <div className="text-center text-sm text-muted-foreground">
-        Total de {etapas.length} etapas de formação
+        Total de {totalEtapas} etapas de formação
       </div>
     </div>
   );

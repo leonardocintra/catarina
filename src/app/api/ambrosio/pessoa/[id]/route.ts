@@ -45,6 +45,8 @@ export async function GET(
   const data = response.data;
 
   // Retornar apenas os dados serializáveis
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payload: any = {
     id: data.id,
     externalId: data.externalId,
@@ -137,7 +139,7 @@ export async function PATCH(
   } else {
     return Response.json(
       {
-        message: resData.message[0],
+        message: resData.message || "Erro ao atualizar pessoa. Avisar time do TI",
       },
       {
         status: res.status,
