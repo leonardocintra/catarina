@@ -6,13 +6,13 @@ const url = `${AmbrosioBaseUrl}/comunidade`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ comunidadeId: string }> },
 ) {
-  const { id } = await params;
+  const { comunidadeId } = await params;
   const cookieStore = await cookies();
 
   const token = cookieStore.get("token")?.value;
-  const res = await fetch(`${url}/${id}`, {
+  const res = await fetch(`${url}/${comunidadeId}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -47,9 +47,9 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: Promise<{ comunidadeId: string }> },
 ) {
-  const { id } = await params;
+  const { comunidadeId } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   const payload = await req.json();
@@ -60,7 +60,7 @@ export async function PATCH(
     observacao: payload.observacao,
   };
 
-  const response = await fetch(`${url}/${id}`, {
+  const response = await fetch(`${url}/${comunidadeId}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",

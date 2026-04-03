@@ -4,6 +4,7 @@ import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
 import ParoquiaForm from "@/components/custom/dashboard/paroquias/form-paroquia";
 import LabelData from "@/components/custom/dashboard/pessoa/label-data";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,7 +25,8 @@ import {
 } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/utils";
-import { Paroquia } from "neocatecumenal";
+import { TriangleAlertIcon } from "lucide-react";
+import { Comunidade, Paroquia } from "neocatecumenal";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -72,6 +74,7 @@ export default function EditarParoquiaPage() {
       try {
         const [resParoquia] = await Promise.all([getParoquia()]);
         setParoquia(resParoquia);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         toast({
           title: `Erro ao buscar diocese`,
@@ -91,6 +94,8 @@ export default function EditarParoquiaPage() {
   if (!paroquia) {
     return <SkeletonLoading mensagem="Carregando paróquia ..." />;
   }
+
+  console.log("paroquia", paroquia);
 
   return (
     <div>
@@ -140,7 +145,7 @@ export default function EditarParoquiaPage() {
               </CardFooter>
             </Card>
           </div>
-          <div className="mt-7 mx-auto max-w-lg">
+          <div className="mt-7 mx-auto max-w-2xl">
             <Table>
               <TableCaption>
                 Lista de comunidades da paroquia {paroquia.descricao}.
@@ -149,18 +154,29 @@ export default function EditarParoquiaPage() {
                 <TableRow>
                   <TableHead>Comunidade</TableHead>
                   <TableHead>Irmãos</TableHead>
+                  <TableHead>Etapa</TableHead>
                   <TableHead>Ação</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {paroquia.comunidades
                   ?.sort((a, b) => a.numeroDaComunidade - b.numeroDaComunidade)
-                  .map((comunidade) => (
+                  .map((comunidade: Comunidade) => (
                     <TableRow key={comunidade.id}>
                       <TableCell className="font-medium text-right">
                         {comunidade.numeroDaComunidade}
                       </TableCell>
                       <TableCell>{comunidade.quantidadeMembros}</TableCell>
+                      <TableCell>
+                        {comunidade.etapaAtual?.descricao ? (
+                          comunidade.etapaAtual.descricao
+                        ) : (
+                          <Badge variant={"destructive"}>
+                            Nenhuma etapa cadastrada.
+                            <TriangleAlertIcon />
+                          </Badge>
+                        )}
+                      </TableCell>
                       <TableCell>
                         <Link href={`/dashboard/comunidades/${comunidade.id}`}>
                           <Button variant="link">Mais detalhes</Button>

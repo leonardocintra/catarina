@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { removerAcento } from "@/lib/utils";
-import { ArrowUpRightIcon, FolderSearch } from "lucide-react";
+import {
+  ArrowUpRightIcon,
+  FolderSearch,
+  TriangleAlertIcon,
+} from "lucide-react";
 import { Comunidade } from "neocatecumenal";
 import Link from "next/link";
 import { useState } from "react";
@@ -50,9 +55,10 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Numero</TableHead>
-            <TableHead>Irmãos</TableHead>
             <TableHead>Paroquia</TableHead>
+            <TableHead>Nº Com.</TableHead>
+            <TableHead>Etapa</TableHead>
+            <TableHead>Irmãos</TableHead>
             <TableHead>Diocese</TableHead>
             <TableHead>Detalhes</TableHead>
           </TableRow>
@@ -60,10 +66,6 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
         <TableBody>
           {comunidadesFiltradasPorParoquia.slice(0, 10).map((comunidade) => (
             <TableRow key={comunidade.id}>
-              <TableCell className="text-muted-foreground font-light">
-                {comunidade.numeroDaComunidade}
-              </TableCell>
-              <TableCell>{comunidade.quantidadeMembros} irmãos</TableCell>
               <TableCell>
                 <Link href={`/dashboard/paroquias/${comunidade.paroquia.id}`}>
                   <Button variant={"ghost"} size={"sm"}>
@@ -74,6 +76,20 @@ export default function ListComunidade({ comunidades }: ListComunidadeProps) {
                   </Button>
                 </Link>
               </TableCell>
+              <TableCell className="text-muted-foreground font-light">
+                {comunidade.numeroDaComunidade}
+              </TableCell>
+              <TableCell>
+                {comunidade.etapaAtual?.descricao ? (
+                  comunidade.etapaAtual.descricao
+                ) : (
+                  <Badge variant={"destructive"}>
+                    Nenhuma etapa cadastrada.
+                    <TriangleAlertIcon />
+                  </Badge>
+                )}
+              </TableCell>
+              <TableCell>{comunidade.quantidadeMembros} irmãos</TableCell>
               <TableCell>{comunidade.paroquia.diocese.descricao}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/comunidades/${comunidade.id}`}>
