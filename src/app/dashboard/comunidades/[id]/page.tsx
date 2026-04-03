@@ -1,11 +1,10 @@
 "use client";
 
 import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
-import { use, useCallback, useEffect, useState } from "react";
+import { use, useState } from "react";
 import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
 import { BASE_URL } from "@/lib/utils";
-import { useToast } from "@/components/ui/use-toast";
-import { Comunidade, ComunidadeEtapa, EtapaEnum } from "neocatecumenal";
+import { ComunidadeEtapa } from "neocatecumenal";
 import {
   Card,
   CardContent,
@@ -13,7 +12,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import { PassarComunidadeDeEtapa } from "@/components/custom/dashboard/comunidade/dialog-passar-etapa";
 import {
   Table,
@@ -28,69 +26,20 @@ import { Button } from "@/components/ui/button";
 import ComunidadeForm from "@/components/custom/dashboard/comunidade/form-comunidade";
 import { Badge } from "@/components/ui/badge";
 import { InfoIcon, UsersIcon } from "lucide-react";
+import { useComunidadeById } from "@/hooks/useComunidadeById";
 
 export default function EditarComunidadePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const router = useRouter();
-  const [comunidade, setComunidade] = useState<Comunidade>();
   const [isEditing, setIsEditing] = useState(false);
   const { id } = use(params);
-  const { toast } = useToast();
-  const routeRedirect = "/dashboard/comunidades";
+  const { comunidade, fetchComunidade } = useComunidadeById({ id });
   const formatDate = (date?: Date) =>
     date
       ? new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" }).format(date)
       : " - ";
-
-  const fetchComunidade = useCallback(async () => {
-    try {
-      const res = await fetch(`${BASE_URL}/api/ambrosio/comunidade/${id}`);
-
-      if (res.status === 404) {
-        toast({
-          title: `Comunidade não encontrada`,
-          variant: "destructive",
-          description: `Comunidade não encontrada. Tente novamente`,
-        });
-        router.push(routeRedirect);
-        return;
-      }
-
-      if (res.status === 401) {
-        toast({
-          title: `Sem permissão`,
-          variant: "destructive",
-          description: `Você não tem permissão para ver essa comunidade`,
-        });
-        router.push(routeRedirect);
-        return;
-      }
-
-      const data = await res.json();
-      const comunidadeNormalizada: Comunidade = {
-        ...data,
-        comunidadeEtapas: data.comunidadeEtapas?.map((ce: any) => ({
-          ...ce,
-          dataInicio: ce?.dataInicio ? new Date(ce.dataInicio) : undefined,
-          dataFim: ce?.dataFim ? new Date(ce.dataFim) : undefined,
-        })),
-      };
-      setComunidade(comunidadeNormalizada);
-    } catch (error: any) {
-      toast({
-        title: `Erro ao buscar comunidade`,
-        variant: "destructive",
-        description: `Erro: ${error}`,
-      });
-    }
-  }, [id, toast, router, routeRedirect]);
-
-  useEffect(() => {
-    fetchComunidade();
-  }, [fetchComunidade]);
 
   if (!comunidade)
     return <SkeletonLoading mensagem="Carregando comunidade ..." />;
@@ -108,7 +57,7 @@ export default function EditarComunidadePage({
 
     return etapasOrdenadas.map((ce: ComunidadeEtapa) => (
       <TableRow key={ce.id}>
-        <TableCell className="font-medium">{ce.etapa}</TableCell>
+        <TableCell className="font-medium">{ce.etapa.descricao}</TableCell>
         <TableCell className="text-right">
           {formatDate(ce.dataInicio)} / {formatDate(ce.dataFim)}
         </TableCell>
@@ -117,11 +66,8 @@ export default function EditarComunidadePage({
           <PassarComunidadeDeEtapa
             buttonDescription="Editar"
             comunidadeId={id}
-            etapaId={ce.id}
-            etapaAtual={
-              comunidade.comunidadeEtapas.at(-1)?.etapa ||
-              EtapaEnum.PRE_CATECUMENATO
-            }
+            comunidadeEtapaId={ce.id}
+            etapaAtual={ce.etapa}
             etapa={ce}
             onSuccess={fetchComunidade}
           />
@@ -133,7 +79,7 @@ export default function EditarComunidadePage({
   return (
     <div>
       <PageSubtitle
-        title={`Comunidade ${comunidade.numeroDaComunidade} - ${comunidade.etapaAtual}`}
+        title={`Comunidade ${comunidade.numeroDaComunidade} - ${comunidade.etapaAtual?.descricao || "Etapa: não foi cadastrada."}`}
         subTitle={`da paróquia ${comunidade.paroquia.descricao} - Qtd: ${comunidade.quantidadeMembros} irmãos`}
         buttons={[
           {
@@ -160,12 +106,19 @@ export default function EditarComunidadePage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            Paróquia <strong>{comunidade.paroquia.descricao}</strong> -
-            Quantidade de irmãos atualmente é:{" "}
-            <Badge>{comunidade.quantidadeMembros}</Badge>
-            <br />
-            Etapa atual: <strong>{comunidade.etapaAtual}</strong>
-            <br />
+            <div className="flex flex-col space-y-2 mb-2">
+              <div>
+                Diocese:{" "}
+                <strong>{comunidade.paroquia.diocese.descricao}</strong>
+              </div>
+              <div>
+                Paróquia <strong>{comunidade.paroquia.descricao}</strong>
+              </div>
+              <div>
+                Quantidade de irmãos:{" "}
+                <Badge>{comunidade.quantidadeMembros}</Badge>
+              </div>
+            </div>
             <Button onClick={() => setIsEditing(true)}> Editar </Button>
           </CardContent>
         </Card>
@@ -186,9 +139,9 @@ export default function EditarComunidadePage({
             <ComunidadeForm
               comunidade={comunidade}
               urlBase={BASE_URL}
-              onSubmitSuccess={() => {
+              onSubmitSuccess={async () => {
                 setIsEditing(false);
-                fetchComunidade();
+                await fetchComunidade();
               }}
             />
           </div>
@@ -218,10 +171,7 @@ export default function EditarComunidadePage({
                 <PassarComunidadeDeEtapa
                   buttonDescription="Nova etapa"
                   comunidadeId={id}
-                  etapaAtual={
-                    comunidade.comunidadeEtapas.at(-1)?.etapa ||
-                    EtapaEnum.PRE_CATECUMENATO
-                  }
+                  etapaAtual={comunidade.etapaAtual}
                   onSuccess={fetchComunidade}
                 />
               </CardFooter>

@@ -30,21 +30,17 @@ import { toast } from "@/components/ui/use-toast";
 import { formatDateInputValue } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowsUpFromLine } from "lucide-react";
-import { ComunidadeEtapa, EtapaEnum } from "neocatecumenal";
-import { useState } from "react";
+import { ComunidadeEtapa, Etapa } from "neocatecumenal";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-
-const etapaOptions = Object.values(EtapaEnum).filter(
-  (value): value is EtapaEnum => typeof value === "string",
-);
 
 interface PassarComunidadeDeEtapaProps {
   comunidadeId: string;
   buttonDescription: string;
-  etapaAtual: EtapaEnum;
+  etapaAtual: Etapa;
   onSuccess?: () => void;
-  etapaId?: number;
+  comunidadeEtapaId?: number;
   etapa?: ComunidadeEtapa;
 }
 
@@ -53,15 +49,14 @@ export function PassarComunidadeDeEtapa({
   buttonDescription,
   etapaAtual,
   onSuccess,
-  etapaId,
+  comunidadeEtapaId,
   etapa,
 }: PassarComunidadeDeEtapaProps) {
   const [open, setOpen] = useState(false);
+  const [etapas, setEtapas] = useState<Etapa[]>([]);
 
   const formSchema = z.object({
-    etapa: z.nativeEnum(EtapaEnum, {
-      error: "Selecione a etapa",
-    }),
+    etapa: z.string().min(1, { message: "Selecione a etapa" }),
     local: z
       .string()
       .min(2, { message: "Descrição deve ter no minimo 2 caracteres." })
@@ -75,7 +70,7 @@ export function PassarComunidadeDeEtapa({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      etapa: etapaAtual,
+      etapa: etapaAtual ? etapaAtual.id.toString() : "",
       dataInicio: etapa?.dataInicio ? new Date(etapa.dataInicio) : undefined,
       dataFim: etapa?.dataFim ? new Date(etapa.dataFim) : undefined,
       local: etapa?.localConvivencia || "",
@@ -83,18 +78,61 @@ export function PassarComunidadeDeEtapa({
     },
   });
 
+  useEffect(() => {
+    const carregarEtapas = async () => {
+      try {
+        const res = await fetch("/api/ambrosio/configuracoes/etapas", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error("Erro ao carregar etapas");
+        }
+
+        const payload = await res.json();
+        const lista = Array.isArray(payload)
+          ? payload
+          : Array.isArray(payload?.data)
+            ? payload.data
+            : [];
+
+        const normalizadas = lista
+          .map((item: Etapa) => ({
+            id: Number(item.id),
+            descricao: String(item.descricao ?? ""),
+          }))
+          .filter((item: Etapa) => Number.isFinite(item.id) && item.descricao);
+
+        setEtapas(normalizadas);
+      } catch {
+        toast({
+          title: "Nao foi possivel carregar etapas",
+          variant: "destructive",
+          description: "Tente novamente em instantes.",
+        });
+      }
+    };
+
+    carregarEtapas();
+  }, []);
+
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
-    let url = `/api/ambrosio/comunidade/etapa`;
+    let url = `/api/ambrosio/comunidade/${comunidadeId}/etapa`;
     let method = "POST";
 
-    if (etapaId) {
+    if (comunidadeEtapaId) {
       method = "PATCH";
-      url += `/${etapaId}`;
+      url += `/${comunidadeEtapaId}`;
     }
+
+    const etapaSelecionada = etapas.find(
+      (etapaOption) => etapaOption.id.toString() === values.etapa,
+    );
+    const etapaDescricaoToast = etapaSelecionada?.descricao ?? values.etapa;
 
     const payload = {
       ...values,
-      comunidadeId,
+      etapa: Number(values.etapa),
     };
 
     try {
@@ -109,14 +147,14 @@ export function PassarComunidadeDeEtapa({
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
         toast({
-          title: `${values.etapa} cadastrada!`,
+          title: `${etapaDescricaoToast} cadastrada!`,
           variant: "default",
           description: `Cadastrado(a) com sucesso a etapa!`,
         });
         closeDialog();
       } else if (res.status === 200 && method === "PATCH") {
         toast({
-          title: `${values.etapa} atualizada!`,
+          title: `${etapaDescricaoToast} atualizada!`,
           variant: "default",
           description: `Atualizado(a) com sucesso a etapa!`,
         });
@@ -142,7 +180,7 @@ export function PassarComunidadeDeEtapa({
           });
         }
       }
-    } catch (error) {
+    } catch {
       toast({
         title: `Etapa não foi cadastrado!`,
         variant: "destructive",
@@ -163,11 +201,11 @@ export function PassarComunidadeDeEtapa({
           <DialogHeader>
             <DialogTitle>Passar Comunidade de Etapa</DialogTitle>
             <DialogDescription className="text-red-600 font-semibold">
-              Etapa atual: {etapaAtual}
+              Etapa atual: {etapaAtual ? etapaAtual.descricao : "Não informada"}
             </DialogDescription>
             <DialogDescription>
               Preencha as informações abaixo para confirmar a passagem de etapa
-              da comunidade. {etapaId}
+              da comunidade.
             </DialogDescription>
           </DialogHeader>
 
@@ -184,9 +222,7 @@ export function PassarComunidadeDeEtapa({
                     <FormLabel>Selecione a nova etapa</FormLabel>
                     <Select
                       value={field.value}
-                      onValueChange={(value) =>
-                        field.onChange(value as EtapaEnum)
-                      }
+                      onValueChange={(value) => field.onChange(value)}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -194,9 +230,12 @@ export function PassarComunidadeDeEtapa({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {etapaOptions.map((option) => (
-                          <SelectItem key={option} value={option}>
-                            {option.replace(/_/g, " ")}
+                        {etapas.map((option) => (
+                          <SelectItem
+                            key={option.id}
+                            value={option.id.toString()}
+                          >
+                            {option.descricao}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -300,7 +339,7 @@ export function PassarComunidadeDeEtapa({
                 <DialogClose asChild>
                   <Button variant="outline">Cancelar</Button>
                 </DialogClose>
-                <Button type="submit">{etapaId ? "Editar" : "Salvar"}</Button>
+                <Button type="submit">{comunidadeEtapaId ? "Editar" : "Salvar"}</Button>
               </DialogFooter>
             </form>
           </Form>

@@ -15,12 +15,12 @@ import { ArrowsUpFromLine } from "lucide-react";
 
 interface SetarCatequistasDaEtapaProps {
   comunidadeId: string;
-  etapaId: string;
+  comunidadeEtapaId: string;
 }
 
 export function SetarCatequistasDaEtapa({
   comunidadeId,
-  etapaId,
+  comunidadeEtapaId,
 }: SetarCatequistasDaEtapaProps) {
   return (
     <Dialog>

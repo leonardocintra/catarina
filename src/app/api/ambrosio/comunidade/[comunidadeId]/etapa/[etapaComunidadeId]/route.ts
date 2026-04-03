@@ -1,34 +1,37 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-const url = `${AmbrosioBaseUrl}/etapa`;
+const url = `${AmbrosioBaseUrl}/comunidade`;
 
 export async function PATCH(
   req: Request,
-  ctx: { params: Promise<{ id: string }> },
+  ctx: { params: Promise<{ comunidadeId: string; etapaComunidadeId: string }> },
 ) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  const { id } = await ctx.params;
+  const { comunidadeId, etapaComunidadeId } = await ctx.params;
 
   const payload = await req.json();
 
   const etapa = {
-    etapa: payload.etapa,
+    etapaId: payload.etapa,
     observacao: payload.observacao,
     localConvivencia: payload.local,
     dataInicio: payload.dataInicio,
     dataFim: payload.dataFim,
   };
 
-  const response = await fetch(`${url}/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+  const response = await fetch(
+    `${url}/${comunidadeId}/etapa/${etapaComunidadeId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(etapa),
     },
-    body: JSON.stringify(etapa),
-  });
+  );
 
   const data = await response.json();
 

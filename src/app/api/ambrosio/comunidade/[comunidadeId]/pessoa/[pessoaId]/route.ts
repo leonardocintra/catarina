@@ -5,9 +5,9 @@ const url = `${AmbrosioBaseUrl}/comunidade`;
 
 export async function POST(
   req: Request,
-  { params }: { params: Promise<{ id: string; pessoaId: string }> },
+  { params }: { params: Promise<{ comunidadeId: string; pessoaId: string }> },
 ) {
-  const { id, pessoaId } = await params;
+  const { comunidadeId, pessoaId } = await params;
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
@@ -34,7 +34,7 @@ export async function POST(
   try {
     const payload = observacao !== undefined ? { observacao } : {};
 
-    const response = await fetch(`${url}/${id}/pessoa/${pessoaId}`, {
+    const response = await fetch(`${url}/${comunidadeId}/pessoa/${pessoaId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

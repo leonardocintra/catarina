@@ -1,7 +1,7 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 import { cookies } from "next/headers";
 
-const url = `${AmbrosioBaseUrl}/etapa`;
+const url = `${AmbrosioBaseUrl}/comunidade`;
 
 export async function GET(req: Request) {
   const cookieStore = await cookies();
@@ -47,21 +47,27 @@ export async function GET(req: Request) {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ comunidadeId: string }> },
+) {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
+  const comunidadeId = Number.parseInt((await params).comunidadeId);
 
   const payload = await req.json();
 
+  
   const etapa = {
-    comunidadeId: Number.parseInt(payload.comunidadeId),
-    etapa: payload.etapa,
+    etapaId: payload.etapa,
     observacao: payload.observacao,
     localConvivencia: payload.local,
     dataInicio: payload.dataInicio,
   };
+  console.log(payload);
+  console.log(etapa);
 
-  const response = await fetch(url, {
+  const response = await fetch(`${url}/${comunidadeId}/etapa`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
