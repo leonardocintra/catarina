@@ -27,6 +27,7 @@ export async function POST(request: Request) {
 
   const equipe = {
     descricao: reqBody.descricao,
+    observacao: reqBody.observacao,
     tipoEquipeId: parseInt(reqBody.tipoEquipe),
     pessoas: reqBody.pessoasComCarismaEquipeId.map((id: number) => ({ id })),
   };

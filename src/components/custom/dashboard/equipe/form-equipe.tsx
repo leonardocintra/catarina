@@ -54,12 +54,12 @@ export default function EquipeForm({
   const [searchCarismaEquipe, setSearchCarismaEquipe] = useState("");
 
   const equipesCarismaOrdenados = [...pessoasComCarismaEquipe].sort((a, b) =>
-    a.pessoa.nome.localeCompare(b.pessoa.nome)
+    a.pessoa.nome.localeCompare(b.pessoa.nome),
   );
 
   const carismasFiltrados = searchCarismaEquipe.trim()
     ? equipesCarismaOrdenados.filter((c) =>
-        c.pessoa.nome.toLowerCase().includes(searchCarismaEquipe.toLowerCase())
+        c.pessoa.nome.toLowerCase().includes(searchCarismaEquipe.toLowerCase()),
       )
     : [];
 
@@ -160,16 +160,17 @@ export default function EquipeForm({
           toast({
             title: `${values.descricao} não foi cadastrado!`,
             variant: "destructive",
-            description: `Erro: ${res.text}`,
+            description: `Erro: ${res.statusText} (${res.status})`,
           });
         }
         setIsLoading(false);
       }
-    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       toast({
         title: `${values.descricao} não foi cadastrado!`,
         variant: "destructive",
-        description: `Erro de conexão. Tente novamente.`,
+        description: `Erro de conexão. Tente novamente. ${error.message}`,
       });
       setIsLoading(false);
     }
@@ -307,7 +308,7 @@ export default function EquipeForm({
                             variant="outline"
                             onClick={() => adicionarEquipe(equipeCarisma)}
                             disabled={selectedCarismas.some(
-                              (c) => c.id === equipeCarisma.id
+                              (c) => c.id === equipeCarisma.id,
                             )}
                           >
                             <Plus className="h-4 w-4" />

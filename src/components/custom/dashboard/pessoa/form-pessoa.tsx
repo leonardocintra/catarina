@@ -81,6 +81,7 @@ export default function PessoaForm({
 
     let url = `${urlBase}/api/ambrosio/pessoa`;
     let method = "POST";
+    let errorMessage = "Erro desconhecido. Tente novamente.";
 
     if (pessoa) {
       url = `${url}/${pessoa.id}`;
@@ -98,51 +99,31 @@ export default function PessoaForm({
 
       const data = await res.json();
       if (res.status === 201 && method === "POST") {
-        toast({
-          title: `${values.nome}`,
-          variant: "default",
-          description: `Cadastrado(a) com sucesso!`,
-        });
+        handleToastMessage(values.nome, "Cadastrado(a) com sucesso!", true);
         router.push(`/dashboard/pessoas/${data.id}`);
       } else if (res.status === 200 && method === "PATCH") {
-        toast({
-          title: `${values.nome}`,
-          variant: "default",
-          description: `Editado(a) com sucesso!`,
-        });
-        // Não redirecionamos na edição, apenas reabilitamos o botão
+        handleToastMessage(values.nome, "Editado(a) com sucesso!", true);
+        // Atenção: Não redirecionamos na edição, apenas reabilitamos o botão
         setIsLoading(false);
         // Fechar o formulário após editar
         onEditSuccess?.();
       } else {
-        if (res.status === 403 || res.status === 401) {
-          toast({
-            title: `${values.nome} não foi cadastrado!`,
-            variant: "destructive",
-            description: `Você não tem permissão para cadastrar / editar pessoas.`,
-          });
+        if (res.status === 409) {
+          errorMessage = `Usuário já existe! ${data.message}`;
+        } else if (res.status === 403 || res.status === 401) {
+          errorMessage = `Você não tem permissão para cadastrar / editar pessoas.`;
         } else if (res.status === 400) {
-          toast({
-            title: `${values.nome} não foi cadastrado!`,
-            variant: "destructive",
-            description: `Erro: ${data.message}`,
-          });
+          errorMessage = `Erro: ${data.message}`;
         } else {
-          toast({
-            title: `${values.nome} não foi cadastrado!`,
-            variant: "destructive",
-            description: `Erro: ${res.text}`,
-          });
+          errorMessage = `Erro: ${res.text}`;
         }
-        setIsLoading(false);
+        handleToastMessage(values.nome, errorMessage);
       }
-    } catch (error) {
-      toast({
-        title: `${values.nome} não foi cadastrado!`,
-        variant: "destructive",
-        description: `Erro de conexão. Tente novamente.`,
-      });
       setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      errorMessage = `Erro de conexão. Tente novamente. Detalhes: ${error}`;
+      handleToastMessage(values.nome, errorMessage);
     }
   };
 
@@ -345,4 +326,16 @@ export default function PessoaForm({
       </Form>
     </div>
   );
+
+  function handleToastMessage(
+    nomePessoa: string,
+    message: string,
+    isSuccess: boolean = false,
+  ) {
+    toast({
+      title: nomePessoa,
+      variant: isSuccess ? "default" : "destructive",
+      description: message,
+    });
+  }
 }

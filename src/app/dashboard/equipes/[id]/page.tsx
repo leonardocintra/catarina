@@ -25,6 +25,7 @@ import { BASE_URL } from "@/lib/utils";
 import { Equipe } from "neocatecumenal";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useEquipeConfigurations } from "@/hooks/useEquipeConfigurations";
 
 export default function EditarEquipePage() {
   const { toast } = useToast();
@@ -35,6 +36,7 @@ export default function EditarEquipePage() {
   const [equipe, setEquipe] = useState<Equipe>();
   const [editar, setEditar] = useState<boolean>(false);
   const [redirectNotFound, setRedirectNotFound] = useState<boolean>(false);
+  const { tiposDeEquipe, carismaEquipe, isLoading } = useEquipeConfigurations();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +69,7 @@ export default function EditarEquipePage() {
       try {
         const [resEquipe] = await Promise.all([getEquipe()]);
         setEquipe(resEquipe);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         toast({
           title: `Erro ao buscar diocese`,
@@ -83,7 +86,7 @@ export default function EditarEquipePage() {
     router.push("/dashboard/equipes");
   }
 
-  if (!equipe) {
+  if (!equipe || isLoading) {
     return <SkeletonLoading mensagem="Carregando equipe ..." />;
   }
 
@@ -104,7 +107,7 @@ export default function EditarEquipePage() {
 
       {!editar && (
         <div>
-          <div className="max-w-lg mx-auto">
+          <div className="max-w-3xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle>Equipe {equipe.descricao}</CardTitle>
@@ -116,7 +119,7 @@ export default function EditarEquipePage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Nome</TableHead>
+                      <TableHead>Catequista / Casal</TableHead>
                       <TableHead>Situação religiosa</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -133,6 +136,9 @@ export default function EditarEquipePage() {
                             {pessoa.nome}{" "}
                             {pessoa.conhecidoPor
                               ? `(${pessoa.conhecidoPor})`
+                              : ""}{" "}
+                            {pessoa.conjugue
+                              ? ` e ${pessoa.conjugue.nome}`
                               : ""}
                           </Button>
                         </TableCell>
@@ -158,8 +164,8 @@ export default function EditarEquipePage() {
         <EquipeForm
           urlBase={BASE_URL}
           equipe={equipe}
-          pessoasComCarismaEquipe={[]}
-          tiposDeEquipe={[]}
+          pessoasComCarismaEquipe={carismaEquipe}
+          tiposDeEquipe={tiposDeEquipe}
         />
       )}
     </div>

@@ -12,7 +12,7 @@
   },
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build --turbopack",
     "build:analyze": "next build --turbopack --experimental-analyze",
     "start": "next start",
