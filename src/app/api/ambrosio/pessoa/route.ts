@@ -47,7 +47,7 @@ export async function POST(req: Request) {
   });
 
   const resData = await res.json();
-
+  
   if (res.status === 201) {
     return Response.json(resData.data, {
       status: 201,
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
   } else {
     return Response.json(
       {
-        message: resData.message[0],
+        message: resData.message,
       },
       {
         status: res.status,

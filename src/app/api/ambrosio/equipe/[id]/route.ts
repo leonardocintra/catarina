@@ -6,7 +6,7 @@ const url = `${AmbrosioBaseUrl}/equipe`;
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const cookieStore = await cookies();
   const { id } = await params;
@@ -26,7 +26,7 @@ export async function GET(
       },
       {
         status: 404,
-      }
+      },
     );
   }
 
@@ -37,7 +37,7 @@ export async function GET(
       },
       {
         status: 401,
-      }
+      },
     );
   }
 
@@ -47,7 +47,7 @@ export async function GET(
 
 export async function PATCH(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const data = await req.json();
   const cookieStore = await cookies();
@@ -55,19 +55,9 @@ export async function PATCH(
 
   const equipe = {
     descricao: data.descricao,
-    diocese: {
-      id: data.dioceseId,
-    },
     observacao: data.observacao,
-    endereco: {
-      id: parseInt(data.enderecoId),
-      logradouro: data.logradouro,
-      numero: data.numero,
-      bairro: data.bairro,
-      cidade: data.cidade,
-      UF: data.uf,
-      cep: data.cep,
-    },
+    tipoEquipeId: parseInt(data.tipoEquipe),
+    pessoas: data.pessoasComCarismaEquipeId.map((id: number) => ({ id })),
   };
 
   const { id } = await params;
@@ -93,7 +83,7 @@ export async function PATCH(
       },
       {
         status: res.status,
-      }
+      },
     );
   }
 }
