@@ -14,14 +14,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { EscolaridadeEnum, Pessoa, SituacaoReligiosa } from "neocatecumenal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { tiposEquipeOptions, estadosCivilOptions } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -75,6 +75,30 @@ export default function PessoaForm({
       situacaoReligiosa: pessoa?.situacaoReligiosa.id.toString() || "",
     },
   });
+
+  const selectedSituacaoReligiosaId = useWatch({
+    control: form.control,
+    name: "situacaoReligiosa",
+  });
+  const selectedSituacaoReligiosa = situacoesReligiosa.find(
+    (situacao) => situacao.id.toString() === selectedSituacaoReligiosaId,
+  );
+  const isSexoLockedToMasculino =
+    selectedSituacaoReligiosa?.sexoUnico === "MASCULINO";
+  const isEstadoCivilLockedToSolteiro = isSexoLockedToMasculino;
+
+  useEffect(() => {
+    if (isSexoLockedToMasculino && form.getValues("sexo") !== "MASCULINO") {
+      form.setValue("sexo", "MASCULINO", { shouldValidate: true });
+    }
+
+    if (
+      isEstadoCivilLockedToSolteiro &&
+      form.getValues("estadoCivil") !== "SOLTEIRO"
+    ) {
+      form.setValue("estadoCivil", "SOLTEIRO", { shouldValidate: true });
+    }
+  }, [isSexoLockedToMasculino, isEstadoCivilLockedToSolteiro, form]);
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
@@ -181,38 +205,13 @@ export default function PessoaForm({
 
           <FormField
             control={form.control}
-            name="sexo"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Sexo</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={pessoa?.sexo}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value={"MASCULINO"}>Masculino</SelectItem>
-                    <SelectItem value={"FEMININO"}>Feminino</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
             name="situacaoReligiosa"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Situação Religiosa</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.situacaoReligiosa.id.toString()}
+                  value={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -237,13 +236,40 @@ export default function PessoaForm({
 
           <FormField
             control={form.control}
+            name="sexo"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Sexo</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={isSexoLockedToMasculino}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={"MASCULINO"}>Masculino</SelectItem>
+                    <SelectItem value={"FEMININO"}>Feminino</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
             name="estadoCivil"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Estado Civil</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={pessoa?.estadoCivil}
+                  value={field.value}
+                  disabled={isEstadoCivilLockedToSolteiro}
                 >
                   <FormControl>
                     <SelectTrigger>
