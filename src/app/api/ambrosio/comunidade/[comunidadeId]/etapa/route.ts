@@ -64,8 +64,6 @@ export async function POST(
     localConvivencia: payload.local,
     dataInicio: payload.dataInicio,
   };
-  console.log(payload);
-  console.log(etapa);
 
   const response = await fetch(`${url}/${comunidadeId}/etapa`, {
     method: "POST",

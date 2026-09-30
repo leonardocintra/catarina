@@ -14,18 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { BASE_URL } from "@/lib/utils";
-import { TriangleAlertIcon } from "lucide-react";
+import { ArrowUpRightIcon, TriangleAlertIcon } from "lucide-react";
 import { Comunidade, Paroquia } from "neocatecumenal";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -95,8 +86,6 @@ export default function EditarParoquiaPage() {
     return <SkeletonLoading mensagem="Carregando paróquia ..." />;
   }
 
-  console.log("paroquia", paroquia);
-
   return (
     <div>
       <PageSubtitle
@@ -145,47 +134,42 @@ export default function EditarParoquiaPage() {
               </CardFooter>
             </Card>
           </div>
-          <div className="mt-7 mx-auto max-w-2xl">
-            <Table>
-              <TableCaption>
-                Lista de comunidades da paroquia {paroquia.descricao}.
-              </TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Comunidade</TableHead>
-                  <TableHead>Irmãos</TableHead>
-                  <TableHead>Etapa</TableHead>
-                  <TableHead>Ação</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paroquia.comunidades
-                  ?.sort((a, b) => a.numeroDaComunidade - b.numeroDaComunidade)
-                  .map((comunidade: Comunidade) => (
-                    <TableRow key={comunidade.id}>
-                      <TableCell className="font-medium text-right">
-                        {comunidade.numeroDaComunidade}
-                      </TableCell>
-                      <TableCell>{comunidade.quantidadeMembros}</TableCell>
-                      <TableCell>
-                        {comunidade.etapaAtual?.descricao ? (
-                          comunidade.etapaAtual.descricao
-                        ) : (
-                          <Badge variant={"destructive"}>
-                            Nenhuma etapa cadastrada.
-                            <TriangleAlertIcon />
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Link href={`/dashboard/comunidades/${comunidade.id}`}>
-                          <Button variant="link">Mais detalhes</Button>
-                        </Link>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+          <div className="mt-7 grid grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))] gap-4">
+            {paroquia.comunidades
+              ?.sort((a, b) => a.numeroDaComunidade - b.numeroDaComunidade)
+              .map((comunidade: Comunidade) => (
+                <Link
+                  key={comunidade.id}
+                  href={`/dashboard/comunidades/${comunidade.id}`}
+                  aria-label={`Ver detalhes da comunidade ${comunidade.numeroDaComunidade}`}
+                  className="group block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <Card className="h-full border-t-4 border-t-primary/50 transition-all duration-200 group-hover:-translate-y-1 group-hover:border-t-primary group-hover:shadow-md">
+                    <CardHeader>
+                      <CardTitle className="flex items-center justify-between gap-3">
+                        <span>Comunidade {comunidade.numeroDaComunidade}</span>
+                        <ArrowUpRightIcon
+                          aria-hidden="true"
+                          className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                        />
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-start gap-3">
+                      <p className="text-sm text-muted-foreground">
+                        {comunidade.quantidadeMembros} irmãos
+                      </p>
+                      {comunidade.etapaAtual?.descricao ? (
+                        <Badge>{comunidade.etapaAtual.descricao}</Badge>
+                      ) : (
+                        <Badge variant="destructive">
+                          Nenhuma etapa cadastrada.
+                          <TriangleAlertIcon />
+                        </Badge>
+                      )}
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
           </div>
         </div>
       )}
