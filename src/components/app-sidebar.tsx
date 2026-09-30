@@ -3,7 +3,7 @@
 import type { ComponentProps } from "react";
 import {
   ChurchIcon,
-  GithubIcon,
+  GitBranchIcon,
   Map,
   MonitorCogIcon,
   MonitorUpIcon,
@@ -136,7 +136,7 @@ const data = {
     {
       name: "Github / Codigo",
       url: "https://github.com/leonardocintra/catarina",
-      icon: GithubIcon,
+      icon: GitBranchIcon,
     },
   ],
 };
