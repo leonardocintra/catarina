@@ -142,6 +142,7 @@ export default function ListUsuarios() {
               <TableRow>
                 <TableHead>Nome</TableHead>
                 <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
                 <TableHead>Telefone</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
@@ -167,6 +168,9 @@ export default function ListUsuarios() {
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {user.email}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.role}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
                       {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
