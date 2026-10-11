@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -15,8 +15,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { User } from "neocatecumenal";
+
+const DEFAULT_ROLE = "SECRETARIA_CNC";
 
 type DashboardUser = User & {
   nome?: string;
@@ -34,11 +43,56 @@ export function UpdateUsuario({ user, onSuccess }: UpdateUsuarioProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [roles, setRoles] = useState<string[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(true);
+  const [rolesError, setRolesError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: user.email || "",
     whatsapp: user.whatsapp || "",
     active: user.active ?? true,
+    role: user.role || DEFAULT_ROLE,
   });
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch("/api/ambrosio/auth/roles", {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error("Erro ao carregar as roles");
+        }
+
+        const data: unknown = await response.json();
+        if (
+          typeof data !== "object" ||
+          data === null ||
+          !("data" in data) ||
+          !Array.isArray(data.data) ||
+          !data.data.every((role): role is string => typeof role === "string")
+        ) {
+          throw new Error("Resposta inválida ao carregar as roles");
+        }
+
+        setRoles(data.data);
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        setRolesError(
+          err instanceof Error ? err.message : "Erro desconhecido ao carregar roles",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setRolesLoading(false);
+        }
+      }
+    };
+
+    fetchRoles();
+    return () => controller.abort();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
@@ -55,11 +109,12 @@ export function UpdateUsuario({ user, onSuccess }: UpdateUsuarioProps) {
 
     try {
       // Enviando apenas os campos que foram alterados
-      const updateData: Record<string, any> = {};
+      const updateData: Record<string, string | boolean> = {};
       if (formData.email) updateData.email = formData.email;
       if (formData.whatsapp) updateData.whatsapp = formData.whatsapp;
       // Sempre envie o campo 'active' como booleano
       updateData.active = Boolean(formData.active);
+      if (formData.role !== user.role) updateData.role = formData.role;
 
       const response = await fetch(`/api/ambrosio/user/${user.id}`, {
         method: "PATCH",
@@ -130,6 +185,33 @@ export function UpdateUsuario({ user, onSuccess }: UpdateUsuarioProps) {
                 onChange={handleChange}
                 placeholder="Digite o WhatsApp (10 ou 11 dígitos)"
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="role">Role</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(role) =>
+                  setFormData((prev) => ({ ...prev, role }))
+                }
+                disabled={rolesLoading || Boolean(rolesError)}
+              >
+                <SelectTrigger id="role" className="w-full">
+                  <SelectValue
+                    placeholder={rolesLoading ? "Carregando roles..." : "Selecione uma role"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {roles.map((role) => (
+                    <SelectItem key={role} value={role}>
+                      {role}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {rolesError && (
+                <p className="text-sm text-red-600">{rolesError}</p>
+              )}
             </div>
 
             <div className="flex items-center gap-2">

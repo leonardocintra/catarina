@@ -119,7 +119,7 @@ export function CadastroForm({
 
       router.push("/dashboard/usuarios");
     } catch (error) {
-      setErrorMsg("Erro ao tentar criar conta");
+      setErrorMsg("Erro ao tentar criar conta. Tente novamente mais tarde.");
       setCadastrando(false);
     }
   };
