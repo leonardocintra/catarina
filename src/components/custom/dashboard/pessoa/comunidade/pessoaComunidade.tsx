@@ -127,7 +127,7 @@ export default function PessoaComunidade({
         setComunidade(comunidadeEncontrada);
         setResultadoPesquisa(
           `Comunidade ${comunidadeEncontrada.numeroDaComunidade} da paróquia ${getParoquiaLabel(paroquiaSelecionada)} encontrada! 
-          \n Essa comunidade possui ${comunidadeEncontrada.quantidadeMembros || 0} irmãos e esta na etapa ${comunidadeEncontrada.etapaAtual}`,
+          \n Essa comunidade possui ${comunidadeEncontrada.quantidadeMembros || 0} irmãos e esta na etapa ${comunidadeEncontrada.etapaAtual.descricao} \n Responsável:  `,
         );
       } else {
         setComunidade(null);
