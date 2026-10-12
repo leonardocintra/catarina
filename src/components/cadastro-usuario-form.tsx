@@ -12,7 +12,7 @@ import { IMaskInput } from "react-imask";
 import { CheckCircle, Search, User } from "lucide-react";
 import { Pessoa } from "neocatecumenal";
 
-export function CadastroForm({
+export function CadastroUsuarioForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {

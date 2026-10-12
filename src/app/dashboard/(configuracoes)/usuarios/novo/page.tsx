@@ -1,9 +1,9 @@
-import { CadastroForm } from "@/components/cadastro-form";
+import { CadastroUsuarioForm } from "@/components/cadastro-usuario-form";
 
 export default function NovoUsuarioPage() {
   return (
     <div>
-      <CadastroForm />
+      <CadastroUsuarioForm />
     </div>
   );
 }
