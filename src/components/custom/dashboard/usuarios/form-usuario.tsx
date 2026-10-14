@@ -16,6 +16,11 @@ import { Loader2 } from "lucide-react";
 
 const DEFAULT_ROLE = "SECRETARIA_CNC";
 
+export type UsuarioParoquia = {
+  id: number;
+  descricao: string;
+};
+
 export type DashboardUser = {
   id: string;
   pessoaId?: number | null;
@@ -25,6 +30,7 @@ export type DashboardUser = {
   active: boolean;
   verifiedWhatsapp?: boolean;
   createdAt?: string;
+  usuarioParoquias?: UsuarioParoquia[];
 };
 
 interface FormUsuarioProps {

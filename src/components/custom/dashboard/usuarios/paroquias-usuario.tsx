@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { Paroquia } from "neocatecumenal";
+import type { UsuarioParoquia } from "./form-usuario";
 
 type Cidade = {
   id: number;
@@ -42,7 +43,15 @@ type Cidade = {
   };
 };
 
-export function ParoquiasUsuario() {
+type ParoquiasUsuarioProps = {
+  userId: string;
+  usuarioParoquias: UsuarioParoquia[];
+};
+
+export function ParoquiasUsuario({
+  userId,
+  usuarioParoquias,
+}: ParoquiasUsuarioProps) {
   const [cidades, setCidades] = useState<Cidade[]>([]);
   const [cidadesLoading, setCidadesLoading] = useState(true);
   const [comboboxOpen, setComboboxOpen] = useState(false);
@@ -50,7 +59,12 @@ export function ParoquiasUsuario() {
   const [paroquias, setParoquias] = useState<Paroquia[]>([]);
   const [paroquiasLoading, setParoquiasLoading] = useState(false);
   const [paroquiasError, setParoquiasError] = useState<string | null>(null);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>(() =>
+    usuarioParoquias.map((paroquia) => paroquia.id),
+  );
+  const [saving, setSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const toggleSelecionada = (id: number) => {
     setSelectedIds((prev) =>
@@ -125,6 +139,43 @@ export function ParoquiasUsuario() {
     return () => controller.abort();
   }, [selectedCidade]);
 
+  const handleSalvar = async () => {
+    if (selectedIds.length === 0 || saving) return;
+
+    setSaving(true);
+    setSaveMessage(null);
+    setSaveError(null);
+
+    try {
+      const response = await fetch(
+        `/api/ambrosio/user/${userId}/paroquias`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paroquiaIds: selectedIds }),
+        },
+      );
+
+      const body = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(
+          body?.message || "Erro ao salvar as paróquias",
+        );
+      }
+
+      setSaveMessage(
+        body?.message || "Paróquias salvas com sucesso",
+      );
+    } catch (err) {
+      setSaveError(
+        err instanceof Error ? err.message : "Erro desconhecido",
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -170,7 +221,6 @@ export function ParoquiasUsuario() {
                         onSelect={() => {
                           setSelectedCidade(cidade);
                           setComboboxOpen(false);
-                          setSelectedIds([]);
                         }}
                       >
                         <Check
@@ -246,8 +296,26 @@ export function ParoquiasUsuario() {
                 </TableBody>
               </Table>
 
-              <Button className="w-full" disabled={selectedIds.length === 0}>
-                Salvar
+              {saveMessage && (
+                <p className="text-sm text-green-600">{saveMessage}</p>
+              )}
+              {saveError && (
+                <p className="text-sm text-red-600">{saveError}</p>
+              )}
+
+              <Button
+                className="w-full"
+                disabled={selectedIds.length === 0 || saving}
+                onClick={handleSalvar}
+              >
+                {saving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Salvando...
+                  </>
+                ) : (
+                  "Salvar"
+                )}
               </Button>
             </div>
           )}
@@ -255,3 +323,5 @@ export function ParoquiasUsuario() {
     </Card>
   );
 }
+
+export default ParoquiasUsuario;

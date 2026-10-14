@@ -143,6 +143,22 @@ export default function EditarUsuarioPage({
                   descricao={formatDate(usuario.createdAt)}
                 />
                 <div className="pt-1">
+                  <span>Paróquias: </span>
+                  {usuario.usuarioParoquias?.length ? (
+                    <ul className="mt-1 space-y-0.5">
+                      {usuario.usuarioParoquias.map((paroquia) => (
+                        <li key={paroquia.id} className="text-sm">
+                          {paroquia.descricao}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="text-muted-foreground text-sm">
+                      Nenhuma paróquia atribuída
+                    </span>
+                  )}
+                </div>
+                <div className="pt-1">
                   <span>Status: </span>
                   <Badge variant={usuario.active ? "default" : "destructive"}>
                     {usuario.active ? "Ativo" : "Inativo"}
@@ -167,7 +183,10 @@ export default function EditarUsuarioPage({
         </div>
 
         <div className="lg:col-span-2">
-          <ParoquiasUsuario />
+          <ParoquiasUsuario
+            userId={id}
+            usuarioParoquias={usuario.usuarioParoquias ?? []}
+          />
         </div>
       </div>
     </div>
