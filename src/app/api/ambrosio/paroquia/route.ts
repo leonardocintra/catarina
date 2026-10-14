@@ -10,9 +10,17 @@ export async function GET(request: Request) {
   // Captura os parâmetros da URL (ex: ?dioceseId=123)
   const { searchParams } = new URL(request.url);
   const dioceseId = searchParams.get("dioceseId");
+  const cidadeId = searchParams.get("cidadeId");
 
   // Monta a URL com ou sem filtro
-  const url = dioceseId ? `${baseUrl}?dioceseId=${dioceseId}` : baseUrl;
+  let url = baseUrl;
+  if (dioceseId) {
+    url += `?dioceseId=${dioceseId}`;
+  }
+  if (cidadeId) {
+    url += `?cidadeId=${cidadeId}`;
+  }
+
 
   const res = await fetch(url, {
     cache: "no-cache",

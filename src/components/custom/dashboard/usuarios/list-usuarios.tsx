@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { Users, Loader2, XCircle } from "lucide-react";
 import { User } from "neocatecumenal";
-import { UpdateUsuario } from "./update-usuario";
 
 type DashboardUser = User & {
   nome?: string;
@@ -24,8 +23,6 @@ type DashboardUser = User & {
     nome?: string;
   };
 };
-
-const SELECTED_USER_CACHE_PREFIX = "dashboard:usuarios";
 
 export default function ListUsuarios() {
   const [users, setUsers] = useState<DashboardUser[]>([]);
@@ -73,24 +70,6 @@ export default function ListUsuarios() {
 
   const getDisplayName = (user: DashboardUser) => {
     return user.pessoa?.nome || user.nome || user.email;
-  };
-
-  const handleEditUser = (user: DashboardUser) => {
-    try {
-      if (typeof window !== "undefined") {
-        window.sessionStorage.setItem(
-          `${SELECTED_USER_CACHE_PREFIX}:${user.id}`,
-          JSON.stringify(user),
-        );
-      }
-    } catch (error) {
-      console.error(
-        "Não foi possível salvar o usuário selecionado no cache",
-        error,
-      );
-    }
-
-    router.push(`/dashboard/usuarios/${user.id}`);
   };
 
   if (loading) {
@@ -176,7 +155,15 @@ export default function ListUsuarios() {
                       {user.whatsapp ? formatPhone(user.whatsapp) : "—"}
                     </TableCell>
                     <TableCell className="flex gap-2 justify-end">
-                      <UpdateUsuario user={user} onSuccess={fetchUsers} />
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() =>
+                          router.push(`/dashboard/usuarios/${user.id}`)
+                        }
+                      >
+                        Editar
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );

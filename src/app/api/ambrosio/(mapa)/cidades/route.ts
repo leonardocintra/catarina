@@ -1,6 +1,6 @@
 import { AmbrosioBaseUrl } from "@/lib/utils";
 
-const url = `${AmbrosioBaseUrl}/users/roles`;
+const url = `${AmbrosioBaseUrl}/cidade`;
 
 export async function GET() {
   const res = await fetch(`${url}`, {

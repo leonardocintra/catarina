@@ -4,6 +4,67 @@ import { NextRequest, NextResponse } from "next/server";
 
 const url = `${AmbrosioBaseUrl}/users`;
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+
+    if (!id) {
+      return NextResponse.json(
+        { message: "ID do usuário é obrigatório" },
+        { status: 400 },
+      );
+    }
+
+    const cookieStore = await cookies();
+    const token = cookieStore.get("token")?.value;
+
+    const response = await fetch(`${url}/${id}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          { message: "Usuário não encontrado" },
+          { status: 404 },
+        );
+      }
+
+      return NextResponse.json(
+        { message: "Erro ao buscar usuário" },
+        { status: response.status },
+      );
+    }
+
+    const body = await response.json();
+    const data = body.data ?? body;
+
+    return NextResponse.json({
+      id: data.id,
+      pessoaId: data.pessoaId ?? null,
+      email: data.email,
+      whatsapp: data.whatsapp ?? null,
+      role: data.role,
+      active: data.active,
+      verifiedWhatsapp: data.verifiedWhatsapp,
+      createdAt: data.createdAt,
+    });
+  } catch (error) {
+    console.error("Erro ao buscar usuário:", error);
+
+    return NextResponse.json(
+      { message: "Erro interno do servidor" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },

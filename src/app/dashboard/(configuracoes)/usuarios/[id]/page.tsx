@@ -1,0 +1,175 @@
+"use client";
+
+import { use, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/app/context/user-provider";
+import PageSubtitle from "@/components/custom/dashboard/page-subtitle";
+import LabelData from "@/components/custom/dashboard/pessoa/label-data";
+import UnauthorizedAccessAlert from "@/components/custom/ui/AlertSemCadastroOuPermissao";
+import { SkeletonLoading } from "@/components/custom/ui/SkeletonLoading";
+import {
+  FormUsuario,
+  type DashboardUser,
+} from "@/components/custom/dashboard/usuarios/form-usuario";
+import { ParoquiasUsuario } from "@/components/custom/dashboard/usuarios/paroquias-usuario";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { ROLE_ADMIN } from "@/constants";
+
+const ROUTE_LIST = "/dashboard/usuarios";
+
+const formatPhone = (whatsapp?: string | null) => {
+  if (!whatsapp) return "—";
+  if (whatsapp.length === 11) {
+    return `(${whatsapp.substring(0, 2)}) ${whatsapp.substring(
+      2,
+      7,
+    )}-${whatsapp.substring(7)}`;
+  }
+  if (whatsapp.length === 10) {
+    return `(${whatsapp.substring(0, 2)}) ${whatsapp.substring(
+      2,
+      6,
+    )}-${whatsapp.substring(6)}`;
+  }
+  return whatsapp;
+};
+
+const formatDate = (value?: string) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("pt-BR");
+};
+
+export default function EditarUsuarioPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  const router = useRouter();
+  const { user } = useUser();
+  const [usuario, setUsuario] = useState<DashboardUser | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const fetchUsuario = async () => {
+      try {
+        const response = await fetch(`/api/ambrosio/user/${id}`, {
+          signal: controller.signal,
+        });
+
+        if (response.status === 404) {
+          router.push(ROUTE_LIST);
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error("Erro ao carregar usuário");
+        }
+
+        const data = (await response.json()) as DashboardUser;
+        setUsuario(data);
+      } catch (err) {
+        if (controller.signal.aborted) return;
+        console.error(err);
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchUsuario();
+    return () => controller.abort();
+  }, [id, router]);
+
+  if (user?.role !== ROLE_ADMIN) {
+    return <UnauthorizedAccessAlert title="Usuários" />;
+  }
+
+  if (loading) {
+    return <SkeletonLoading mensagem="Carregando usuário ..." />;
+  }
+
+  if (!usuario) {
+    return null;
+  }
+
+  return (
+    <div>
+      <PageSubtitle
+        title={`Editar ${usuario.email}`}
+        subTitle={usuario.role}
+        buttons={[
+          {
+            buttonText: "Voltar",
+            buttonUrl: ROUTE_LIST,
+            buttonShow: true,
+            buttonVariant: "outline",
+          },
+        ]}
+      />
+
+      <div className="grid gap-4 lg:grid-cols-3 items-start">
+        <div className="lg:col-span-1">
+          {!isEditing && (
+            <Card className="w-full">
+              <CardHeader>
+                <CardTitle className="text-2xl">{usuario.email}</CardTitle>
+                <CardDescription>Dados do usuário</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-1">
+                <LabelData titulo="Email" descricao={usuario.email} />
+                <LabelData
+                  titulo="WhatsApp"
+                  descricao={formatPhone(usuario.whatsapp)}
+                />
+                <LabelData titulo="Role" descricao={usuario.role} />
+                <LabelData
+                  titulo="Criado em"
+                  descricao={formatDate(usuario.createdAt)}
+                />
+                <div className="pt-1">
+                  <span>Status: </span>
+                  <Badge variant={usuario.active ? "default" : "destructive"}>
+                    {usuario.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button className="w-full" onClick={() => setIsEditing(true)}>
+                  Editar dados
+                </Button>
+              </CardFooter>
+            </Card>
+          )}
+
+          {isEditing && (
+            <FormUsuario
+              user={usuario}
+              onCancel={() => setIsEditing(false)}
+              onSuccess={() => router.push(ROUTE_LIST)}
+            />
+          )}
+        </div>
+
+        <div className="lg:col-span-2">
+          <ParoquiasUsuario />
+        </div>
+      </div>
+    </div>
+  );
+}
