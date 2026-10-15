@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "@/components/ui/use-toast";
 import { UseFormReturn, FieldValues, Path } from "react-hook-form";
 
