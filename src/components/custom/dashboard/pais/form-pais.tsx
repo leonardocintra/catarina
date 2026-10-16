@@ -16,17 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { IPais } from "@/interfaces/IPais";
-import { useEffect, useState } from "react";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { getTodosOsPaises } from "@/lib/api/geolocation";
-import { removerAcento } from "@/lib/utils";
+import { useState } from "react";
 
 type FormPaisProps = {
   urlBase: string;
@@ -38,34 +28,6 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
   const router = useRouter();
 
   const [disabled, setDisabled] = useState(false);
-  const [input, setInput] = useState("");
-  const [paises, setPaises] = useState<string[]>([]);
-  const [paisesFiltrados, setPaisesFiltrados] = useState<string[]>([]);
-
-  useEffect(() => {
-    // Esse primeiro useEffect é somente para buscar os paises
-    const fetchPaises = async () => {
-      const resultado: any = await getTodosOsPaises();
-      if (resultado) setPaises(resultado);
-    };
-
-    fetchPaises();
-  }, []);
-
-  useEffect(() => {
-    // Esse segundo useEffect é somente para filtrar os paises
-    if (input.length > 1) {
-      setPaisesFiltrados(
-        paises.filter((pais) =>
-          removerAcento(pais.toLowerCase()).includes(
-            removerAcento(input.toLowerCase())
-          )
-        )
-      );
-    } else {
-      setPaisesFiltrados([]);
-    }
-  }, [input, paises]);
 
   const formSchema = z.object({
     nome: z
@@ -76,9 +38,12 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      nome: pais?.nome ?? "",
+    },
   });
 
-  const handleSubmit = async () => {
+  const handleSubmit = async ({ nome }: z.infer<typeof formSchema>) => {
     setDisabled(true);
 
     let url = `${urlBase}/api/ambrosio/configuracoes/pais`;
@@ -94,16 +59,14 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        nome: input,
-      }),
+      body: JSON.stringify({ nome }),
     });
 
     const data = await res.json();
 
     if (res.status === 201 && method === "POST") {
       toast({
-        title: `${input}`,
+        title: nome,
         variant: "default",
         description: `Pais cadastrado(a) com sucesso!`,
       });
@@ -111,7 +74,7 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
       router.push(`/dashboard/pais`);
     } else if (res.status === 200 && method === "PATCH") {
       toast({
-        title: `${input}`,
+        title: nome,
         variant: "default",
         description: `Pais editado com sucesso!`,
       });
@@ -121,13 +84,13 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
       if (res.status === 400 || res.status === 404) {
         toast({
-          title: `${input} não foi cadastrado!`,
+          title: `${nome} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${data.message}`,
         });
       } else {
         toast({
-          title: `${input} não foi cadastrado!`,
+          title: `${nome} não foi cadastrado!`,
           variant: "destructive",
           description: `Erro: ${res.text}`,
         });
@@ -137,32 +100,6 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
 
   return (
     <div className="max-w-md mx-auto sm:mt-8">
-      <div>
-        <Command>
-          <CommandInput
-            placeholder="Digite o nome do pais ..."
-            value={input}
-            onValueChange={setInput}
-          />
-          <CommandList>
-            <CommandEmpty>Nenhum resultado encontrado...</CommandEmpty>
-            <CommandGroup heading="Sugestões">
-              {paisesFiltrados.map((p, index) => (
-                <CommandItem
-                  key={index}
-                  onSelect={() => {
-                    form.setValue("nome", p); // Define o valor do formulário
-                    setInput(p); // Atualiza o input de busca
-                    setPaisesFiltrados([]);
-                  }}
-                >
-                  {p}
-                </CommandItem>
-              ))}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(handleSubmit)}
@@ -171,12 +108,11 @@ export default function PaisForm({ urlBase, pais }: FormPaisProps) {
           <FormField
             control={form.control}
             name="nome"
-            disabled
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Nome</FormLabel>
                 <FormControl>
-                  <Input placeholder="Nome do pais ..." {...field} disabled />
+                  <Input placeholder="Digite o nome do país..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
