@@ -3,7 +3,7 @@
   "description": "Front administrativo para manipulacao de dados do caminho",
   "version": "0.62.0",
   "engines": {
-    "node": ">=24"
+    "node": "24"
   },
   "author": {
     "name": "Leonardo Nascimento Cintra",
